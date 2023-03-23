@@ -25,7 +25,7 @@ def check_files():
 
     cbfs_error_string = 'E: Selected image region is not a valid CBFS.'
     uefiextract_error_string = 'parse: not a single Volume Top File ' \
-                               ' is found, the image may be corrupted'
+                               'is found, the image may be corrupted'
 
     if not fw_img1.is_file():
         sys.exit('ERROR: \'%s\' file does not exist' % sys.argv[1])
