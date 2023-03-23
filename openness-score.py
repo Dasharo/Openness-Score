@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 import subprocess
 from coreboot import DasharoCorebootImage
+from uefi import UEFIImage
 
 
 def usage():
@@ -107,9 +108,13 @@ def main():
     print('\'%s\' detected as Dasharo image' % dasharo_img_file)
     print('\'%s\' detected as vendor image' % vendor_img_file)
 
+    print('\n\n\'%s\' Dasharo image statistics:' % dasharo_img_file)
     DasharoCbImg = DasharoCorebootImage(dasharo_img_file)
     print(DasharoCbImg)
 
+    print('\n\n\'%s\' vendor image statistics:' % vendor_img_file)
+    VendorImg = UEFIImage(vendor_img_file)
+    print(VendorImg)
 
 if __name__ == '__main__':
     main()
