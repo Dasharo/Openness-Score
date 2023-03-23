@@ -101,6 +101,7 @@ def main():
     print('\'%s\' detected as vendor image' % vendor_img_file)
 
     DasharoCbImg = DasharoCorebootImage(dasharo_img_file)
+    print(DasharoCbImg)
 
 
 if __name__ == '__main__':

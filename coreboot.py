@@ -2,11 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-import pprint
 import re
 import os
 import subprocess
 from typing import List
+
+debug = False
 
 
 class DasharoCorebootImage:
@@ -36,12 +37,13 @@ class DasharoCorebootImage:
     # Regions that may contain code but in closed-source binary form
     # HSPHY_FW does not belong here, because it is part of ME which counts
     # as closed-source binary blob as a whole.
-    BLOB_REGIONS = ['RW_VBIOS_CACHE', 'ME_RW_A', 'ME_RW_B', 'IFWI', 'SIGN_CSE']
+    BLOB_REGIONS = ['RW_VBIOS_CACHE', 'ME_RW_A', 'ME_RW_B', 'IFWI', 'SIGN_CSE',
+                    'SI_ME']
 
     # Regions to not account for in calculations.
     # These are containers aggregating smaller regions.
-    SKIP_REGIONS = ['RW_MISC', 'UNIFIED_MRC_CACHE', 'RW_SHARED',
-                    'RW_SECTION_A', 'RW_SECTION_B', 'SI_ALL']
+    SKIP_REGIONS = ['RW_MISC', 'UNIFIED_MRC_CACHE', 'RW_SHARED', 'SI_ALL',
+                    'RW_SECTION_A', 'RW_SECTION_B', 'WP_RO', 'RO_SECTION']
 
     # Regions to count as empty/unused
     EMPTY_REGIONS = ['UNUSED']
@@ -52,15 +54,46 @@ class DasharoCorebootImage:
         self.fmap_regions = {}
         self.cbfs_images = []
         self.num_regions = 0
+        self.num_cbfses = 0
         self.open_code_size = 0
         self.closed_code_size = 0
         self.data_size = 0
         self.empty_size = 0
+        self.open_code_regions = []
+        self.closed_code_regions = []
+        self.data_regions = []
+        self.empty_regions = []
+        # This type of regions will be counted as closed-source at the end of
+        # metrics calculation. Keep them in separate array to export them into
+        # CSV later for review.
+        self.uncategorized_regions = []
 
         self._parse_cb_fmap_layout()
+        self._calculate_metrics()
 
     def __len__(self):
         return self.image_size
+
+    def __repr__(self):
+        return "DasharoCorebootImage()"
+
+    def __str__(self):
+        return 'Dasharo image %s:\n' \
+               '\tImage size: %d\n' \
+               '\tNumber of regions: %d\n' \
+               '\tNumber of CBFSes: %d\n' \
+               '\tTotal open-source files size: %d\n' \
+               '\tTotal closed-source files size: %d\n' \
+               '\tTotal data size: %d\n' \
+               '\tTotal empty size: %d' % \
+                (self.image_path,
+                 self.image_size,
+                 self.num_regions,
+                 self.num_cbfses,
+                 self.open_code_size,
+                 self.closed_code_size,
+                 self.data_size,
+                 self.empty_size)
 
     def _region_is_cbfs(self, region):
         if region['attributes'] == 'CBFS':
@@ -74,7 +107,7 @@ class DasharoCorebootImage:
 
         for match in re.finditer(self.region_pregexp, layout.stdout):
             self.fmap_regions[self.num_regions] = {
-                'region': match.group('region'),
+                'name': match.group('region'),
                 'offset': int(match.group('offset')),
                 'size': int(match.group('size')),
                 'attributes': match.group('attribute').strip(', '),
@@ -84,32 +117,102 @@ class DasharoCorebootImage:
                 cbfs = CBFSImage(self.image_path,
                                  self.fmap_regions[self.num_regions])
                 self.cbfs_images.append(cbfs)
+                self.num_cbfses += 1
+                print(cbfs)
 
-            self.num_regions = self.num_regions + 1
+            self.num_regions += 1
 
-        print("Dasharo image regions:")
-        [print(self.fmap_regions[i]) for i in range(self.num_regions)]
+        if debug:
+            print("Dasharo image regions:")
+            [print(self.fmap_regions[i]) for i in range(self.num_regions)]
+
+    def _classify_region(self, region):
+        if self._region_is_cbfs(region):
+            # Skip CBFSes because they have separate class and methods to
+            # calculate metrics
+            return
+        elif region['name'] in self.SKIP_REGIONS:
+            return
+        elif region['name'] in self.CODE_REGIONS:
+            self.open_code_regions.append(region)
+        elif region['name'] in self.BLOB_REGIONS:
+            self.closed_code_regions.append(region)
+        elif region['name'] in self.EMPTY_REGIONS:
+            self.empty_regions.append(region)
+        elif region['name'] in self.DATA_REGIONS:
+            self.data_regions.append(region)
+        elif region['attributes'] == 'read-only':
+            # Regions with read-only attribute are containers. Skip them. FMAP
+            # region is an exception and there may be more, so keep this IF
+            # branch at the very end.
+            print('WARNING: Skipped %s region, suspected to be a container'
+                  % region['name'])
+            return
+        else:
+            self.uncategorized_regions.append(region)
+
+    def _calculate_metrics(self):
+        for i in range(self.num_regions):
+            self._classify_region(self.fmap_regions[i])
+
+        self.open_code_size = self._sum_sizes(self.open_code_regions)
+        self.closed_code_size = self._sum_sizes(self.closed_code_regions)
+        self.data_size = self._sum_sizes(self.data_regions)
+        self.empty_size = self._sum_sizes(self.empty_regions)
+        self.closed_code_size += self._sum_sizes(self.uncategorized_regions)
+        if len(self.uncategorized_regions) != 0:
+            print('INFO: Found %d uncategorized regions of total size %d bytes'
+                  % (len(self.uncategorized_regions),
+                     self._sum_sizes(self.uncategorized_regions)))
+            print(self.uncategorized_regions)
+
+        for i in range(self.num_cbfses):
+            self.open_code_size += self.cbfs_images[i].open_code_size
+            self.closed_code_size += self.cbfs_images[i].closed_code_size
+            self.data_size += self.cbfs_images[i].data_size
+            self.empty_size += self.cbfs_images[i].empty_size
+
+        self._normalize_sizes()
+
+    def _sum_sizes(self, regions):
+        return sum(list(r['size'] for r in regions))
+
+    def _normalize_sizes(self):
+        # It may happen that the FMAP does not cover whole flash size and the
+        # first region will start with non-zero offset. Check if first region
+        # offset is zero, if not count all bytes from the start of flash to the
+        # start of first region as clsoed source.
+        if self.fmap_regions[0]['offset'] != 0:
+            self.closed_code_size += self.fmap_regions[0]['offset']
+
+        # Final check if all sizes are summing up to whole image size
+        full_size = sum([self.open_code_size, self.empty_size,
+                         self.closed_code_size, self.data_size])
+        if full_size != self.image_size:
+            print('WARNING: Somethign went wrong.\n'
+                  'The component sizes do not sum up to the image size. '
+                  '%d != %d' % (full_size, self.image_size))
 
 
 class CBFSImage:
 
-    cbfs_filetypes = [
+    CBFS_FILETYPES = [
         'bootblock', 'cbfs header', 'stage', 'simple elf', 'fit_payload',
         'optionrom', 'bootsplash', 'raw', 'vsa', 'mbi', 'microcode',
         'intel_fit', 'fsp', 'mrc', 'cmos_default', 'cmos_layout', 'spd',
         'mrc_cache', 'mma', 'efi', 'struct', 'deleted', 'null', 'amdfw'
     ]
 
-    open_source_filetypes = [
+    OPEN_SOURCE_FILETYPES = [
         'bootblock', 'stage', 'simple elf', 'fit_payload',
     ]
 
-    closed_source_filetypes = [
+    CLOSED_SOURCE_FILETYPES = [
         'optionrom', 'vsa', 'mbi', 'microcode', 'fsp', 'mrc', 'mma', 'efi',
         'amdfw'
     ]
 
-    data_filetypes = [
+    DATA_FILETYPES = [
         'cbfs header', 'bootsplash', 'intel_fit', 'cmos_default',
         'cmos_layout', 'spd', 'mrc_cache', 'struct',
     ]
@@ -119,7 +222,7 @@ class CBFSImage:
     # account for such exceptions. Some non-x86 files are also here for the
     # future. The list may not be exhaustive. Search for "cbfs-files" pattern
     # in coreobot Makefiles.
-    closed_source_exceptions = [
+    CLOSED_SOURCE_EXCEPTIONS = [
         'fallback/refcode', 'fallback/secure_os', 'fallback/dram',
         'fallback/qcsdi', 'fallback/qclib', 'fallback/pmiccfg',
         'fallback/dcb', 'fallback/dcb_longsys1p8', 'fallback/aop',
@@ -133,7 +236,7 @@ class CBFSImage:
     # code respecitvely. We also assume VBT to be data, becasue Intel publishes
     # VBT BSF/JSON files with the meaning of each byte in it. The lists may not
     # be exhaustive. Search for "cbfs-files" pattern in coreobot Makefiles.
-    raw_data_files = [
+    RAW_DATA_FILES = [
         'config', 'revision', 'build_info', 'vbt.bin', 'payload_config',
         'payload_revision', 'etc/grub.cfg', 'logo.bmp', 'rt8168-macaddress',
         'atl1e-macaddress', 'wifi_sar_defaults.hex', 'ecrw.hash', 'pdrw.hash',
@@ -144,7 +247,7 @@ class CBFSImage:
 
     # Everything derived from open-source code which is an executable code or
     # was created from open-source code in a reproducible way
-    raw_open_source_files = [
+    RAW_OPEN_SOURCE_FILES = [
         'fallback/dsdt.aml', 'vgaroms/seavgabios.bin', 'pagetables', 'pt',
         'pdpt', 'ecrw', 'pdrw', 'sff8104-linux.dtb', 'stm.bin', 'fallback/DTB',
         'oemmanifest.bin', 'smcbiosinfo.bin'
@@ -152,7 +255,7 @@ class CBFSImage:
 
     # PSE binary is treated as closed source as there is no guarantee of open
     # code availability for given build.
-    raw_closed_source_files = [
+    RAW_CLOSED_SOURCE_FILES = [
         'doom.wad', 'ecfw1.bin', 'ecfw2.bin', 'apu/ecfw', 'ec/ecfw',
         'sch5545_ecfw.bin', 'txt_bios_acm.bin', 'txt_sinit_acm.bin',
         'apu/amdfw_a_body', 'apu/amdfw_b_body', 'smu_fw', 'smu_fw2',
@@ -173,7 +276,7 @@ class CBFSImage:
     file_patterns = [
         r"(?P<filename>[a-zA-Z0-9\(\)\/\.\,\_\-]*?)\s+",
         r"(?P<offset>0x[0-9a-f]+?)\s+",
-        r"(?P<filetype>(" + "|".join(cbfs_filetypes) + r"){1}?)\s+",
+        r"(?P<filetype>(" + "|".join(CBFS_FILETYPES) + r"){1}?)\s+",
         r"(?P<size>\d+?)\s+(?P<compression>\w+?)(\s+\(\d+ \w+\))?$"
     ]
 
@@ -181,7 +284,7 @@ class CBFSImage:
 
     def __init__(self, image_path, region):
         self.image_path = image_path
-        self.region_name = region['region']
+        self.region_name = region['name']
         self.cbfs_size = region['size']
         self.cbfs_files = {}
         self.num_files = 0
@@ -189,11 +292,39 @@ class CBFSImage:
         self.closed_code_size = 0
         self.data_size = 0
         self.empty_size = 0
+        self.open_code_files = []
+        self.closed_code_files = []
+        self.data_files = []
+        self.empty_files = []
+        # This type of files will be counted as closed-source at the end of
+        # metrics calculation. Keep them in separate array to export them into
+        # CSV later for review.
+        self.uncategorized_files = []
 
         self._parse_cbfs_files()
+        self._calculate_metrics()
 
     def __len__(self):
         return self.cbfs_size
+
+    def __repr__(self):
+        return "CBFSImage()"
+
+    def __str__(self):
+        return 'CBFS region %s:\n' \
+               '\tCBFS size: %d\n' \
+               '\tNumber of files: %d\n' \
+               '\tOpen-source files size: %d\n' \
+               '\tClosed-source files size: %d\n' \
+               '\tData size: %d\n' \
+               '\tEmpty size: %d' % \
+                (self.region_name,
+                 self.cbfs_size,
+                 self.num_files,
+                 self.open_code_size,
+                 self.closed_code_size,
+                 self.data_size,
+                 self.empty_size)
 
     def _parse_cbfs_files(self):
         cmd = ["cbfstool", self.image_path, "print", "-r", self.region_name]
@@ -210,5 +341,81 @@ class CBFSImage:
 
             self.num_files = self.num_files + 1
 
-        print("Region %s CBFS contents:" % self.region_name)
-        [print(self.cbfs_files[i]) for i in range(self.num_files)]
+        if debug:
+            print('Region %s CBFS contents:' % self.region_name)
+            [print(self.cbfs_files[i]) for i in range(self.num_files)]
+
+    def _calculate_metrics(self):
+        for i in range(self.num_files):
+            self._classify_file(self.cbfs_files[i])
+
+        self.open_code_size = self._sum_sizes(self.open_code_files)
+        self.closed_code_size = self._sum_sizes(self.closed_code_files)
+        self.data_size = self._sum_sizes(self.data_files)
+        self.empty_size = self._sum_sizes(self.empty_files)
+        self.closed_code_size += self._sum_sizes(self.uncategorized_files)
+        if len(self.uncategorized_files) != 0:
+            print('INFO: Found %d uncategorized files of total size %d bytes'
+                  % (len(self.uncategorized_files),
+                     self._sum_sizes(self.uncategorized_files)))
+            print(self.uncategorized_files)
+
+        self._normalize_sizes()
+
+    def _classify_file(self, file):
+        if file['filetype'] in self.OPEN_SOURCE_FILETYPES:
+            if file['filename'] not in self.CLOSED_SOURCE_EXCEPTIONS:
+                self.open_code_files.append(file)
+            else:
+                self.closed_code_files.append(file)
+        elif file['filetype'] in self.CLOSED_SOURCE_FILETYPES:
+            self.closed_code_files.append(file)
+            # TODO: add iPXE handling for optionrom type
+        elif file['filetype'] in self.DATA_FILETYPES:
+            self.data_files.append(file)
+        elif file['filetype'] == 'null':
+            self.empty_files.append(file)
+        elif file['filetype'] == 'raw':
+            if file['filename'] in self.RAW_DATA_FILES:
+                self.data_files.append(file)
+            elif file['filename'] in self.RAW_OPEN_SOURCE_FILES:
+                self.open_code_files.append(file)
+            elif file['filename'] in self.RAW_CLOSED_SOURCE_FILES:
+                self.closed_code_files.append(file)
+            else:
+                self.uncategorized_files.append(file)
+        else:
+            self.uncategorized_files.append(file)
+
+    def _normalize_sizes(self):
+        # We have to take into account truncated CBFSes like FW_MAIN_A or
+        # FW_MAIN_B, where the space after the last file is empty but not
+        # listed as such.
+        last_file_end = self.cbfs_files[self.num_files-1]['size'] + \
+                        self.cbfs_files[self.num_files-1]['offset']
+        truncated_size = self.cbfs_size - last_file_end
+
+        # COREBOOT region will always have the bootblock at its end, so the
+        # truncated_size will be always equal to 64 (size of metadata at the
+        # beginning of the file). If the gap is bigger than 64 bytes, then it
+        # means we have truncated CBFS and have to add the truncated_size to
+        # the sum of empty files.
+        if truncated_size > 64:
+            self.empty_size += truncated_size
+
+        # We have to normalize the total size of files in each group to the
+        # total region size, because the cbfstool does not report the size of
+        # the file metadata, so the sum of all file sizes would not match the
+        # CBFS region size. This metadata will be counted as data bytes.
+        metadata_size = self.cbfs_size - sum([self.open_code_size,
+                                              self.empty_size,
+                                              self.closed_code_size,
+                                              self.data_size])
+
+        self.data_size += metadata_size
+        if debug:
+            print('Size of metadata in %s CBFS: %d bytes'
+                  % (self.region_name, metadata_size))
+
+    def _sum_sizes(self, files):
+        return sum(list(f['size'] for f in files))
