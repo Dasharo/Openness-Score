@@ -47,6 +47,13 @@ def check_files():
     except FileNotFoundError:
         sys.exit('ERROR: UEFIExtract not found, please install it first.')
 
+    try:
+        subprocess.run(['lzma', '-V'],
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit('ERROR: lzma not found, please install it first.')
+
     cbfstool_check = subprocess.run(['cbfstool', sys.argv[1], 'print'],
                                     text=True, capture_output=True)
     fw1_is_cbfs = cbfs_error_string not in cbfstool_check.stderr

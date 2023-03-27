@@ -5,6 +5,7 @@
 import re
 import os
 import subprocess
+from pathlib import Path
 from typing import List
 
 debug = False
@@ -75,7 +76,7 @@ class DasharoCorebootImage:
         return self.image_size
 
     def __repr__(self):
-        return "DasharoCorebootImage()"
+        return 'DasharoCorebootImage()'
 
     def __str__(self):
         return 'Dasharo image %s:\n' \
@@ -102,7 +103,7 @@ class DasharoCorebootImage:
             return False
 
     def _parse_cb_fmap_layout(self):
-        cmd = ["cbfstool", self.image_path, "layout", "-w"]
+        cmd = ['cbfstool', self.image_path, 'layout', '-w']
         layout = subprocess.run(cmd, text=True, capture_output=True)
 
         for match in re.finditer(self.region_pregexp, layout.stdout):
@@ -123,7 +124,7 @@ class DasharoCorebootImage:
             self.num_regions += 1
 
         if debug:
-            print("Dasharo image regions:")
+            print('Dasharo image regions:')
             [print(self.fmap_regions[i]) for i in range(self.num_regions)]
 
     def _classify_region(self, region):
@@ -142,9 +143,9 @@ class DasharoCorebootImage:
         elif region['name'] in self.DATA_REGIONS:
             self.data_regions.append(region)
         elif region['attributes'] == 'read-only':
-            # Regions with read-only attribute are containers. Skip them. FMAP
-            # region is an exception and there may be more, so keep this IF
-            # branch at the very end.
+            # Regions with read-only attribute are containers. Skip them. The
+            # FMAP region is an exception and there may be more, so keep this
+            # IF branch at the very end.
             print('WARNING: Skipped %s region, suspected to be a container'
                   % region['name'])
             return
@@ -189,7 +190,7 @@ class DasharoCorebootImage:
         full_size = sum([self.open_code_size, self.empty_size,
                          self.closed_code_size, self.data_size])
         if full_size != self.image_size:
-            print('WARNING: Somethign went wrong.\n'
+            print('WARNING: Something went wrong.\n'
                   'The component sizes do not sum up to the image size. '
                   '%d != %d' % (full_size, self.image_size))
 
@@ -220,7 +221,7 @@ class CBFSImage:
     # Some binary blobs containing code are not added as raw files or as fsp,
     # etc, for example refcode blob is a stage type. We keep them here to
     # account for such exceptions. Some non-x86 files are also here for the
-    # future. The list may not be exhaustive. Search for "cbfs-files" pattern
+    # future. The list may not be exhaustive. Search for 'cbfs-files' pattern
     # in coreobot Makefiles.
     CLOSED_SOURCE_EXCEPTIONS = [
         'fallback/refcode', 'fallback/secure_os', 'fallback/dram',
@@ -235,7 +236,7 @@ class CBFSImage:
     # have not been misused to hide blobs. These names are below for data and
     # code respecitvely. We also assume VBT to be data, becasue Intel publishes
     # VBT BSF/JSON files with the meaning of each byte in it. The lists may not
-    # be exhaustive. Search for "cbfs-files" pattern in coreobot Makefiles.
+    # be exhaustive. Search for 'cbfs-files' pattern in coreobot Makefiles.
     RAW_DATA_FILES = [
         'config', 'revision', 'build_info', 'vbt.bin', 'payload_config',
         'payload_revision', 'etc/grub.cfg', 'logo.bmp', 'rt8168-macaddress',
@@ -250,7 +251,7 @@ class CBFSImage:
     RAW_OPEN_SOURCE_FILES = [
         'fallback/dsdt.aml', 'vgaroms/seavgabios.bin', 'pagetables', 'pt',
         'pdpt', 'ecrw', 'pdrw', 'sff8104-linux.dtb', 'stm.bin', 'fallback/DTB',
-        'oemmanifest.bin', 'smcbiosinfo.bin'
+        'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom'
     ]
 
     # PSE binary is treated as closed source as there is no guarantee of open
@@ -273,6 +274,8 @@ class CBFSImage:
         'cdt.mbn', 'ddr.mbn', 'rpm.mbn'
     ]
 
+    DASHARO_LAN_ROM_GUID = 'DEB917C0-C56A-4860-A05B-BF2F22EBB717'
+
     file_patterns = [
         r"(?P<filename>[a-zA-Z0-9\(\)\/\.\,\_\-]*?)\s+",
         r"(?P<offset>0x[0-9a-f]+?)\s+",
@@ -287,7 +290,9 @@ class CBFSImage:
         self.region_name = region['name']
         self.cbfs_size = region['size']
         self.cbfs_files = {}
+        self.kconfig_opts = {}
         self.num_files = 0
+        self.num_opts = 0
         self.open_code_size = 0
         self.closed_code_size = 0
         self.data_size = 0
@@ -300,15 +305,20 @@ class CBFSImage:
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
         self.uncategorized_files = []
+        self.edk2_ipxe = False
+        self.ipxe_present = False
+        self.ipxe_rom_id = None
+        self.lan_rom_size = 0
 
         self._parse_cbfs_files()
+        self._parse_cb_config()
         self._calculate_metrics()
 
     def __len__(self):
         return self.cbfs_size
 
     def __repr__(self):
-        return "CBFSImage()"
+        return 'CBFSImage()'
 
     def __str__(self):
         return 'CBFS region %s:\n' \
@@ -327,7 +337,7 @@ class CBFSImage:
                  self.empty_size)
 
     def _parse_cbfs_files(self):
-        cmd = ["cbfstool", self.image_path, "print", "-r", self.region_name]
+        cmd = ['cbfstool', self.image_path, 'print', '-r', self.region_name]
         cbfs_content = subprocess.run(cmd, text=True, capture_output=True)
 
         for match in re.finditer(self.file_regexp, cbfs_content.stdout):
@@ -360,6 +370,16 @@ class CBFSImage:
                      self._sum_sizes(self.uncategorized_files)))
             print(self.uncategorized_files)
 
+        # Account for an externally added LAN driver to the EDK2 payload. We
+        # subtract the compressed size of the driver from the compressed size
+        # of the paylaod counted as open-source and add the value to
+        # closed-source.
+        if self.lan_rom_size != 0:
+            print('INFO: Found external LAN driver blob of size %d bytes'
+                  % self.lan_rom_size)
+            self.open_code_size -= self.lan_rom_size
+            self.closed_code_size += self.lan_rom_size
+
         self._normalize_sizes()
 
     def _classify_file(self, file):
@@ -370,7 +390,6 @@ class CBFSImage:
                 self.closed_code_files.append(file)
         elif file['filetype'] in self.CLOSED_SOURCE_FILETYPES:
             self.closed_code_files.append(file)
-            # TODO: add iPXE handling for optionrom type
         elif file['filetype'] in self.DATA_FILETYPES:
             self.data_files.append(file)
         elif file['filetype'] == 'null':
@@ -382,6 +401,10 @@ class CBFSImage:
                 self.open_code_files.append(file)
             elif file['filename'] in self.RAW_CLOSED_SOURCE_FILES:
                 self.closed_code_files.append(file)
+            # iPXE is added as a raw file
+            elif self.ipxe_present and not self.edk2_ipxe:
+                if file['filename'] == 'pci' + self.ipxe_rom_id + '.rom':
+                    self.open_code_files.append(file)
             else:
                 self.uncategorized_files.append(file)
         else:
@@ -419,3 +442,111 @@ class CBFSImage:
 
     def _sum_sizes(self, files):
         return sum(list(f['size'] for f in files))
+
+    def _get_kconfig_value(self, option):
+        for i in range(len(self.kconfig_opts)):
+            if self.kconfig_opts[i]['option'] == option:
+                return self.kconfig_opts[i]['value']
+
+        return None
+
+    def _parse_cb_config(self):
+        kconfig_pattern = r'^CONFIG_(?P<option>[A-Z0-9_]+?)=(?P<value>.*?)$'
+        kconfig_pregexp = re.compile(kconfig_pattern, re.MULTILINE)
+
+        cmd = ['cbfstool', self.image_path,
+               'extract', '-n', 'config',
+               '-f', '/tmp/cb_config_' + self.region_name,
+               '-r', self.region_name]
+        subprocess.run(cmd, text=True, capture_output=True)
+
+        try:
+            file = open('/tmp/cb_config_' + self.region_name, mode='r')
+            cb_config = file.read()
+            file.close()
+        except FileNotFoundError:
+            print('WARNING: Could not extract coreboot config')
+            return
+
+        for match in re.finditer(kconfig_pregexp, cb_config):
+            self.kconfig_opts[self.num_opts] = {
+                'option': match.group('option'),
+                'value': match.group('value'),
+            }
+            self.num_opts = self.num_opts + 1
+
+        if debug:
+            print('Region %s CBFS config:' % self.region_name)
+            [print(self.kconfig_opts[i]) for i in range(self.num_opts)]
+
+        self._check_for_ipxe()
+        self._check_for_lanrom()
+        # Cleanup
+        cmd = ['rm', '/tmp/cb_config_' + self.region_name]
+        subprocess.run(cmd, text=True, capture_output=True)
+
+    def _check_for_ipxe(self):
+        if self._get_kconfig_value('EDK2_ENABLE_IPXE') == 'y':
+            self.edk2_ipxe = True
+            # If EDK2 iPXE is chosen, CONFIG_PXE is selected as well and will
+            # not be present in the config file. Worst case scenario If EDK2
+            # iPXE option is set as default in the mainboard's Kconfig file and
+            # will not be reflected in the CBFS config file.
+            self.ipxe_present = True
+        elif self._get_kconfig_value('PXE') == 'y':
+            # Worst case scenario, PXE is set as default in the mainbaord's
+            # Kconfig file and wil not be reflected in the CBFS config file. In
+            # such case the matrics will assume the pci$(pxe_rom_id).rom as
+            # closed source. Also the PXE_ROM must not be found in the config,
+            # it would mean an external binary.
+            if self._get_kconfig_value('PXE_ROM') is None:
+                self.ipxe_present = True
+
+        self.ipxe_rom_id = self._get_kconfig_value('PXE_ROM_ID')
+        # If the PXE ROM ID is not found, it means it has its default value.
+        if self.ipxe_rom_id is None:
+            self.ipxe_rom_id = '10ec,8168'
+
+    def _check_for_lanrom(self):
+        if self._get_kconfig_value('EDK2_LAN_ROM_DRIVER') is None:
+            return
+        # We determined there was an external LAN driver included. Now we
+        # have to determine it's compressed size, because we have to
+        # subtract the LAN driver size form compressed payload size.
+        cmd = ['cbfstool', self.image_path,
+               'extract', '-n', 'fallback/payload',
+               '-f', '/tmp/payload_' + self.region_name,
+               '-r', self.region_name,
+               '-m', 'x86']
+        subprocess.run(cmd, text=True, capture_output=True)
+
+        lan_rom_file = '/tmp/lan_rom_' + self.region_name + '/body_1.bin'
+        cmd = ['UEFIExtract', '/tmp/payload_' + self.region_name,
+               self.DASHARO_LAN_ROM_GUID,
+               '-o', '/tmp/lan_rom_' + self.region_name,
+               '-m', 'body']
+        subprocess.run(cmd, text=True, capture_output=True)
+
+        if not Path(lan_rom_file).is_file():
+            print('WARNING: Failed to extract LAN driver. '
+                  'It will not be counted as closed-source')
+            return
+        # We do not use the same LZMA as cbfstool originally does, but the
+        # resulting size different can be neglected, example: i225 EFI driver
+        # uncompressed: 154064 bytes, cbfstool LZMA compressed 63445 bytes, OS
+        # lzma (-6 default) compressed: 63320 bytes.
+        cmd = ['lzma', '-z', '-c', lan_rom_file]
+        lan_rom_compress = subprocess.run(cmd, text=False, capture_output=True)
+
+        if lan_rom_compress.returncode == 0:
+            self.lan_rom_size = len(lan_rom_compress.stdout)
+        else:
+            print('WARNING: Failed to compress LAN driver. '
+                  'It will not be counted as closed-source')
+            return
+
+        # Cleanup
+        cmd = ['rm', '-rf'
+               '/tmp/payload_' + self.region_name,
+               '/tmp/lan_rom_' + self.region_name]
+        subprocess.run(cmd, text=True, capture_output=True)
