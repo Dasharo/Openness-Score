@@ -243,7 +243,16 @@ class CBFSImage:
         'atl1e-macaddress', 'wifi_sar_defaults.hex', 'ecrw.hash', 'pdrw.hash',
         'oem.bin', 'sbom', 'boot_policy_manifest.bin', 'key_manifest.bin',
         'txt_bios_policy.bin', 'apu/amdfw_a', 'apu/amdfw_b', 'me_rw.hash',
-        'me_rw.version', 'vboot_public_key.bin'
+        'me_rw.version', 'vboot_public_key.bin',
+        # SeaBIOS runtime config below https://www.seabios.org/Runtime_config
+        'links', 'bootorder', 'etc/show-boot-menu', 'boot-menu-message',
+        'etc/boot-menu-key', 'etc/boot-menu-wait', 'etc/boot-fail-wait',
+        'etc/extra-pci-roots', 'etc/ps2-keyboard-spinup', 'etc/threads',
+        'etc/optionroms-checksum', 'etc/pci-optionrom-exec',
+        'etc/s3-resume-vga-init', 'etc/screen-and-debug', 'etc/sercon-port',
+        'etc/advertise-serial-debug-port', 'etc/floppy0', 'etc/floppy1',
+        'etc/usb-time-sigatt', 'etc/sdcard0', 'etc/sdcard1', 'etc/sdcard2',
+        'etc/sdcard3'
     ]
 
     # Everything derived from open-source code which is an executable code or
@@ -251,7 +260,7 @@ class CBFSImage:
     RAW_OPEN_SOURCE_FILES = [
         'fallback/dsdt.aml', 'vgaroms/seavgabios.bin', 'pagetables', 'pt',
         'pdpt', 'ecrw', 'pdrw', 'sff8104-linux.dtb', 'stm.bin', 'fallback/DTB',
-        'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom'
+        'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom',
     ]
 
     # PSE binary is treated as closed source as there is no guarantee of open
@@ -403,7 +412,8 @@ class CBFSImage:
                 self.closed_code_files.append(file)
             # iPXE is added as a raw file
             elif self.ipxe_present and not self.edk2_ipxe:
-                if file['filename'] == 'pci' + self.ipxe_rom_id + '.rom':
+                if file['filename'] == 'pci' + self.ipxe_rom_id + '.rom' or \
+                   file['filename'] == 'pci' + self.ipxe_rom_id + '.rom.lzma':
                     self.open_code_files.append(file)
             else:
                 self.uncategorized_files.append(file)
