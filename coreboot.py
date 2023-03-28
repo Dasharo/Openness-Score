@@ -83,8 +83,8 @@ class DasharoCorebootImage:
                '\tImage size: %d\n' \
                '\tNumber of regions: %d\n' \
                '\tNumber of CBFSes: %d\n' \
-               '\tTotal open-source files size: %d\n' \
-               '\tTotal closed-source files size: %d\n' \
+               '\tTotal open-source code size: %d\n' \
+               '\tTotal closed-source code size: %d\n' \
                '\tTotal data size: %d\n' \
                '\tTotal empty size: %d' % \
                 (self.image_path,
