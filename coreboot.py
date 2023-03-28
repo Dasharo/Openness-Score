@@ -156,10 +156,10 @@ class DasharoCorebootImage:
         for i in range(self.num_regions):
             self._classify_region(self.fmap_regions[i])
 
-        self.open_code_size = self._sum_sizes(self.open_code_regions)
-        self.closed_code_size = self._sum_sizes(self.closed_code_regions)
-        self.data_size = self._sum_sizes(self.data_regions)
-        self.empty_size = self._sum_sizes(self.empty_regions)
+        self.open_code_size += self._sum_sizes(self.open_code_regions)
+        self.closed_code_size += self._sum_sizes(self.closed_code_regions)
+        self.data_size += self._sum_sizes(self.data_regions)
+        self.empty_size += self._sum_sizes(self.empty_regions)
         self.closed_code_size += self._sum_sizes(self.uncategorized_regions)
         if len(self.uncategorized_regions) != 0:
             print('INFO: Found %d uncategorized regions of total size %d bytes'
