@@ -78,10 +78,10 @@ def export_data(args, image):
         except PermissionError:
             sys.exit('You do not have permission to write to %s' % args.output)
 
-    print(output_path.joinpath('openness_score.md'))
     Path(output_path.joinpath('openness_score.md')).unlink(missing_ok=True)
     Path(output_path.joinpath('openness_score.md')).touch()
-    image.export_markdown(output_path.joinpath('openness_score.md'))
+    image.export_markdown(output_path.joinpath(
+                          '%s_openness_score.md' % Path(args.file).name))
     image.export_charts(output_path)
 
 
