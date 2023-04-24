@@ -264,7 +264,7 @@ class DasharoCorebootImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('%s Dasharo coreboot image openness' %
+        fig.suptitle('Dasharo coreboot image openness\n%s' %
                      Path(self.image_path).name)
         plt.savefig('%s_openness_chart.png' %
                     dir.joinpath(Path(self.image_path).name))
@@ -276,7 +276,7 @@ class DasharoCorebootImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('%s Dasharo coreboot image openness (no empty space)' %
+        fig.suptitle('Dasharo coreboot image openness (no empty space)\n%s' %
                      Path(self.image_path).name)
         plt.savefig('%s_openness_chart_no_empty.png' %
                     dir.joinpath(Path(self.image_path).name))

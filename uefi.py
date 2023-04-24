@@ -353,7 +353,7 @@ class UEFIImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('%s UEFI image openness' % Path(self.image_path).name)
+        fig.suptitle('UEFI image openness\n%s' % Path(self.image_path).name)
         plt.savefig('%s_openness_chart.png' %
                     dir.joinpath(Path(self.image_path).name))
 
@@ -364,7 +364,7 @@ class UEFIImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('%s UEFI image openness (no empty space)' %
+        fig.suptitle('UEFI image openness (no empty space)\n%s' %
                      Path(self.image_path).name)
         plt.savefig('%s_openness_chart_no_empty.png' %
                     dir.joinpath(Path(self.image_path).name))
