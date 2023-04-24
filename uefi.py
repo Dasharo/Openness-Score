@@ -7,43 +7,45 @@ import os
 import sys
 import subprocess
 from typing import List
-
-debug = False
+from pathlib import Path
+import matplotlib.pyplot as plt
 
 
 class UEFIImage:
 
+    debug = False
+
     # Format: Type, Subtype, Name
     EMPTY_REGION_PADDING = [
         # First level padding present between IFD regions
-        [ 'Padding', 'Empty (0xFF)', '- Padding' ],
-        [ 'Padding', 'Empty (0x00)', '- Padding' ]
+        ['Padding', 'Empty (0xFF)', '- Padding'],
+        ['Padding', 'Empty (0x00)', '- Padding']
     ]
 
     EMPTY_BIOS_PADDING = [
         # Second level padding between volumes (ME firmware can also contain
         # such padding thus in separate array)
-        [ 'Padding', 'Empty (0xFF)', '-- Padding' ],
-        [ 'Padding', 'Empty (0x00)', '-- Padding' ]
+        ['Padding', 'Empty (0xFF)', '-- Padding'],
+        ['Padding', 'Empty (0x00)', '-- Padding']
     ]
 
     NON_EMPTY_REGION_PADDING = [
         # First level padding present between IFD regions
-        [ 'Padding', 'Non-empty', '- Padding' ]
+        ['Padding', 'Non-empty', '- Padding']
     ]
 
     NON_EMPTY_BIOS_PADDING = [
         # Second level padding between volumes (ME firmware can also contain
         # such padding thus in separate array)
-        [ 'Padding', 'Non-empty', '-- Padding' ]
+        ['Padding', 'Non-empty', '-- Padding']
     ]
 
     # TODO: Ensure Reserved1, Reserved2, PTT, DevExp1 and DevExp2 are
     # indeed closed-source.
-    CLOSED_SOURCE_REGIONS = [ 'ME', 'DevExp1', 'DevExp2', 'Microcode', 'EC',
-                              'IE', 'PTT', 'Reserved1', 'Reserved2', ]
+    CLOSED_SOURCE_REGIONS = ['ME', 'DevExp1', 'DevExp2', 'Microcode', 'EC',
+                             'IE', 'PTT', 'Reserved1', 'Reserved2']
 
-    DATA_REGIONS = ['Descriptor', 'GbE', 'PDR', '10GbE1', '10GbE2', ]
+    DATA_REGIONS = ['Descriptor', 'GbE', 'PDR', '10GbE1', '10GbE2']
 
     item_patterns = [
         r"^\s(?P<type>.*?)\s+\|",
@@ -57,7 +59,7 @@ class UEFIImage:
     report_regexp = re.compile(''.join(item_patterns), re.MULTILINE)
     bios_region_started = False
 
-    def __init__(self, image_path):
+    def __init__(self, image_path, verbose=False):
         self.image_path = image_path
         self.image_size = os.path.getsize(image_path)
         self.uefi_entries = {}
@@ -74,6 +76,8 @@ class UEFIImage:
         self.closed_code_regions = []
         self.data_regions = []
         self.empty_spaces = []
+
+        self.debug = verbose
 
         self._parse_uefi_image()
         self._calculate_metrics()
@@ -93,16 +97,16 @@ class UEFIImage:
                '\tTotal open-source files size: %d\n' \
                '\tTotal closed-source files size: %d\n' \
                '\tTotal data size: %d\n' \
-               '\tTotal empty size: %d' % \
-                (self.image_path,
-                 self.image_size,
-                 self.num_entries,
-                 self.num_regions,
-                 self.num_volumes,
-                 self.open_code_size,
-                 self.closed_code_size,
-                 self.data_size,
-                 self.empty_size)
+               '\tTotal empty size: %d' % (
+                    self.image_path,
+                    self.image_size,
+                    self.num_entries,
+                    self.num_regions,
+                    self.num_volumes,
+                    self.open_code_size,
+                    self.closed_code_size,
+                    self.data_size,
+                    self.empty_size)
 
     def _parse_uefi_image(self):
         cmd = ['UEFIExtract', self.image_path, 'report']
@@ -148,12 +152,12 @@ class UEFIImage:
 
             self.num_entries += 1
 
-        if debug:
+        if self.debug:
             print("UEFI image entries:")
             [print(self.uefi_entries[i]) for i in range(self.num_entries)]
 
     def _entry_is_volume(self, entry):
-        # Take only the top level volumes. Volems that are nested/compressed
+        # Take only the top level volumes. Volumes that are nested/compressed
         # will have size of -1 (N/A).
         if entry['type'] == 'Volume' and entry['size'] != -1:
             return True
@@ -166,13 +170,13 @@ class UEFIImage:
         # volumes exist.
         for i in range(self.num_volumes):
             volume_start = self.volumes[i].volume_base
-            volume_end = self.volumes[i].volume_base + self.volumes[i].volume_size
-            if entry['base'] >= volume_start and \
-               entry['base'] + entry['size'] <= volume_end:
+            volume_end = (self.volumes[i].volume_base +
+                          self.volumes[i].volume_size)
+            if (entry['base'] >= volume_start) and \
+               (entry['base'] + entry['size'] <= volume_end):
                 return True
-            
-        return False
 
+        return False
 
     def _entry_is_region(self, entry):
         if entry['type'] == 'Region':
@@ -190,10 +194,10 @@ class UEFIImage:
             return False
         elif self._entry_is_region(entry):
             return False
-        elif entry['base'] < bios_start or entry['base'] >= bios_end:
+        elif (entry['base'] < bios_start) or (entry['base'] >= bios_end):
             return False
-        elif entry['base'] >= bios_start and \
-             entry['base'] + entry['size'] <= bios_end:
+        elif (entry['base'] >= bios_start) and \
+             (entry['base'] + entry['size'] <= bios_end):
             return True
         else:
             print('ERROR: Could not determine if entry is in BIOS region')
@@ -205,7 +209,7 @@ class UEFIImage:
             if self._entry_is_volume(self.uefi_entries[i]) and \
                self._is_entry_inside_bios_region(self.uefi_entries[i]):
                 if not self._is_entry_nested_volume(self.uefi_entries[i]):
-                    volume = UEFIVolume(self.uefi_entries, i)
+                    volume = UEFIVolume(self.uefi_entries, i, self.debug)
                     self.volumes.append(volume)
                     self.num_volumes += 1
                     print(volume)
@@ -218,21 +222,24 @@ class UEFIImage:
             if entry_type in self.EMPTY_BIOS_PADDING and \
                self._is_entry_inside_bios_region(self.uefi_entries[i]):
                 self.empty_spaces.append(self.uefi_entries[i])
-            elif entry_type in self.NON_EMPTY_BIOS_PADDING and \
-                 self._is_entry_inside_bios_region(self.uefi_entries[i]):
+            elif (entry_type in self.NON_EMPTY_BIOS_PADDING) and \
+                 (self._is_entry_inside_bios_region(self.uefi_entries[i])):
                 self.data_regions.append(self.uefi_entries[i])
             elif entry_type in self.EMPTY_REGION_PADDING:
                 self.empty_spaces.append(self.uefi_entries[i])
             elif entry_type in self.NON_EMPTY_REGION_PADDING:
                 self.data_regions.append(self.uefi_entries[i])
 
-        if debug:
+        if self.debug:
             print("UEFI image empty entries:")
-            [print(self.empty_spaces[i]) for i in range(len(self.empty_spaces))]
+            for i in range(len(self.empty_spaces)):
+                print(self.empty_spaces[i])
             print("UEFI image data entries:")
-            [print(self.data_regions[i]) for i in range(len(self.data_regions))]
+            for i in range(len(self.data_regions)):
+                print(self.data_regions[i])
             print("UEFI image closed-code entries:")
-            [print(self.closed_code_regions[i]) for i in range(len(self.closed_code_regions))]
+            for i in range(len(self.closed_code_regions)):
+                print(self.closed_code_regions[i])
 
     def _sum_sizes(self, files):
         return sum(list(f['size'] for f in files))
@@ -265,7 +272,8 @@ class UEFIImage:
                 continue
             else:
                 print('WARNING: Found unclassified region %s.\n'
-                      'Counting it as closed-source.' % self.regions[i]['subtype'])
+                      'Counting it as closed-source.' %
+                      self.regions[i]['subtype'])
 
         # Final check if all sizes are summing up to whole image size
         full_size = sum([self.open_code_size, self.empty_size,
@@ -278,20 +286,106 @@ class UEFIImage:
                   'The component sizes do not sum up to the image size. '
                   '%d != %d' % (full_size, self.image_size))
 
+    def _get_percentage(self, metric, include_empty=True):
+        if include_empty:
+            return metric * 100 / self.image_size
+        else:
+            return metric * 100 / (self.image_size - self.empty_size)
+
+    def _export_regions(self, file, regions, category):
+        for region in regions:
+            file.write('| {} | {} | {} | {} |\n'.format(
+                        region['subtype'], hex(region['base']),
+                        hex(region['size']), category))
+
+    def export_markdown(self, file):
+        with open(file, 'a') as md:
+            md.write('# Dasharo Openness Score\n\n')
+            md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
+            md.write('* Image size: %d\n'
+                     '* Number of entries: %d\n'
+                     '* Number of regions: %d\n'
+                     '* Number of volumes: %d\n'
+                     '* Total open-source files size: %d (%s)\n'
+                     '* Total closed-source files size: %d (%s)\n'
+                     '* Total data size: %d (%s)\n'
+                     '* Total empty size: %d (%s)\n\n' % (
+                        self.image_size,
+                        self.num_entries,
+                        self.num_regions,
+                        self.num_volumes,
+                        self.open_code_size, hex(self.open_code_size),
+                        self.closed_code_size, hex(self.closed_code_size),
+                        self.data_size, hex(self.data_size),
+                        self.empty_size, hex(self.empty_size)))
+
+            md.write('Open-source percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size))
+            md.write('Closed-source percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.closed_code_size))
+            md.write('Open-source percentage (empty space not included):'
+                     ' **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size, False))
+            md.write('Closed-source percentage (empty space not included):'
+                     ' **%1.1f%%**\n\n' %
+                     self._get_percentage(self.closed_code_size, False))
+
+            md.write('> Numbers given above already include the calculations')
+            md.write(' from UEFI volumes\n> presented below. Only top level'
+                     ' volumes have been presented\n\n')
+
+            # Regions first
+            md.write('## UEFI regions\n\n')
+            md.write('| Region | Base | Size | Category |\n')
+            md.write('| ------ | ---- | ---- | -------- |\n')
+            self._export_regions(md, self.closed_code_regions, 'closed-source')
+            self._export_regions(md, self.data_regions, 'data')
+
+            for uefi_fv in self.volumes:
+                md.write('\n')
+                uefi_fv.export_markdown(md)
+
+    def export_charts(self, dir):
+        labels = 'closed-source', 'open-source', 'data', 'empty'
+        sizes = [self.closed_code_size, self.open_code_size,
+                 self.data_size, self.empty_size]
+        explode = (0, 0.1, 0, 0)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('%s UEFI image openness' % Path(self.image_path).name)
+        plt.savefig('%s_openness_chart.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
+        labels = 'closed-source', 'open-source', 'data'
+        sizes = [self.closed_code_size, self.open_code_size,
+                 self.data_size]
+        explode = (0, 0.1, 0)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('%s UEFI image openness (no empty space)' %
+                     Path(self.image_path).name)
+        plt.savefig('%s_openness_chart_no_empty.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
 
 class UEFIVolume:
+
+    debug = False
 
     # The ratio of NVAR entries vs all entries in given volume to callsify
     # whole volume as NVAR.
     NVAR_VOLUME_THRESHOLD = 90
 
-    def __init__(self, uefi_entries, entry_idx):
+    def __init__(self, uefi_entries, entry_idx, verbose=False):
         self.uefi_entries = uefi_entries
         self.volume_idx = entry_idx
         self.volume_base = uefi_entries[entry_idx]['base']
         self.volume_size = uefi_entries[entry_idx]['size']
         self.volume_end = self.volume_base + self.volume_size
         self.volume_type = uefi_entries[entry_idx]['subtype']
+        self.volume_guid = uefi_entries[entry_idx]['name'].lstrip('-').strip()
         self.volume_entries = []
         self.nested_volumes = []
         self.open_code_size = 0
@@ -302,6 +396,8 @@ class UEFIVolume:
         self.closed_code_files = []
         self.data_files = []
         self.empty_files = []
+
+        self.debug = verbose
 
         self._parse_volume_files()
         self._calculate_metrics()
@@ -314,20 +410,20 @@ class UEFIVolume:
 
     def __str__(self):
         return 'UEFI Volume:\n' \
-               '\tBase: %s\n' \
-               '\tSize: %s\n' \
-               '\tNumber of entries: %d\n' \
-               '\tOpen-source code size: %d\n' \
-               '\tClosed-source code size: %d\n' \
-               '\tData size: %d\n' \
-               '\tEmpty size: %d' % \
-                (hex(self.volume_base),
-                 hex(self.volume_size),
-                 len(self.volume_entries),
-                 self.open_code_size,
-                 self.closed_code_size,
-                 self.data_size,
-                 self.empty_size)
+                '\tBase: %s\n' \
+                '\tSize: %s\n' \
+                '\tNumber of entries: %d\n' \
+                '\tOpen-source code size: %d\n' \
+                '\tClosed-source code size: %d\n' \
+                '\tData size: %d\n' \
+                '\tEmpty size: %d' % (
+                    hex(self.volume_base),
+                    hex(self.volume_size),
+                    len(self.volume_entries),
+                    self.open_code_size,
+                    self.closed_code_size,
+                    self.data_size,
+                    self.empty_size)
 
     def _entry_is_inside_volume(self, entry):
         # Each volume starts with an entry that has a base and size.
@@ -339,11 +435,11 @@ class UEFIVolume:
                 return False
             if self._entry_is_self_volume(entry):
                 return False
-            elif entry['base'] < self.volume_base or \
-                 entry['base'] >= self.volume_end:
+            elif (entry['base'] < self.volume_base) or \
+                 (entry['base'] >= self.volume_end):
                 return False
-            elif entry['base'] >= self.volume_base and \
-               entry['base'] + entry['size'] <= self.volume_end:
+            elif (entry['base'] >= self.volume_base) and \
+                 (entry['base'] + entry['size'] <= self.volume_end):
                 return True
             else:
                 print('ERROR: Ignored the following entry in volume:')
@@ -389,11 +485,11 @@ class UEFIVolume:
         # Volumes that are nested/uncompressed will have a valid size.
         if entry['type'] == 'Volume' and entry['size'] != -1 and \
            entry['subtype'] == 'FFSv2':
-            if entry['base'] < self.volume_base or \
-               entry['base'] >= self.volume_end:
+            if (entry['base'] < self.volume_base) or \
+               (entry['base'] >= self.volume_end):
                 return False
-            elif entry['base'] >= self.volume_base and \
-               entry['base'] + entry['size'] <= self.volume_end:
+            elif (entry['base'] >= self.volume_base) and \
+                 (entry['base'] + entry['size'] <= self.volume_end):
                 return True
 
         return False
@@ -402,7 +498,8 @@ class UEFIVolume:
         for i in range(self.volume_idx + 1, len(self.uefi_entries)):
             if self._entry_is_inside_volume(self.uefi_entries[i]):
                 if self._entry_is_nested_volume(self.uefi_entries[i]):
-                    nested_volume = UEFIVolume(self.uefi_entries, i)
+                    nested_volume = UEFIVolume(self.uefi_entries, i,
+                                               self.debug)
                     self.nested_volumes.append(nested_volume)
                     # Increment the index to skip all element belonging to the
                     # nested volume. Also continue the loop to avoid loop break
@@ -418,9 +515,10 @@ class UEFIVolume:
             if self._is_end_of_volume(self.uefi_entries[i]):
                 break
 
-        if debug:
+        if self.debug:
             print("UEFI volume entries:")
-            [print(self.volume_entries[i]) for i in range(len(self.volume_entries))]
+            for i in range(len(self.volume_entries)):
+                print(self.volume_entries[i])
 
     def _classify_entries(self):
         # We only calssigy empty and non-empty pads and free space, everything
@@ -438,7 +536,7 @@ class UEFIVolume:
             elif self._is_entry_non_empty_pad_file(self.volume_entries[i]):
                 self.data_files.append(self.volume_entries[i])
 
-        if debug:
+        if self.debug:
             print("UEFI volume empty entries:")
             [print(self.empty_files[i]) for i in range(len(self.empty_files))]
             print("UEFI volume data entries:")
@@ -470,7 +568,7 @@ class UEFIVolume:
         # we don't care about it.
         if entry['base'] != -1 and entry['size'] != 0:
             if entry['type'] == 'Free space':
-                    return True
+                return True
 
         return False
 
@@ -538,3 +636,50 @@ class UEFIVolume:
             self.data_size += (self.volume_size - classified_files_size)
         else:
             self.closed_code_size += (self.volume_size - classified_files_size)
+
+    def _export_files_md(self, file, volume_files, category):
+        for f in volume_files:
+            file.write('| {} | {} | {} | {} | {} | {} |\n'.format(
+                        f['name'].lstrip('-').lstrip(), f['type'],
+                        f['subtype'], hex(f['base']), hex(f['size']),
+                        category))
+
+    def export_markdown(self, file):
+        file.write('## UEFI Volume %s\n\n' % self.volume_guid)
+        file.write('* Base: %s\n'
+                   '* Size: %s\n'
+                   '* Number of entries: %d\n'
+                   '* Open-source code size: %d (%s)\n'
+                   '* Closed-source code size: %d (%s)\n'
+                   '* Data size: %d (%s)\n'
+                   '* Empty size: %d (%s)\n\n' %
+                   (hex(self.volume_base),
+                    hex(self.volume_size),
+                    len(self.volume_entries),
+                    self.open_code_size, hex(self.open_code_size),
+                    self.closed_code_size, hex(self.closed_code_size),
+                    self.data_size, hex(self.data_size),
+                    self.empty_size, hex(self.empty_size)))
+
+        if self._is_nvar_store_volume():
+            file.write('> This is an UEFI NVAR storage volume. All'
+                       ' entries except empty spaces are\n> counted as'
+                       ' data. The table below is just a simplified view'
+                       ' of top level\n> volume entries categorized as'
+                       ' either data or empty space\n\n')
+        else:
+            file.write('> The table below is just a simplified view'
+                       ' of top level volume entries\n> categorized as'
+                       ' file that are known to contain either data or'
+                       ' empty space.\n> Everything else is considered'
+                       ' closed-source.\n\n')
+
+        file.write('| Filename | File type | File subtype | Base |'
+                   ' Size | Category |\n')
+        file.write('| -------- | --------- | ------------ | ---- |'
+                   ' ---- | -------- |\n')
+        self._export_files_md(file, self.open_code_files, 'open-source')
+        self._export_files_md(file, self.closed_code_files,
+                              'closed-source')
+        self._export_files_md(file, self.data_files, 'data')
+        self._export_files_md(file, self.empty_files, 'empty')

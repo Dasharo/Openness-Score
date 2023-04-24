@@ -7,11 +7,12 @@ import os
 import subprocess
 from pathlib import Path
 from typing import List
-
-debug = False
+import matplotlib.pyplot as plt
 
 
 class DasharoCorebootImage:
+
+    debug = False
 
     region_patterns = [
         r"'(?P<region>[A-Z_]+?)' ",
@@ -49,7 +50,7 @@ class DasharoCorebootImage:
     # Regions to count as empty/unused
     EMPTY_REGIONS = ['UNUSED']
 
-    def __init__(self, image_path):
+    def __init__(self, image_path, verbose=False):
         self.image_path = image_path
         self.image_size = os.path.getsize(image_path)
         self.fmap_regions = {}
@@ -69,6 +70,8 @@ class DasharoCorebootImage:
         # CSV later for review.
         self.uncategorized_regions = []
 
+        self.debug = verbose
+
         self._parse_cb_fmap_layout()
         self._calculate_metrics()
 
@@ -80,21 +83,21 @@ class DasharoCorebootImage:
 
     def __str__(self):
         return 'Dasharo image %s:\n' \
-               '\tImage size: %d\n' \
-               '\tNumber of regions: %d\n' \
-               '\tNumber of CBFSes: %d\n' \
-               '\tTotal open-source code size: %d\n' \
-               '\tTotal closed-source code size: %d\n' \
-               '\tTotal data size: %d\n' \
-               '\tTotal empty size: %d' % \
-                (self.image_path,
-                 self.image_size,
-                 self.num_regions,
-                 self.num_cbfses,
-                 self.open_code_size,
-                 self.closed_code_size,
-                 self.data_size,
-                 self.empty_size)
+                '\tImage size: %d\n' \
+                '\tNumber of regions: %d\n' \
+                '\tNumber of CBFSes: %d\n' \
+                '\tTotal open-source code size: %d\n' \
+                '\tTotal closed-source code size: %d\n' \
+                '\tTotal data size: %d\n' \
+                '\tTotal empty size: %d' % (
+                    self.image_path,
+                    self.image_size,
+                    self.num_regions,
+                    self.num_cbfses,
+                    self.open_code_size,
+                    self.closed_code_size,
+                    self.data_size,
+                    self.empty_size)
 
     def _region_is_cbfs(self, region):
         if region['attributes'] == 'CBFS':
@@ -116,14 +119,15 @@ class DasharoCorebootImage:
 
             if self._region_is_cbfs(self.fmap_regions[self.num_regions]):
                 cbfs = CBFSImage(self.image_path,
-                                 self.fmap_regions[self.num_regions])
+                                 self.fmap_regions[self.num_regions],
+                                 self.debug)
                 self.cbfs_images.append(cbfs)
                 self.num_cbfses += 1
                 print(cbfs)
 
             self.num_regions += 1
 
-        if debug:
+        if self.debug:
             print('Dasharo image regions:')
             [print(self.fmap_regions[i]) for i in range(self.num_regions)]
 
@@ -194,8 +198,93 @@ class DasharoCorebootImage:
                   'The component sizes do not sum up to the image size. '
                   '%d != %d' % (full_size, self.image_size))
 
+    def _get_percentage(self, metric, include_empty=True):
+        if include_empty:
+            return metric * 100 / self.image_size
+        else:
+            return metric * 100 / (self.image_size - self.empty_size)
+
+    def _export_regions(self, file, regions, category):
+        for region in regions:
+            file.write('| {} | {} | {} | {} |\n'.format(
+                        region['name'], hex(region['offset']),
+                        hex(region['size']), category))
+
+    def export_markdown(self, file):
+        with open(file, 'a') as md:
+            md.write('# Dasharo Openness Score\n\n')
+            md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
+            md.write('* Image size: %d (%s)\n'
+                     '* Number of regions: %d\n'
+                     '* Number of CBFSes: %d\n'
+                     '* Total open-source code size: %d (%s)\n'
+                     '* Total closed-source code size: %d (%s)\n'
+                     '* Total data size: %d (%s)\n'
+                     '* Total empty size: %d (%s)\n\n' % (
+                        self.image_size, hex(self.image_size),
+                        self.num_regions,
+                        self.num_cbfses,
+                        self.open_code_size, hex(self.open_code_size),
+                        self.closed_code_size, hex(self.closed_code_size),
+                        self.data_size, hex(self.data_size),
+                        self.empty_size, hex(self.empty_size)))
+
+            md.write('Open-source percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size))
+            md.write('Closed-source percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.closed_code_size))
+            md.write('Open-source percentage (empty space not included):'
+                     ' **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size, False))
+            md.write('Closed-source percentage (empty space not included):'
+                     ' **%1.1f%%**\n\n' %
+                     self._get_percentage(self.closed_code_size, False))
+
+            md.write('> Numbers given above already include the calculations')
+            md.write(' from CBFS regions\n> presented below\n\n')
+
+            # Regions first
+            md.write('## FMAP regions\n\n')
+            md.write('| FMAP region | Offset | Size | Category |\n')
+            md.write('| ----------- | ------ | ---- | -------- |\n')
+            self._export_regions(md, self.open_code_regions, 'open-source')
+            self._export_regions(md, self.closed_code_regions, 'closed-source')
+            self._export_regions(md, self.data_regions, 'data')
+            self._export_regions(md, self.empty_regions, 'empty')
+
+            for cbfs in self.cbfs_images:
+                md.write('\n')
+                cbfs.export_markdown(md)
+
+    def export_charts(self, dir):
+        labels = 'closed-source', 'open-source', 'data', 'empty'
+        sizes = [self.closed_code_size, self.open_code_size,
+                 self.data_size, self.empty_size]
+        explode = (0, 0.1, 0, 0)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('%s Dasharo coreboot image openness' %
+                     Path(self.image_path).name)
+        plt.savefig('%s_openness_chart.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
+        labels = 'closed-source', 'open-source', 'data'
+        sizes = [self.closed_code_size, self.open_code_size,
+                 self.data_size]
+        explode = (0, 0.1, 0)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('%s Dasharo coreboot image openness (no empty space)' %
+                     Path(self.image_path).name)
+        plt.savefig('%s_openness_chart_no_empty.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
 
 class CBFSImage:
+
+    debug = False
 
     CBFS_FILETYPES = [
         'bootblock', 'cbfs header', 'stage', 'simple elf', 'fit_payload',
@@ -294,7 +383,7 @@ class CBFSImage:
 
     file_regexp = re.compile(''.join(file_patterns), re.MULTILINE)
 
-    def __init__(self, image_path, region):
+    def __init__(self, image_path, region, verbose=False):
         self.image_path = image_path
         self.region_name = region['name']
         self.cbfs_size = region['size']
@@ -319,6 +408,8 @@ class CBFSImage:
         self.ipxe_rom_id = None
         self.lan_rom_size = 0
 
+        self.debug = verbose
+
         self._parse_cbfs_files()
         self._parse_cb_config()
         self._calculate_metrics()
@@ -336,14 +427,14 @@ class CBFSImage:
                '\tOpen-source files size: %d\n' \
                '\tClosed-source files size: %d\n' \
                '\tData size: %d\n' \
-               '\tEmpty size: %d' % \
-                (self.region_name,
-                 self.cbfs_size,
-                 self.num_files,
-                 self.open_code_size,
-                 self.closed_code_size,
-                 self.data_size,
-                 self.empty_size)
+               '\tEmpty size: %d' % (
+                    self.region_name,
+                    self.cbfs_size,
+                    self.num_files,
+                    self.open_code_size,
+                    self.closed_code_size,
+                    self.data_size,
+                    self.empty_size)
 
     def _parse_cbfs_files(self):
         cmd = ['cbfstool', self.image_path, 'print', '-r', self.region_name]
@@ -360,7 +451,7 @@ class CBFSImage:
 
             self.num_files = self.num_files + 1
 
-        if debug:
+        if self.debug:
             print('Region %s CBFS contents:' % self.region_name)
             [print(self.cbfs_files[i]) for i in range(self.num_files)]
 
@@ -446,7 +537,7 @@ class CBFSImage:
                                               self.data_size])
 
         self.data_size += metadata_size
-        if debug:
+        if self.debug:
             print('Size of metadata in %s CBFS: %d bytes'
                   % (self.region_name, metadata_size))
 
@@ -485,7 +576,7 @@ class CBFSImage:
             }
             self.num_opts = self.num_opts + 1
 
-        if debug:
+        if self.debug:
             print('Region %s CBFS config:' % self.region_name)
             [print(self.kconfig_opts[i]) for i in range(self.num_opts)]
 
@@ -560,3 +651,40 @@ class CBFSImage:
                '/tmp/payload_' + self.region_name,
                '/tmp/lan_rom_' + self.region_name]
         subprocess.run(cmd, text=True, capture_output=True)
+
+    def _export_files_md(self, file, cbfs_files, category):
+        for f in cbfs_files:
+            file.write('| {} | {} | {} | {} | {} |\n'.format(
+                        f['filename'], f['filetype'],
+                        f['size'], f['compression'], category))
+
+    def export_markdown(self, file):
+        # Regions first
+        file.write('## CBFS %s\n\n' % self.region_name)
+        file.write('* CBFS size: %d\n'
+                   '* Number of files: %d\n'
+                   '* Open-source files size: %d (%s)\n'
+                   '* Closed-source files size: %d (%s)\n'
+                   '* Data size: %d (%s)\n'
+                   '* Empty size: %d (%s)\n\n' % (
+                        self.cbfs_size,
+                        self.num_files,
+                        self.open_code_size, hex(self.open_code_size),
+                        self.closed_code_size, hex(self.closed_code_size),
+                        self.data_size, hex(self.data_size),
+                        self.empty_size, hex(self.empty_size)))
+
+        file.write('> Numbers given above are already normalized (i.e. they'
+                   ' already include size\n> of metadata and possible'
+                   ' closed-source LAN drivers included in the payload\n'
+                   ' > which are not visible in the table below)\n\n')
+
+        file.write('| CBFS filname | CBFS filetype | Size | Compression |'
+                   ' Category |\n')
+        file.write('| ------------ | ------------- | ---- | ----------- |'
+                   ' -------- |\n')
+
+        self._export_files_md(file, self.open_code_files, 'open-source')
+        self._export_files_md(file, self.closed_code_files, 'closed-source')
+        self._export_files_md(file, self.data_files, 'data')
+        self._export_files_md(file, self.empty_files, 'empty')

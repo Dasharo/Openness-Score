@@ -9,30 +9,28 @@ from pathlib import Path
 import subprocess
 from coreboot import DasharoCorebootImage
 from uefi import UEFIImage
+from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
+
+version = 'v0.1.0'
 
 
-def usage():
-    usage_text = 'Usage:\n' \
-                 './openness-score.py <vendor_firmware_image_path>' \
-                 ' <dasharo_firmware_image_path>\n' \
-                 './openness-score.py <dasharo_firmware_image_path>' \
-                 ' <vendor_firmware_image_path>\n'
-    print(usage_text)
+class ObligingArgumentParser(ArgumentParser):
+
+    def error(self, message):
+        sys.stderr.write('Error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
 
 
-def check_files():
-    fw_img1 = Path(sys.argv[1])
-    fw_img2 = Path(sys.argv[2])
+def check_file(file):
+    fw_img = Path(file)
 
     cbfs_error_string = 'E: Selected image region is not a valid CBFS.'
     uefiextract_error_string = 'parse: not a single Volume Top File ' \
                                'is found, the image may be corrupted'
 
-    if not fw_img1.is_file():
-        sys.exit('ERROR: \'%s\' file does not exist' % sys.argv[1])
-
-    if not fw_img2.is_file():
-        sys.exit('ERROR: \'%s\' file does not exist' % sys.argv[2])
+    if not fw_img.is_file():
+        sys.exit('ERROR: \'%s\' file does not exist' % file)
 
     try:
         subprocess.run(['cbfstool'],
@@ -55,66 +53,77 @@ def check_files():
     except FileNotFoundError:
         sys.exit('ERROR: lzma not found, please install it first.')
 
-    cbfstool_check = subprocess.run(['cbfstool', sys.argv[1], 'print'],
+    cbfstool_check = subprocess.run(['cbfstool', file, 'print'],
                                     text=True, capture_output=True)
-    fw1_is_cbfs = cbfs_error_string not in cbfstool_check.stderr
+    fw_is_cbfs = cbfs_error_string not in cbfstool_check.stderr
 
-    cbfstool_check = subprocess.run(['cbfstool', sys.argv[2], 'print'],
-                                    text=True, capture_output=True)
-    fw2_is_cbfs = cbfs_error_string not in cbfstool_check.stderr
-
-    if fw1_is_cbfs and fw2_is_cbfs:
-        usage()
-        sys.exit('ERROR: Both of the two files seem to be Dasharo images.')
-    elif not fw1_is_cbfs and not fw2_is_cbfs:
-        usage()
-        sys.exit('ERROR: Neither of the two image files are Dasharo images.')
-
-    uefiextract_check = subprocess.run(['UEFIExtract', sys.argv[1], 'report'],
+    uefiextract_check = subprocess.run(['UEFIExtract', file, 'report'],
                                        text=True, capture_output=True)
-    fw1_is_vendor = uefiextract_error_string not in uefiextract_check.stdout
+    fw_is_uefi = uefiextract_error_string not in uefiextract_check.stdout
 
-    uefiextract_check = subprocess.run(['UEFIExtract', sys.argv[2], 'report'],
-                                       text=True, capture_output=True)
-    fw2_is_vendor = uefiextract_error_string not in uefiextract_check.stdout
+    if not fw_is_uefi and not fw_is_cbfs:
+        sys.exit('ERROR: Could not recognize firmware binary.')
 
-    if fw1_is_vendor and fw2_is_vendor:
-        usage()
-        sys.exit('ERROR: Both of the two files seem to be vendor images.')
-    elif not fw1_is_vendor and not fw2_is_vendor:
-        usage()
-        sys.exit('ERROR: Neither of the two files seem to be vendor images.')
+    return fw_is_cbfs, fw_is_uefi
 
-    if fw1_is_cbfs and fw2_is_vendor:
-        return sys.argv[1], sys.argv[2]
 
-    if fw1_is_vendor and fw2_is_cbfs:
-        return sys.argv[2], sys.argv[1]
+def export_data(args, image):
 
-    sys.exit('ERROR: Could not recognize vendor or Dasharo firmware binary.')
+    output_path = Path.cwd()
+
+    if args.output is not None:
+        output_path = Path(args.output)
+        try:
+            output_path.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            sys.exit('You do not have permission to write to %s' % args.output)
+
+    print(output_path.joinpath('openness_score.md'))
+    Path(output_path.joinpath('openness_score.md')).unlink(missing_ok=True)
+    Path(output_path.joinpath('openness_score.md')).touch()
+    image.export_markdown(output_path.joinpath('openness_score.md'))
+    image.export_charts(output_path)
 
 
 def main():
-    if len(sys.argv) == 1:
-        usage()
+
+    parser = ObligingArgumentParser(
+        description='Calculate Dasharo Openness Score for firmware images\n',
+        formatter_class=RawTextHelpFormatter, add_help=False)
+
+    parser.add_argument('file', help='Firmware binary file to be parsed',
+                        nargs='?')
+    parser.add_argument('-h', '--help', action='help', help=SUPPRESS)
+    parser.add_argument('-o', '--output', help='\n'.join([
+                        'Specifies the directory where to store the results']))
+    parser.add_argument('-v', '--verbose', help=SUPPRESS, action='store_true')
+    parser.add_argument('-V', '--version', action='version',
+                        version='Dasharo Openness Score {}'.format(version))
+
+    args = parser.parse_args()
+
+    if args.verbose:
+        print(args)
+
+    if not args.file:
+        parser.print_help(sys.stderr)
         sys.exit(0)
 
-    if len(sys.argv) != 3:
-        usage()
-        sys.exit('ERROR: The utility takes exactly two arguments.')
+    fw_is_cbfs, fw_is_uefi = check_file(args.file)
 
-    dasharo_img_file, vendor_img_file = check_files()
+    if fw_is_cbfs:
+        print('\'%s\' detected as Dasharo image' % args.file)
+        print('\n\n\'%s\' Dasharo image statistics:' % args.file)
+        DasharoCbImg = DasharoCorebootImage(args.file, args.verbose)
+        print(DasharoCbImg)
+        export_data(args, DasharoCbImg)
+    elif fw_is_uefi:
+        print('\'%s\' detected as vendor image' % args.file)
+        print('\n\n\'%s\' vendor image statistics:' % args.file)
+        VendorImg = UEFIImage(args.file, args.verbose)
+        print(VendorImg)
+        export_data(args, VendorImg)
 
-    print('\'%s\' detected as Dasharo image' % dasharo_img_file)
-    print('\'%s\' detected as vendor image' % vendor_img_file)
-
-    print('\n\n\'%s\' Dasharo image statistics:' % dasharo_img_file)
-    DasharoCbImg = DasharoCorebootImage(dasharo_img_file)
-    print(DasharoCbImg)
-
-    print('\n\n\'%s\' vendor image statistics:' % vendor_img_file)
-    VendorImg = UEFIImage(vendor_img_file)
-    print(VendorImg)
 
 if __name__ == '__main__':
     main()
