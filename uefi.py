@@ -286,11 +286,8 @@ class UEFIImage:
                   'The component sizes do not sum up to the image size. '
                   '%d != %d' % (full_size, self.image_size))
 
-    def _get_percentage(self, metric, include_empty=True):
-        if include_empty:
-            return metric * 100 / self.image_size
-        else:
-            return metric * 100 / (self.image_size - self.empty_size)
+    def _get_percentage(self, metric):
+        return metric * 100 / (self.open_code_size + self.closed_code_size)
 
     def _export_regions(self, file, regions, category):
         for region in regions:
@@ -299,7 +296,7 @@ class UEFIImage:
                         hex(region['size']), category))
 
     def export_markdown(self, file):
-        with open(file, 'a') as md:
+        with open(file, 'w') as md:
             md.write('# Dasharo Openness Score\n\n')
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
             md.write('* Image size: %d\n'
@@ -319,16 +316,10 @@ class UEFIImage:
                         self.data_size, hex(self.data_size),
                         self.empty_size, hex(self.empty_size)))
 
-            md.write('Open-source percentage: **%1.1f%%**\n' %
+            md.write('Open-source code percentage: **%1.1f%%**\n' %
                      self._get_percentage(self.open_code_size))
-            md.write('Closed-source percentage: **%1.1f%%**\n' %
+            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
                      self._get_percentage(self.closed_code_size))
-            md.write('Open-source percentage (empty space not included):'
-                     ' **%1.1f%%**\n' %
-                     self._get_percentage(self.open_code_size, False))
-            md.write('Closed-source percentage (empty space not included):'
-                     ' **%1.1f%%**\n\n' %
-                     self._get_percentage(self.closed_code_size, False))
 
             md.write('> Numbers given above already include the calculations')
             md.write(' from UEFI volumes\n> presented below. Only top level'

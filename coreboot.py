@@ -186,7 +186,7 @@ class DasharoCorebootImage:
         # It may happen that the FMAP does not cover whole flash size and the
         # first region will start with non-zero offset. Check if first region
         # offset is zero, if not count all bytes from the start of flash to the
-        # start of first region as clsoed source.
+        # start of first region as closed source.
         if self.fmap_regions[0]['offset'] != 0:
             self.closed_code_size += self.fmap_regions[0]['offset']
 
@@ -198,11 +198,8 @@ class DasharoCorebootImage:
                   'The component sizes do not sum up to the image size. '
                   '%d != %d' % (full_size, self.image_size))
 
-    def _get_percentage(self, metric, include_empty=True):
-        if include_empty:
-            return metric * 100 / self.image_size
-        else:
-            return metric * 100 / (self.image_size - self.empty_size)
+    def _get_percentage(self, metric):
+        return metric * 100 / (self.open_code_size + self.closed_code_size)
 
     def _export_regions(self, file, regions, category):
         for region in regions:
@@ -211,7 +208,7 @@ class DasharoCorebootImage:
                         hex(region['size']), category))
 
     def export_markdown(self, file):
-        with open(file, 'a') as md:
+        with open(file, 'w') as md:
             md.write('# Dasharo Openness Score\n\n')
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
             md.write('* Image size: %d (%s)\n'
@@ -229,16 +226,10 @@ class DasharoCorebootImage:
                         self.data_size, hex(self.data_size),
                         self.empty_size, hex(self.empty_size)))
 
-            md.write('Open-source percentage: **%1.1f%%**\n' %
+            md.write('Open-source code percentage: **%1.1f%%**\n' %
                      self._get_percentage(self.open_code_size))
-            md.write('Closed-source percentage: **%1.1f%%**\n' %
+            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
                      self._get_percentage(self.closed_code_size))
-            md.write('Open-source percentage (empty space not included):'
-                     ' **%1.1f%%**\n' %
-                     self._get_percentage(self.open_code_size, False))
-            md.write('Closed-source percentage (empty space not included):'
-                     ' **%1.1f%%**\n\n' %
-                     self._get_percentage(self.closed_code_size, False))
 
             md.write('> Numbers given above already include the calculations')
             md.write(' from CBFS regions\n> presented below\n\n')
