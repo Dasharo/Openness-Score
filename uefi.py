@@ -155,6 +155,8 @@ class UEFIImage:
         if self.debug:
             print("UEFI image entries:")
             [print(self.uefi_entries[i]) for i in range(self.num_entries)]
+            print("UEFI image regions:")
+            [print(region) for region in self.regions]
 
     def _entry_is_volume(self, entry):
         # Take only the top level volumes. Volumes that are nested/compressed
@@ -205,6 +207,22 @@ class UEFIImage:
             return False
 
     def _classify_entries(self):
+        # Regions first
+        for i in range(self.num_regions):
+            if self.regions[i]['subtype'] in self.CLOSED_SOURCE_REGIONS:
+                self.closed_code_regions.append(self.regions[i])
+            elif self.regions[i]['subtype'] in self.DATA_REGIONS:
+                self.data_regions.append(self.regions[i])
+            elif self.regions[i]['subtype'] == 'BIOS':
+                # Do nothing. BIOS region is comprised of FVs which are parsed
+                # in next loop.
+                continue
+            else:
+                print('WARNING: Found unclassified region %s.\n'
+                      'Counting it as closed-source.' %
+                      self.regions[i]['subtype'])
+                self.closed_code_regions.append(self.regions[i])
+
         for i in range(self.num_entries):
             if self._entry_is_volume(self.uefi_entries[i]) and \
                self._is_entry_inside_bios_region(self.uefi_entries[i]):
@@ -261,20 +279,6 @@ class UEFIImage:
         self._normalize_sizes()
 
     def _normalize_sizes(self):
-        for i in range(self.num_regions):
-            if self.regions[i]['subtype'] in self.CLOSED_SOURCE_REGIONS:
-                self.closed_code_size += self.regions[i]['size']
-            elif self.regions[i]['subtype'] in self.DATA_REGIONS:
-                self.data_size += self.regions[i]['size']
-            elif self.regions[i]['subtype'] == 'BIOS':
-                # Do nothing. BIOS region is comprised of FVs which are parsed
-                # separately.
-                continue
-            else:
-                print('WARNING: Found unclassified region %s.\n'
-                      'Counting it as closed-source.' %
-                      self.regions[i]['subtype'])
-
         # Final check if all sizes are summing up to whole image size
         full_size = sum([self.open_code_size, self.empty_size,
                          self.closed_code_size, self.data_size])
@@ -299,7 +303,12 @@ class UEFIImage:
         with open(file, 'w') as md:
             md.write('# Dasharo Openness Score\n\n')
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
-            md.write('* Image size: %d\n'
+            md.write('Open-source code percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size))
+            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
+                     self._get_percentage(self.closed_code_size))
+
+            md.write('* Image size: %d (%s)\n'
                      '* Number of entries: %d\n'
                      '* Number of regions: %d\n'
                      '* Number of volumes: %d\n'
@@ -307,7 +316,7 @@ class UEFIImage:
                      '* Total closed-source files size: %d (%s)\n'
                      '* Total data size: %d (%s)\n'
                      '* Total empty size: %d (%s)\n\n' % (
-                        self.image_size,
+                        self.image_size, hex(self.image_size),
                         self.num_entries,
                         self.num_regions,
                         self.num_volumes,
@@ -315,11 +324,6 @@ class UEFIImage:
                         self.closed_code_size, hex(self.closed_code_size),
                         self.data_size, hex(self.data_size),
                         self.empty_size, hex(self.empty_size)))
-
-            md.write('Open-source code percentage: **%1.1f%%**\n' %
-                     self._get_percentage(self.open_code_size))
-            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
-                     self._get_percentage(self.closed_code_size))
 
             md.write('> Numbers given above already include the calculations')
             md.write(' from UEFI volumes\n> presented below. Only top level'
@@ -331,12 +335,27 @@ class UEFIImage:
             md.write('| ------ | ---- | ---- | -------- |\n')
             self._export_regions(md, self.closed_code_regions, 'closed-source')
             self._export_regions(md, self.data_regions, 'data')
+            self._export_regions(md, self.empty_spaces, 'empty')
+            md.write('\n')
+            md.write('> These are regions defined by Intel flash descriptor'
+                     ' but also holes\n> between those regions and UEFI'
+                     ' Volumes which may or may not be empty.\n')
 
             for uefi_fv in self.volumes:
                 md.write('\n')
                 uefi_fv.export_markdown(md)
 
     def export_charts(self, dir):
+        labels = 'closed-source', 'open-source'
+        sizes = [self.closed_code_size, self.open_code_size]
+        explode = (0, 0.1)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('UEFI image code openness\n%s' % Path(self.image_path).name)
+        plt.savefig('%s_openness_chart.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
         labels = 'closed-source', 'open-source', 'data', 'empty'
         sizes = [self.closed_code_size, self.open_code_size,
                  self.data_size, self.empty_size]
@@ -344,20 +363,9 @@ class UEFIImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('UEFI image openness\n%s' % Path(self.image_path).name)
-        plt.savefig('%s_openness_chart.png' %
-                    dir.joinpath(Path(self.image_path).name))
-
-        labels = 'closed-source', 'open-source', 'data'
-        sizes = [self.closed_code_size, self.open_code_size,
-                 self.data_size]
-        explode = (0, 0.1, 0)
-
-        fig, ax = plt.subplots()
-        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('UEFI image openness (no empty space)\n%s' %
+        fig.suptitle('UEFI full image \n%s' %
                      Path(self.image_path).name)
-        plt.savefig('%s_openness_chart_no_empty.png' %
+        plt.savefig('%s_openness_chart_full_image.png' %
                     dir.joinpath(Path(self.image_path).name))
 
 
