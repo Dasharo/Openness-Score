@@ -211,6 +211,11 @@ class DasharoCorebootImage:
         with open(file, 'w') as md:
             md.write('# Dasharo Openness Score\n\n')
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
+            md.write('Open-source code percentage: **%1.1f%%**\n' %
+                     self._get_percentage(self.open_code_size))
+            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
+                     self._get_percentage(self.closed_code_size))
+
             md.write('* Image size: %d (%s)\n'
                      '* Number of regions: %d\n'
                      '* Number of CBFSes: %d\n'
@@ -225,11 +230,6 @@ class DasharoCorebootImage:
                         self.closed_code_size, hex(self.closed_code_size),
                         self.data_size, hex(self.data_size),
                         self.empty_size, hex(self.empty_size)))
-
-            md.write('Open-source code percentage: **%1.1f%%**\n' %
-                     self._get_percentage(self.open_code_size))
-            md.write('Closed-source code percentage: **%1.1f%%**\n\n' %
-                     self._get_percentage(self.closed_code_size))
 
             md.write('> Numbers given above already include the calculations')
             md.write(' from CBFS regions\n> presented below\n\n')
@@ -248,6 +248,17 @@ class DasharoCorebootImage:
                 cbfs.export_markdown(md)
 
     def export_charts(self, dir):
+        labels = 'closed-source', 'open-source'
+        sizes = [self.closed_code_size, self.open_code_size]
+        explode = (0, 0.1)
+
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        fig.suptitle('Dasharo coreboot image code openness\n%s' %
+                     Path(self.image_path).name)
+        plt.savefig('%s_openness_chart.png' %
+                    dir.joinpath(Path(self.image_path).name))
+
         labels = 'closed-source', 'open-source', 'data', 'empty'
         sizes = [self.closed_code_size, self.open_code_size,
                  self.data_size, self.empty_size]
@@ -255,21 +266,9 @@ class DasharoCorebootImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('Dasharo coreboot image openness\n%s' %
+        fig.suptitle('Dasharo coreboot full image component share\n%s' %
                      Path(self.image_path).name)
-        plt.savefig('%s_openness_chart.png' %
-                    dir.joinpath(Path(self.image_path).name))
-
-        labels = 'closed-source', 'open-source', 'data'
-        sizes = [self.closed_code_size, self.open_code_size,
-                 self.data_size]
-        explode = (0, 0.1, 0)
-
-        fig, ax = plt.subplots()
-        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('Dasharo coreboot image openness (no empty space)\n%s' %
-                     Path(self.image_path).name)
-        plt.savefig('%s_openness_chart_no_empty.png' %
+        plt.savefig('%s_openness_chart_full_image.png' %
                     dir.joinpath(Path(self.image_path).name))
 
 
