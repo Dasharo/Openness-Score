@@ -63,7 +63,10 @@ in [Sphinx format](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrin
 
 To view the documentation run the following:
 
-TBD
+```
+make html
+python -m http.server -d build/html 8080
+```
 
 ## Checking Python style
 
