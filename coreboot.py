@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 
 
 class DasharoCorebootImage:
+    """ DasharoCorebootImage class
+
+    The main class representing a coreboot-based firmware image.
+    """
 
     debug = False
 
@@ -20,7 +24,7 @@ class DasharoCorebootImage:
         r"size (?P<size>\d+?), offset (?P<offset>\d+?)\)"
     ]
 
-    region_pregexp = re.compile(''.join(region_patterns), re.MULTILINE)
+    region_regexp = re.compile(''.join(region_patterns), re.MULTILINE)
 
     # Regions to consider as data, they should not contain any code ever.
     # Some of the regions are used only by certain platforms and may not be met
@@ -31,57 +35,112 @@ class DasharoCorebootImage:
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
                     'RW_DDR_TRAINING']
+    """A list of region names known to contain data"""
 
     # Regions that are not CBFSes and may contain open-source code
     # Their whole size is counted as code.
     CODE_REGIONS = ['BOOTBLOCK']
+    """A list of region names known to contain open-source code"""
 
     # Regions that may contain code but in closed-source binary form
     # HSPHY_FW does not belong here, because it is part of ME which counts
     # as closed-source binary blob as a whole.
     BLOB_REGIONS = ['RW_VBIOS_CACHE', 'ME_RW_A', 'ME_RW_B', 'IFWI', 'SIGN_CSE',
                     'SI_ME']
+    """A list of region names known to contain closed-source code"""
 
     # Regions to not account for in calculations.
     # These are containers aggregating smaller regions.
     SKIP_REGIONS = ['RW_MISC', 'UNIFIED_MRC_CACHE', 'RW_SHARED', 'SI_ALL',
                     'RW_SECTION_A', 'RW_SECTION_B', 'WP_RO', 'RO_SECTION']
+    """A list of region names known to be containers or aliases of other
+    regions. These regions are skipped from classification."""
 
     # Regions to count as empty/unused
     EMPTY_REGIONS = ['UNUSED']
+    """A list of region names known to be empty spaces, e.g. between IFD
+    regions."""
 
     def __init__(self, image_path, verbose=False):
+        """__init__ DasharoCorebootImage class init method.
+
+        Initializes the class fields for storing the firmware image components
+        classified to specific groups. Also calls
+        :meth:`~coreboot.DasharoCorebootImage._parse_cb_fmap_layout` and
+        :meth:`~coreboot.DasharoCorebootImage._calculate_metrics` methods
+        to parse the image and calculate the metrics.
+
+        :param image_path: Path the the firmware image file being parsed.
+        :type image_path: str
+        :param verbose: Optional parameter to turn on debug information during
+                        the image parsing, defaults to False
+        :type verbose: bool, optional
+        """
         self.image_path = image_path
+        """Path to the image represented by DasharoCorebootImage class"""
         self.image_size = os.path.getsize(image_path)
+        """Image size in bytes"""
         self.fmap_regions = {}
+        """Dictionary holding the coreboot image flashmap regions"""
         self.cbfs_images = []
+        """List holding the regions with CBFS"""
         self.num_regions = 0
+        """Total number of flashmap regions"""
         self.num_cbfses = 0
+        """Total number of flashmap regions containing CBFSes"""
         self.open_code_size = 0
+        """Total number of bytes classified as open-source code"""
         self.closed_code_size = 0
+        """Total number of bytes classified as closed-source code"""
         self.data_size = 0
+        """Total number of bytes classified as data"""
         self.empty_size = 0
+        """Total number of bytes classified as empty"""
         self.open_code_regions = []
+        """List holding flashmap regions filled with open-source code"""
         self.closed_code_regions = []
+        """List holding flashmap regions filled with closed-source code"""
         self.data_regions = []
+        """List holding empty flashmap regions"""
         self.empty_regions = []
         # This type of regions will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
         self.uncategorized_regions = []
+        """List holding flashmap regions that could not be classified. Counted
+        as closed-source code at the end of calculation process.
+        """
 
         self.debug = verbose
+        """Used to enable verbose debug output from the parsing process"""
 
         self._parse_cb_fmap_layout()
         self._calculate_metrics()
 
     def __len__(self):
+        """__len__ Return the length of the coreboot firmware image
+
+        :return: Length of the firmware binary file
+        :rtype: int
+        """
         return self.image_size
 
     def __repr__(self):
+        """__repr__ DasharoCorebootImage class representation
+
+        :return: class representation
+        :rtype: str
+        """
         return 'DasharoCorebootImage()'
 
     def __str__(self):
+        """__str__ Returns string representation of the firmware image.
+
+        Prints the firmware image statistics.
+
+        :return: DasharoCorebootImage string representation
+        :rtype: str
+        """
         return 'Dasharo image %s:\n' \
                 '\tImage size: %d\n' \
                 '\tNumber of regions: %d\n' \
@@ -100,16 +159,36 @@ class DasharoCorebootImage:
                     self.empty_size)
 
     def _region_is_cbfs(self, region):
+        """_region_is_cbfs Checks if region has CBFS attribute
+
+        :param region: Flashmap region entry from dictionary
+        :type region: dict
+        :return: True if regions contains CBFS attribute, false otherwise.
+        :rtype: boolean
+        """
         if region['attributes'] == 'CBFS':
             return True
         else:
             return False
 
     def _parse_cb_fmap_layout(self):
+        """_parse_cb_fmap_layout Parses the cbfstool flashmap layout.
+
+        Parses the output of 'cbfstool self.image_path layout -w'
+        and extract the flashmap regions to a self.fmap_regions dictionary
+        using the :const:`coreboot.DasharoCorebootImage.region_regexp`
+        regular expression.
+
+        If a flashmap region has a CBFS attribute, the self.cbfs_images list
+        is appended with a new instance of :class:`coreboot.CBFSImage`.
+
+        If self.debug is True, all flashmap regions with their attributes are
+        printed on the console at the end.
+        """
         cmd = ['cbfstool', self.image_path, 'layout', '-w']
         layout = subprocess.run(cmd, text=True, capture_output=True)
 
-        for match in re.finditer(self.region_pregexp, layout.stdout):
+        for match in re.finditer(self.region_regexp, layout.stdout):
             self.fmap_regions[self.num_regions] = {
                 'name': match.group('region'),
                 'offset': int(match.group('offset')),
@@ -132,6 +211,41 @@ class DasharoCorebootImage:
             [print(self.fmap_regions[i]) for i in range(self.num_regions)]
 
     def _classify_region(self, region):
+        """_classify_region Classifies the flashmap regions into basic categories.
+
+        Each detected flashmap region is being classified into 4 basic
+        categories and appended to respective lists. CBFS regions are processed
+        separately and not included here.
+
+        :attr:`coreboot.DasharoCorebootImage.open_code_regions` are appended
+        with flashmap regions which name is found in
+        :const:`coreboot.DasharoCorebootImage.CODE_REGIONS`
+
+        :attr:`coreboot.DasharoCorebootImage.closed_code_regions` are appended
+        with flashmap regions which name is found in
+        :const:`coreboot.DasharoCorebootImage.BLOB_REGIONS`
+
+        :attr:`coreboot.DasharoCorebootImage.empty_regions` are appended
+        with flashmap regions which name is found in
+        :const:`coreboot.DasharoCorebootImage.EMPTY_REGIONS`
+
+        :attr:`coreboot.DasharoCorebootImage.data_regions` are appended
+        with flashmap regions which name is found in
+        :const:`coreboot.DasharoCorebootImage.DATA_REGIONS`
+
+        Flashmap regions which names is found in
+        :const:`coreboot.DasharoCorebootImage.SKIP_REGIONS` are not classified
+        due to being cotnainers or aliases to other regions. Counting them
+        would result in duplication of the sizes when calculating metrics.
+
+        Any other unrecognized flashmap region falls into
+        :attr:`coreboot.DasharoCorebootImage.data_regions` list which will be
+        counted as closed-source code region because we were unable to identify
+        what can be inside.
+
+        :param region: Flashmap region entry from dictionary
+        :type region: dict
+        """
         if self._region_is_cbfs(region):
             # Skip CBFSes because they have separate class and methods to
             # calculate metrics
@@ -157,6 +271,45 @@ class DasharoCorebootImage:
             self.uncategorized_regions.append(region)
 
     def _calculate_metrics(self):
+        """_calculate_metrics Calculates the sizes of the four basic firmware
+        components categories
+
+        Calls :meth:`~coreboot.DasharoCorebootImage._classify_region` for each
+        detected region. The sums the regions sizes from all 5 lists
+
+        :attr:`coreboot.DasharoCorebootImage.open_code_regions` sizes sum is
+        added to :attr:`coreboot.DasharoCorebootImage.open_code_size`
+
+        :attr:`coreboot.DasharoCorebootImage.closed_code_regions` sizes sum is
+        added to :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+
+        :attr:`coreboot.DasharoCorebootImage.data_regions` sizes sum is
+        added to :attr:`coreboot.DasharoCorebootImage.data_size`
+
+        :attr:`coreboot.DasharoCorebootImage.empty_regions` sizes sum is
+        added to :attr:`coreboot.DasharoCorebootImage.empty_size`
+
+        :attr:`coreboot.DasharoCorebootImage.uncategorized_regions` sizes sum is
+        added to :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+
+        Additionally for each detected CBFS region their foru basic components
+        categories are also added to the total metrics.
+
+        :attr:`coreboot.CBFSImage.open_code_size` is added to
+        :attr:`coreboot.DasharoCorebootImage.open_code_size`
+
+        :attr:`coreboot.CBFSImage.closed_code_size` is added to
+        :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+
+        :attr:`coreboot.CBFSImage.data_size` is added to
+        :attr:`coreboot.DasharoCorebootImage.data_size`
+
+        :attr:`coreboot.CBFSImage.empty_size` is added to
+        :attr:`coreboot.DasharoCorebootImage.empty_size`
+
+        At the end the method calls
+        :meth:`coreboot.DasharoCorebootImage._normalize_sizes`
+        """
         for i in range(self.num_regions):
             self._classify_region(self.fmap_regions[i])
 
@@ -180,9 +333,27 @@ class DasharoCorebootImage:
         self._normalize_sizes()
 
     def _sum_sizes(self, regions):
+        """_sum_sizes Sums the size of the regions.
+
+        :param regions: Dictionary of regions to sum
+        :type regions: dict
+        :return: Sum of the region sizes
+        :rtype: int
+        """
         return sum(list(r['size'] for r in regions))
 
     def _normalize_sizes(self):
+        """_normalize_sizes Checks if all firmware image components sizes sum
+        up to whole image size.
+
+        This method acts as a safety check if there was no error during parsing
+        and classification. Additionally it verifies whether the flashmap
+        starts right at offset zero. It may happen that the flashmap does not
+        start at offset zero, which is possible for Intel board coreboot images
+        without IFD and ME regions specified. In such case the missing regions
+        are counted as closed-source and added to
+        :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+        """
         # It may happen that the FMAP does not cover whole flash size and the
         # first region will start with non-zero offset. Check if first region
         # offset is zero, if not count all bytes from the start of flash to the
@@ -199,15 +370,48 @@ class DasharoCorebootImage:
                   '%d != %d' % (full_size, self.image_size))
 
     def _get_percentage(self, metric):
+        """_get_percentage Helper function to generate code share percentage.
+
+        :param metric: The size of open-source or closed-source code
+        :type metric: int
+        :return: Percentage share of given metric compared to the sum of
+                 open-source and closed-source code size.
+        :rtype: int
+        """
         return metric * 100 / (self.open_code_size + self.closed_code_size)
 
-    def _export_regions(self, file, regions, category):
+    def _export_regions_md(self, file, regions, category):
+        """_export_regions_md Write the regions for given category to the
+        markdown file
+
+        :param file: Markdown file handle to write the regions's info to
+        :type file: file
+        :param regions: Dictionary containing regions to be written to the
+                        markdown file.
+        :type regions: dict
+        :param category: Category of the regions to be written to the markdown
+                         file. Should be one of: open-source, closed-source,
+                         data, empty.
+        :type category: str
+        """
         for region in regions:
             file.write('| {} | {} | {} | {} |\n'.format(
                         region['name'], hex(region['offset']),
                         hex(region['size']), category))
 
     def export_markdown(self, file):
+        """export_markdown Opens a file and saves the openness report in
+        markdown format.
+
+        Saves the parsed information and classified image components into a
+        markdown file. Also for each CBFS in
+        :attr:`coreboot.DasharoCorebootImage.cbfs_images` it calls
+        :attr:`coreboot.CBFSIMage.export_markdown` to save the CBFS region
+        statistics.
+
+        :param file: Path to markdown file
+        :type file: str
+        """
         with open(file, 'w') as md:
             md.write('# Dasharo Openness Score\n\n')
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
@@ -238,16 +442,25 @@ class DasharoCorebootImage:
             md.write('## FMAP regions\n\n')
             md.write('| FMAP region | Offset | Size | Category |\n')
             md.write('| ----------- | ------ | ---- | -------- |\n')
-            self._export_regions(md, self.open_code_regions, 'open-source')
-            self._export_regions(md, self.closed_code_regions, 'closed-source')
-            self._export_regions(md, self.data_regions, 'data')
-            self._export_regions(md, self.empty_regions, 'empty')
+            self._export_regions_md(md, self.open_code_regions, 'open-source')
+            self._export_regions_md(md, self.closed_code_regions, 'closed-source')
+            self._export_regions_md(md, self.data_regions, 'data')
+            self._export_regions_md(md, self.empty_regions, 'empty')
 
             for cbfs in self.cbfs_images:
                 md.write('\n')
                 cbfs.export_markdown(md)
 
     def export_charts(self, dir):
+        """export_charts Plots the pice charts with firmware image statistics.
+
+        Method plots two pie charts. One containing only the closed-source to
+        open-source code ration. Second the share percentage of all four image
+        components catgories: closed-source, open-source, data and empty space.
+
+        :param dir: Path to the directory where the charts will be saved.
+        :type dir: str
+        """
         labels = 'closed-source', 'open-source'
         sizes = [self.closed_code_size, self.open_code_size]
         explode = (0, 0.1)
@@ -282,20 +495,24 @@ class CBFSImage:
         'intel_fit', 'fsp', 'mrc', 'cmos_default', 'cmos_layout', 'spd',
         'mrc_cache', 'mma', 'efi', 'struct', 'deleted', 'null', 'amdfw'
     ]
+    """A list of all known CBFS filetypes for regexp matching."""
 
     OPEN_SOURCE_FILETYPES = [
         'bootblock', 'stage', 'simple elf', 'fit_payload',
     ]
+    """A list of CBFS filetypes known to be open-source code"""
 
     CLOSED_SOURCE_FILETYPES = [
         'optionrom', 'vsa', 'mbi', 'microcode', 'fsp', 'mrc', 'mma', 'efi',
         'amdfw'
     ]
+    """A list of CBFS filetypes known to be closed-source code"""
 
     DATA_FILETYPES = [
         'cbfs header', 'bootsplash', 'intel_fit', 'cmos_default',
         'cmos_layout', 'spd', 'mrc_cache', 'struct',
     ]
+    """A list of CBFS filetypes known to be data"""
 
     # Some binary blobs containing code are not added as raw files or as fsp,
     # etc, for example refcode blob is a stage type. We keep them here to
@@ -309,6 +526,7 @@ class CBFSImage:
         'fallback/uart_fw', 'fallback/spi_fw', 'fallback/i2c_fw',
         'fallback/cpucp', 'fallback/shrm', 'fallback/gsi_fw',
     ]
+    """A list of CBFS filenames exceptions known to be closed-source code"""
 
     # Filetype raw can be anything and can also be named arbitrarily. We trust
     # that Dasharo binary is unmodified and standard names used by coreboot
@@ -333,6 +551,7 @@ class CBFSImage:
         'etc/usb-time-sigatt', 'etc/sdcard0', 'etc/sdcard1', 'etc/sdcard2',
         'etc/sdcard3'
     ]
+    """A list of CBFS filenames known to be data"""
 
     # Everything derived from open-source code which is an executable code or
     # was created from open-source code in a reproducible way
@@ -341,6 +560,7 @@ class CBFSImage:
         'pdpt', 'ecrw', 'pdrw', 'sff8104-linux.dtb', 'stm.bin', 'fallback/DTB',
         'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom',
     ]
+    """A list of CBFS filenames known to be created from open-source code"""
 
     # PSE binary is treated as closed source as there is no guarantee of open
     # code availability for given build.
@@ -361,8 +581,11 @@ class CBFSImage:
         'cse_iom', 'cse_nphy', 'pse.bin', 'rmu.bin', 'tegra_mtc.bin', 'tz.mbn',
         'cdt.mbn', 'ddr.mbn', 'rpm.mbn'
     ]
+    """A list of CBFS filenames known to be closed-source"""
 
     DASHARO_LAN_ROM_GUID = 'DEB917C0-C56A-4860-A05B-BF2F22EBB717'
+    """GUID of the Dasharo UEFI Paylaod file that contains closed-source
+    EFI driver for LAN NIC"""
 
     file_patterns = [
         r"(?P<filename>[a-zA-Z0-9\(\)\/\.\,\_\-]*?)\s+",
@@ -374,43 +597,104 @@ class CBFSImage:
     file_regexp = re.compile(''.join(file_patterns), re.MULTILINE)
 
     def __init__(self, image_path, region, verbose=False):
+        """__init__ CBFSImage class init method.
+
+        Initializes the class fields for storing the CBFS region components
+        classified to specific groups. Also calls
+        :meth:`~coreboot.DasharoCorebootImage._parse_cbfs_files`,
+        :meth:`~coreboot.DasharoCorebootImage._parse_cb_config` and
+        :meth:`~coreboot.DasharoCorebootImage._calculate_metrics` methods
+        to parse the CBFS and calculate the metrics.
+
+        :param region: Path the the firmware image file being parsed.
+        :type image_path: str
+        :param region: The flashmap region where the CBFS resides.
+        :type image_path: dict
+        :param verbose: Optional parameter to turn on debug information during
+                        the image parsing, defaults to False
+        :type verbose: bool, optional
+        """
         self.image_path = image_path
+        """Path to the image represented by DasharoCorebootImage class"""
         self.region_name = region['name']
+        """The region name where the CBFS is located"""
         self.cbfs_size = region['size']
+        """The region size where the CBFS is located"""
         self.cbfs_files = {}
+        """Dictionary holding the CBFS files and their attributes"""
         self.kconfig_opts = {}
+        """Dictionary holding the coreboot config used to produce the CBFS"""
         self.num_files = 0
+        """Number of files in the CBFS"""
         self.num_opts = 0
+        """Number of options coreboot config file found in CBFS"""
         self.open_code_size = 0
+        """Total number of bytes classified as open-source code"""
         self.closed_code_size = 0
+        """Total number of bytes classified as closed-source code"""
         self.data_size = 0
+        """Total number of bytes classified as data"""
         self.empty_size = 0
+        """Total number of bytes classified as empty"""
         self.open_code_files = []
+        """List holding CBFS files classified as open-source code"""
         self.closed_code_files = []
+        """List holding CBFS files classified as closed-source code"""
         self.data_files = []
+        """List holding CBFS files classified as data"""
         self.empty_files = []
+        """List holding CBFS empty spaces"""
         # This type of files will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
         self.uncategorized_files = []
+        """List holding CBFS files that could not be classified. Counted
+        as closed-source code at the end of calculation process.
+        """
         self.edk2_ipxe = False
+        """Variable to hold the status whether iPXE was built for EDK2"""
         self.ipxe_present = False
+        """Variable to hold the status of iPXE presence in the CBFS"""
         self.ipxe_rom_id = None
+        """Variable to hold the PCI ID used for iPXE build"""
         self.lan_rom_size = 0
+        """Variable to hold the size of optional LAN EFI driver used in
+        Dasharo builds. If such driver is detected based on coreboot config,
+        the driver's size is subtracted from open-source code and added to
+        closed-source code.
+        """
 
         self.debug = verbose
+        """Used to enable verbose debug output from the parsing process"""
 
         self._parse_cbfs_files()
         self._parse_cb_config()
         self._calculate_metrics()
 
     def __len__(self):
+        """__len__ Return the length of the CBFS region
+
+        :return: Length of the CBFS
+        :rtype: int
+        """
         return self.cbfs_size
 
     def __repr__(self):
+        """__repr__ CBFSImage class representation
+
+        :return: class representation
+        :rtype: str
+        """
         return 'CBFSImage()'
 
     def __str__(self):
+        """__str__ Returns string representation of the CBFS.
+
+        Prints the firmware image statistics.
+
+        :return: CBFSImage string representation
+        :rtype: str
+        """
         return 'CBFS region %s:\n' \
                '\tCBFS size: %d\n' \
                '\tNumber of files: %d\n' \
@@ -427,6 +711,16 @@ class CBFSImage:
                     self.empty_size)
 
     def _parse_cbfs_files(self):
+        """_parse_cbfs_files Parses the CBFS contents.
+
+        Parses the output of 'cbfstool self.image_path print -r
+        self.region_name' and extracts the CBFS files information to the
+        self.cbfs_files dictionary using the
+        :const:`coreboot.CBFSImage.file_regexp` regular expression.
+
+        If self.debug is True, all flashmap regions with their attributes are
+        printed on the console at the end.
+        """
         cmd = ['cbfstool', self.image_path, 'print', '-r', self.region_name]
         cbfs_content = subprocess.run(cmd, text=True, capture_output=True)
 
@@ -446,6 +740,34 @@ class CBFSImage:
             [print(self.cbfs_files[i]) for i in range(self.num_files)]
 
     def _calculate_metrics(self):
+        """_calculate_metrics Calculates the sizes of the four basic firmware
+        components categories
+
+        Calls :meth:`~coreboot.CBFSImage._classify_file` for each
+        detected CBFS file. Then sums the files' sizes from all 5 lists:
+
+        :attr:`coreboot.CBFSImage.open_code_files` sizes sum is
+        added to :attr:`coreboot.CBFSImage.open_code_size`
+
+        :attr:`coreboot.CBFSImage.closed_code_files` sizes sum is
+        added to :attr:`coreboot.CBFSImage.closed_code_size`
+
+        :attr:`coreboot.CBFSImage.data_files` sizes sum is
+        added to :attr:`coreboot.CBFSImage.data_size`
+
+        :attr:`coreboot.CBFSImage.empty_files` sizes sum is
+        added to :attr:`coreboot.CBFSImage.empty_size`
+
+        :attr:`coreboot.CBFSImage.uncategorized_files` sizes sum is
+        added to :attr:`coreboot.CBFSImage.closed_code_size`
+
+        Additionally if a LAN EFI driver has been detected, it is subtracted
+        from open-source code size (normally the driver is part ofthe payload
+        considered to be open-source) and added to the closed-source size.
+
+        At the end the method calls
+        :meth:`coreboot.CBFSImage._normalize_sizes`
+        """
         for i in range(self.num_files):
             self._classify_file(self.cbfs_files[i])
 
@@ -473,6 +795,44 @@ class CBFSImage:
         self._normalize_sizes()
 
     def _classify_file(self, file):
+        """_classify_file Classifies the CBFS file into basic categories.
+
+        Each detected CBFS file is being classified into 4 basic
+        categories and appended to respective lists.
+
+        :attr:`coreboot.CBFSImage.open_code_files` are appended
+        with CBFS files which type is found in
+        :const:`coreboot.CBFSImage.OPEN_SOURCE_FILETYPES` and names are not
+        found in :const:`coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS`.
+        CBFS files of type 'raw' are also classified as open-source code if
+        its name is found in :const:`coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES`
+        or if it is an iPXE legacy ROM (based on the PCI ID detected from
+        coreboot's config).
+
+        :attr:`coreboot.CBFSImage.closed_code_files` are appended
+        with CBFS files which name is found in
+        :const:`coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES` or with CBFS file's
+        type found in :const:`coreboot.CBFSImage.OPEN_SOURCE_FILETYPES` and
+        name found in :const:`coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS` or
+        with CBFS files of type 'raw' which names are found in
+        :const:`coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES`.
+
+        :attr:`coreboot.CBFSImage.empty_files` are appended
+        with CBFS files with type 'null'.
+
+        :attr:`coreboot.CBFSImage.data_files` are appended with CBFS files
+        which type is found in :const:`coreboot.CBFSImage.DATA_FILETYPES` or
+        with CBFS file of type 'raw' and names found in
+        :const:`coreboot.CBFSImage.RAW_DATA_FILES`.
+
+        Any other unrecognized CBFS files fall into
+        :attr:`coreboot.CBFSImage.uncategorized_files` list which will be
+        counted as closed-source code because we were unable to identify
+        what can be inside.
+
+        :param file: CBFS file entry from dictionary
+        :type region: dict
+        """
         if file['filetype'] in self.OPEN_SOURCE_FILETYPES:
             if file['filename'] not in self.CLOSED_SOURCE_EXCEPTIONS:
                 self.open_code_files.append(file)
@@ -502,6 +862,21 @@ class CBFSImage:
             self.uncategorized_files.append(file)
 
     def _normalize_sizes(self):
+        """_normalize_sizes Ensures that all CBFS components sizes sum up to
+        whole image size.
+
+        This function takes into account a situation when the CBFS is truncated
+        (e.g. vboot RW CBFS regions). In such case we calculate the byte offset
+        of the end of last file in CBFS and calculate the truncated size by
+        subtracting the offset from the CBFS region size. The truncated size is
+        then added to the :attr:`coreboot.CBFSImage.empty_size`.
+
+        cbfstool prints only the sizes of files and does not account for the
+        metadata surrounding the file. It is necessary to calculate the
+        metadata size by subtarcting all file's sizes from the whole CBFS
+        region size. The metadata size is then added to the
+        :attr:`coreboot.CBFSImage.data_size`.
+        """
         # We have to take into account truncated CBFSes like FW_MAIN_A or
         # FW_MAIN_B, where the space after the last file is empty but not
         # listed as such.
@@ -532,9 +907,24 @@ class CBFSImage:
                   % (self.region_name, metadata_size))
 
     def _sum_sizes(self, files):
+        """_sum_sizes Sums the size of the CBFS files.
+
+        :param files: Dictionary of files to sum
+        :type files: dict
+        :return: Sum of the files' sizes
+        :rtype: int
+        """
         return sum(list(f['size'] for f in files))
 
     def _get_kconfig_value(self, option):
+        """_get_kconfig_value Returns a value of given coreboot's Kconfig
+        option.
+
+        :param option: Name of the Kconfig option without 'CONFIG_' prefix.
+        :type option: str
+        :return: The value of Kconfig option
+        :rtype: str
+        """
         for i in range(len(self.kconfig_opts)):
             if self.kconfig_opts[i]['option'] == option:
                 return self.kconfig_opts[i]['value']
@@ -542,6 +932,16 @@ class CBFSImage:
         return None
 
     def _parse_cb_config(self):
+        """_parse_cb_config Extracts and parses the CBFS config file.
+
+        The function uses the cbfstool to extract the coreboot's config
+        and a regexp to extract the Kconfig names and values to
+        :attr:`coreboot.CBFSImage.kconfig_opts`.
+
+        Additionally the function calls
+        :meth:`coreboot.CBFSImage._check_for_ipxe` and
+        :meth:`coreboot.CBFSImage._check_for_lanrom`.
+        """
         kconfig_pattern = r'^CONFIG_(?P<option>[A-Z0-9_]+?)=(?P<value>.*?)$'
         kconfig_pregexp = re.compile(kconfig_pattern, re.MULTILINE)
 
@@ -577,6 +977,15 @@ class CBFSImage:
         subprocess.run(cmd, text=True, capture_output=True)
 
     def _check_for_ipxe(self):
+        """_check_for_ipxe Checks whether iPXE was built int othe CBFS image
+        and in what form.
+
+        The function checks for iPXE specific Kconfig options and sets the
+        :attr:`coreboot.CBFSImage.edk2_ipxe`,
+        :attr:`coreboot.CBFSImage.ipxe_present` and
+        :attr:`coreboot.CBFSImage.ipxe_rom_id` based on the detected Kconfig
+        values.
+        """
         if self._get_kconfig_value('EDK2_ENABLE_IPXE') == 'y':
             self.edk2_ipxe = True
             # If EDK2 iPXE is chosen, CONFIG_PXE is selected as well and will
@@ -586,8 +995,8 @@ class CBFSImage:
             self.ipxe_present = True
         elif self._get_kconfig_value('PXE') == 'y':
             # Worst case scenario, PXE is set as default in the mainbaord's
-            # Kconfig file and wil not be reflected in the CBFS config file. In
-            # such case the matrics will assume the pci$(pxe_rom_id).rom as
+            # Kconfig file and will not be reflected in the CBFS config file. In
+            # such case the metrics will assume the pci$(pxe_rom_id).rom as
             # closed source. Also the PXE_ROM must not be found in the config,
             # it would mean an external binary.
             if self._get_kconfig_value('PXE_ROM') is None:
@@ -599,6 +1008,17 @@ class CBFSImage:
             self.ipxe_rom_id = '10ec,8168'
 
     def _check_for_lanrom(self):
+        """_check_for_lanrom Checks whether external LAN EFI driver has been
+        included in UEFI Payload and calculates its estimated compressed size.
+
+        The function check for the LAn driver Kcofngi option. If it is present,
+        then the cbfstool is called to extract the payload binary. Then
+        UEFIExtract tries to extract the LAN EFI driver by the file GUID
+        :attr:`coreboot.CBFSImage.DASHARO_LAN_ROM_GUID` from the payload
+        binary. At the ned the extracted LAN EFI driver is compressed with lzma
+        to estimate the driver's size occupying the UEFI Payload. The result
+        is saved to :attr:`coreboot.CBFSImage.lan_rom_size`.
+        """
         if self._get_kconfig_value('EDK2_LAN_ROM_DRIVER') is None:
             return
         # We determined there was an external LAN driver included. Now we
@@ -643,13 +1063,34 @@ class CBFSImage:
         subprocess.run(cmd, text=True, capture_output=True)
 
     def _export_files_md(self, file, cbfs_files, category):
+        """_export_files_md Writes the CBFS files for given category to the
+        markdown file
+
+        :param file: Markdown file handle to write the CBFS files' info to
+        :type file: file
+        :param cbfs_files: Dictionary containing CBFS files to be written to
+                           the markdown file.
+        :type regions: dict
+        :param category: Category of the CBFS files to be written to the
+                         markdown file. Should be one of: open-source,
+                         closed-source, data, empty.
+        :type category: str
+        """
         for f in cbfs_files:
             file.write('| {} | {} | {} | {} | {} |\n'.format(
                         f['filename'], f['filetype'],
                         f['size'], f['compression'], category))
 
     def export_markdown(self, file):
-        # Regions first
+        """export_markdown Saves the openness report in markdown format for
+        given CBFS region
+
+        Saves the parsed information and classified CBFS components into a
+        markdown file. 
+
+        :param file: Markdown file handle
+        :type file: str
+        """
         file.write('## CBFS %s\n\n' % self.region_name)
         file.write('* CBFS size: %d\n'
                    '* Number of files: %d\n'
