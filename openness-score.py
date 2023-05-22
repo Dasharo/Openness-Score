@@ -12,17 +12,42 @@ from uefi import UEFIImage
 from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
 
 version = 'v0.1.0'
-
+"""The utility's version"""
 
 class ObligingArgumentParser(ArgumentParser):
+    """ObligingArgumentParser An extension to ArgumentParser class providing
+    better error handling.
 
+    :param ArgumentParser: The class to be inherited from.
+    :type ArgumentParser: ArgumentParser
+    """
     def error(self, message):
+        """error Prints an error message if there was an error parsing the
+        arguments.
+
+        The function also prints a help section and returns an exit code 2.
+
+        :param message: Message to be printed on error.
+        :type message: str
+        """
         sys.stderr.write('Error: %s\n' % message)
         self.print_help()
         sys.exit(2)
 
 
 def check_file(file):
+    """check_file The function performs all safety checks and detects the
+    input file format.
+
+    Function checks if all required external utilities like cbfstool,
+    UEFIExtract and lzma are present. It also recognizes whether the input
+    file is a coreboot image or UEFI image.
+
+    :param file: The input firmware image path
+    :type file: str
+    :return: Two booleans indicating the CBFS and UEFI format compliance
+    :rtype: boolean, boolean
+    """
     fw_img = Path(file)
 
     cbfs_error_string = 'E: Selected image region is not a valid CBFS.'
@@ -68,7 +93,14 @@ def check_file(file):
 
 
 def export_data(args, image):
+    """export_data Calls the image's class methods to export data to markdown
+    and pie charts
 
+    :param args: Program arguments
+    :type args: argparse.Namespace
+    :param image: An instance of DasharoCorebootImage or UEFIImage
+    :type image: DasharoCorebootImage or UEFIImage
+    """
     output_path = Path.cwd()
 
     if args.output is not None:
@@ -88,7 +120,10 @@ def export_data(args, image):
 
 
 def main():
-
+    """main Utilitie's entry point responsible for argument parsing and
+    creating firmware image class instances based on detected image format.
+    Calls functions to create the reports and pie charts.
+    """
     parser = ObligingArgumentParser(
         description='Calculate Dasharo Openness Score for firmware images\n',
         formatter_class=RawTextHelpFormatter, add_help=False)
