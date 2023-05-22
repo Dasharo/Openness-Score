@@ -1,6 +1,6 @@
 # Openness-Score
 
-Dasharo Openness Score measuring utility
+Dasharo Openness Score measuring utility.
 
 ## What is Dasharo Openness Score
 
@@ -20,6 +20,44 @@ Trusted Computing Base (TCB) has been reduced.
 
 Dasharo Openness Score utility not only support Dasharo coreboot-based images,
 but also many more coreboot distributions like heads.
+
+## Usage
+
+```bash
+usage: openness-score.py [-o OUTPUT] [-v] [-V] [file]
+
+Calculate Dasharo Openness Score for firmware images
+
+positional arguments:
+  file                  Firmware binary file to be parsed
+
+options:
+  -o OUTPUT, --output OUTPUT
+                        Specifies the directory where to store the results
+  -v, --verbose         Print verbose information during the image parsing
+  -V, --version         show program's version number and exit
+
+```
+
+For example:
+
+```bash
+./openness-score.py ~/msi_ms7d25_v1.1.1_ddr4.rom
+```
+
+The utility will produce 3 files:
+
+- `<filename>_openness_chart.png` - a pie chart image showing the share
+  percentage of open-source code and closed-source code relative to total
+  executable code detected in the image
+- `<filename>_openness_chart_full_image.png` - a pie chart image showing the
+  share percentage of open-source code, closed-source code, data and empty
+  space relative to total image size
+- `<filename>_openness_score.md` - a report in markdown format presenting
+  precise numbers and detailed classification of firmware image components
+  to closed-source, open-source, data and empty categories
+
+**The utility currently supports coreboot and pure UEFI images only.**
 
 ### Examples
 
@@ -52,7 +90,6 @@ Python requirements:
 ```
 pip3 install -r requirements.txt
 ```
-
 
 ## Documentation
 
