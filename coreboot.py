@@ -101,8 +101,9 @@ class DasharoCorebootImage:
         self.closed_code_regions = []
         """List holding flashmap regions filled with closed-source code"""
         self.data_regions = []
-        """List holding empty flashmap regions"""
+        """List holding flashmap regions filled with data"""
         self.empty_regions = []
+        """List holding empty flashmap regions"""
         # This type of regions will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
@@ -164,7 +165,7 @@ class DasharoCorebootImage:
         :param region: Flashmap region entry from dictionary
         :type region: dict
         :return: True if regions contains CBFS attribute, false otherwise.
-        :rtype: boolean
+        :rtype: bool
         """
         if region['attributes'] == 'CBFS':
             return True
@@ -174,16 +175,16 @@ class DasharoCorebootImage:
     def _parse_cb_fmap_layout(self):
         """_parse_cb_fmap_layout Parses the cbfstool flashmap layout.
 
-        Parses the output of 'cbfstool self.image_path layout -w'
-        and extract the flashmap regions to a self.fmap_regions dictionary
-        using the :const:`coreboot.DasharoCorebootImage.region_regexp`
-        regular expression.
+        Parses the output of 'cbfstool self.image_path layout -w' and extract
+        the flashmap regions to a self.fmap_regions dictionary using the
+        :const:`coreboot.DasharoCorebootImage.region_regexp` regular
+        expression.
 
-        If a flashmap region has a CBFS attribute, the self.cbfs_images list
-        is appended with a new instance of :class:`coreboot.CBFSImage`.
+        If a flashmap region has a CBFS attribute, the self.cbfs_images list is
+        appended with a new instance of :class:`coreboot.CBFSImage`.
 
-        If self.debug is True, all flashmap regions with their attributes are
-        printed on the console at the end.
+        If :attr:`coreboot.DasharoCorebootImage.debug` is True, all flashmap
+        regions with their attributes are printed on the console at the end.
         """
         cmd = ['cbfstool', self.image_path, 'layout', '-w']
         layout = subprocess.run(cmd, text=True, capture_output=True)
@@ -292,7 +293,7 @@ class DasharoCorebootImage:
         :attr:`coreboot.DasharoCorebootImage.uncategorized_regions` sizes sum is
         added to :attr:`coreboot.DasharoCorebootImage.closed_code_size`
 
-        Additionally for each detected CBFS region their foru basic components
+        Additionally for each detected CBFS region their four basic component's
         categories are also added to the total metrics.
 
         :attr:`coreboot.CBFSImage.open_code_size` is added to
@@ -406,7 +407,7 @@ class DasharoCorebootImage:
         Saves the parsed information and classified image components into a
         markdown file. Also for each CBFS in
         :attr:`coreboot.DasharoCorebootImage.cbfs_images` it calls
-        :attr:`coreboot.CBFSIMage.export_markdown` to save the CBFS region
+        :meth:`coreboot.CBFSImage.export_markdown` to save the CBFS region
         statistics.
 
         :param file: Path to markdown file
@@ -452,11 +453,11 @@ class DasharoCorebootImage:
                 cbfs.export_markdown(md)
 
     def export_charts(self, dir):
-        """export_charts Plots the pice charts with firmware image statistics.
+        """export_charts Plots the pie charts with firmware image statistics.
 
         Method plots two pie charts. One containing only the closed-source to
-        open-source code ration. Second the share percentage of all four image
-        components catgories: closed-source, open-source, data and empty space.
+        open-source code ratio. Second the share percentage of all four image
+        components categories: closed-source, open-source, data and empty space.
 
         :param dir: Path to the directory where the charts will be saved.
         :type dir: str
@@ -486,6 +487,10 @@ class DasharoCorebootImage:
 
 
 class CBFSImage:
+    """ CBFSImage class
+
+    The main class representing a coreboot's CBFS.
+    """
 
     debug = False
 
@@ -718,8 +723,8 @@ class CBFSImage:
         self.cbfs_files dictionary using the
         :const:`coreboot.CBFSImage.file_regexp` regular expression.
 
-        If self.debug is True, all flashmap regions with their attributes are
-        printed on the console at the end.
+        If :attr:`coreboot.CBFSImage.debug` is True, all CBFS contents with
+        their attributes are printed on the console at the end.
         """
         cmd = ['cbfstool', self.image_path, 'print', '-r', self.region_name]
         cbfs_content = subprocess.run(cmd, text=True, capture_output=True)

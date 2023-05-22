@@ -46,7 +46,7 @@ def check_file(file):
     :param file: The input firmware image path
     :type file: str
     :return: Two booleans indicating the CBFS and UEFI format compliance
-    :rtype: boolean, boolean
+    :rtype: bool, bool
     """
     fw_img = Path(file)
 
