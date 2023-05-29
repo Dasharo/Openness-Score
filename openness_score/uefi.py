@@ -10,11 +10,13 @@ from typing import List
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+"""This module is responsible for parsing UEFI images"""
+
 
 class UEFIImage:
     """UEFIImage class
 
-    The main class representing an UEFI firmware image.
+    The main class representing an UEFI firmware image
     """
 
     debug = False
@@ -70,13 +72,13 @@ class UEFIImage:
     bios_region_started = False
 
     def __init__(self, image_path, verbose=False):
-        """__init__ UEFIImage class init method.
+        """UEFIImage class init method
 
         Initializes the class fields for storing the firmware image components
         classified to specific groups. Also calls
         :meth:`~coreboot.UEFIImage._parse_uefi_image` and
-        :meth:`~coreboot.UEFIImage._calculate_metrics` methods
-        to parse the image and calculate the metrics.
+        :meth:`~coreboot.UEFIImage._calculate_metrics` methods to parse the
+        image and calculate the metrics.
 
         :param image_path: Path the the firmware image file being parsed.
         :type image_path: str
@@ -124,7 +126,7 @@ class UEFIImage:
         self._calculate_metrics()
 
     def __len__(self):
-        """__len__ Return the length of the UEFI firmware image
+        """Returns the length of the UEFI firmware image
 
         :return: Length of the firmware binary file
         :rtype: int
@@ -132,7 +134,7 @@ class UEFIImage:
         return self.image_size
 
     def __repr__(self):
-        """__repr__ UEFIImage class representation
+        """UEFIImage class representation
 
         :return: class representation
         :rtype: str
@@ -140,7 +142,7 @@ class UEFIImage:
         return "UEFIImage()"
 
     def __str__(self):
-        """__str__ Returns string representation of the firmware image.
+        """Returns string representation of the firmware image
 
         Prints the firmware image statistics.
 
@@ -167,8 +169,8 @@ class UEFIImage:
                     self.empty_size)
 
     def _parse_uefi_image(self):
-        """_parse_uefi_image Parses the UEFI image with UEFIExtract and
-        extracts information about its components.
+        """Parses the UEFI image with UEFIExtract and extracts information
+        about its components
 
         Parses the output of 'UEFIExtract self.image_path report' and extract
         the UEFI image components to a self.uefi_entries dictionary using the
@@ -231,8 +233,7 @@ class UEFIImage:
             [print(region) for region in self.regions]
 
     def _entry_is_volume(self, entry):
-        """_entry_is_volume Helper function to check if UEFI entry is an UEFI
-        Firmware Volume
+        """Helper function to check if UEFI entry is an UEFI Firmware Volume
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -247,13 +248,13 @@ class UEFIImage:
             return False
 
     def _is_entry_nested_volume(self, entry):
-        """_is_entry_nested_volume Helper function to check if UEFI entry is an
-        UEFI Firmware Volume nested in another already detected UEFI Firmware
-        Volume
+        """Helper function to check if UEFI entry is an UEFI Firmware Volume
+        nested in another already detected UEFI Firmware Volume
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
-        :return: True if entry is a Firmware Volume is nested, False otherwise.
+        :return: True if entry is a Firmware Volume is nested, False
+                 otherwise.
         :rtype: bool
         """
         # Ignore nested uncompressed volumes, they will be handled inside
@@ -270,7 +271,7 @@ class UEFIImage:
         return False
 
     def _entry_is_region(self, entry):
-        """_entry_is_region Helper function to check if UEFI entry is a region
+        """Helper function to check if UEFI entry is a region
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -283,8 +284,8 @@ class UEFIImage:
             return False
 
     def _is_entry_inside_bios_region(self, entry):
-        """_is_entry_inside_bios_region Helper function to check if UEFI entry
-        resides inside the BIOS region
+        """Helper function to check if UEFI entry resides inside the BIOS
+        region
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -311,8 +312,7 @@ class UEFIImage:
             return False
 
     def _classify_entries(self):
-        """_classify_entries Classifies the UEFI entries and regions into basic
-        categories.
+        """Classifies the UEFI entries and regions into basic categories
 
         Each detected UEFI region is being classified into 2 basic categories
         (utility assumes there is no open-source code in vendor images and
@@ -331,12 +331,12 @@ class UEFIImage:
         :attr:`uefi.UEFIImage.closed_code_regions`.
 
         Next, the entries are being processed. For simplicity we only classify
-        entries that do not belong to Firmware Volumes, so they are either data
-        (non-empty pads) or empty (empty padding). If an entry is a Firmware
-        Volume and resides inside the BISO region, a new instance of
+        entries that do not belong to Firmware Volumes, so they are either
+        data (non-empty pads) or empty (empty padding). If an entry is a
+        Firmware Volume and resides inside the BISO region, a new instance of
         :class:`uefi.UEFIVolume` is created and appended to
         :attr:`uefi.UEFIImage.volumes` list.
-        
+
         Entries are counted as data if their names are found in
         :const:`uefi.UEFIImage.NON_EMPTY_REGION_PADDING` or are inside BIOS
         region and their names are found in
@@ -402,7 +402,7 @@ class UEFIImage:
                 print(self.closed_code_regions[i])
 
     def _sum_sizes(self, regions):
-        """_sum_sizes Sums the size of the regions.
+        """Sums the size of the regions
 
         :param regions: Dictionary of regions to sum
         :type regions: dict
@@ -412,8 +412,8 @@ class UEFIImage:
         return sum(list(r['size'] for r in regions))
 
     def _calculate_metrics(self):
-        """_calculate_metrics Calculates the sizes of the four basic firmware
-        components categories.
+        """Calculates the sizes of the four basic firmware components
+        categories
 
         The function calls the :meth:`uefi.UEFIImage._classify_entries` and
         then sums up the classified regions sizes.
@@ -431,7 +431,8 @@ class UEFIImage:
         basic component's categories are also added to the total metrics.
 
         :attr:`uefi.UEFIVolume.open_code_size` is added to
-        :attr:`uefi.UEFIImage.open_code_size` (although it is expected to be 0)
+        :attr:`uefi.UEFIImage.open_code_size` (although it is expected to be
+        0).
 
         :attr:`uefi.UEFIVolume.closed_code_size` is added to
         :attr:`uefi.UEFIImage.closed_code_size`
@@ -460,15 +461,15 @@ class UEFIImage:
         self._normalize_sizes()
 
     def _normalize_sizes(self):
-        """_normalize_sizes Checks if all firmware image components sizes sum
-        up to whole image size.
+        """Checks if all firmware image components sizes sum up to whole image
+        size
 
-        This method acts as a safety check if there was no error during parsing
-        and classification. It may happen that the total size of classified
-        entries does not sum up to full image size. In such case the size
-        difference are counted as data (possibly some metadata) and added to
-        :attr:`uefi.UEFIImage.closed_code_size`. Additionally and error is
-        printed.
+        This method acts as a safety check if there was no error during
+        parsing and classification. It may happen that the total size of
+        classified entries does not sum up to full image size. In such case
+        the size difference are counted as data (possibly some metadata) and
+        added to :attr:`uefi.UEFIImage.closed_code_size`. Additionally and
+        error is printed.
         """
         # Final check if all sizes are summing up to whole image size
         full_size = sum([self.open_code_size, self.empty_size,
@@ -482,7 +483,7 @@ class UEFIImage:
                   '%d != %d' % (full_size, self.image_size))
 
     def _get_percentage(self, metric):
-        """_get_percentage Helper function to generate code share percentage.
+        """Helper function to generate code share percentage
 
         :param metric: The size of open-source or closed-source code
         :type metric: int
@@ -493,8 +494,7 @@ class UEFIImage:
         return metric * 100 / (self.open_code_size + self.closed_code_size)
 
     def _export_regions_md(self, file, regions, category):
-        """_export_regions_md Write the regions for given category to the
-        markdown file
+        """Write the regions for given category to the markdown file
 
         :param file: Markdown file handle to write the regions's info to
         :type file: file
@@ -512,8 +512,7 @@ class UEFIImage:
                         hex(region['size']), category))
 
     def export_markdown(self, file):
-        """export_markdown Opens a file and saves the openness report in
-        markdown format.
+        """Opens a file and saves the openness report in markdown format
 
         Saves the parsed information and classified image components into a
         markdown file. Also for each UEFI firmware volume in
@@ -557,7 +556,8 @@ class UEFIImage:
             md.write('## UEFI regions\n\n')
             md.write('| Region | Base | Size | Category |\n')
             md.write('| ------ | ---- | ---- | -------- |\n')
-            self._export_regions_md(md, self.closed_code_regions, 'closed-source')
+            self._export_regions_md(md, self.closed_code_regions,
+                                    'closed-source')
             self._export_regions_md(md, self.data_regions, 'data')
             self._export_regions_md(md, self.empty_spaces, 'empty')
             md.write('\n')
@@ -570,11 +570,12 @@ class UEFIImage:
                 uefi_fv.export_markdown(md)
 
     def export_charts(self, dir):
-        """export_charts Plots the pie charts with firmware image statistics.
+        """Plots the pie charts with firmware image statistics
 
         Method plots two pie charts. One containing only the closed-source to
         open-source code ratio. Second the share percentage of all four image
-        components categories: closed-source, open-source, data and empty space.
+        components categories: closed-source, open-source, data and empty
+        space.
 
         :param dir: Path to the directory where the charts will be saved.
         :type dir: str
@@ -585,7 +586,8 @@ class UEFIImage:
 
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
-        fig.suptitle('UEFI image code openness\n%s' % Path(self.image_path).name)
+        fig.suptitle('UEFI image code openness\n%s' %
+                     Path(self.image_path).name)
         plt.savefig('%s_openness_chart.png' %
                     dir.joinpath(Path(self.image_path).name))
 
@@ -603,7 +605,7 @@ class UEFIImage:
 
 
 class UEFIVolume:
-    """ UEFIVolume class
+    """UEFIVolume class
 
     The main class representing an UEFI Firmware Volume.
     """
@@ -620,7 +622,7 @@ class UEFIVolume:
     """
 
     def __init__(self, uefi_entries, entry_idx, verbose=False):
-        """__init__ UEFIVolume class init method.
+        """UEFIVolume class init method
 
         Initializes the class fields for storing the UEFI Firmware Volume
         components classified to specific groups. Also calls
@@ -683,7 +685,7 @@ class UEFIVolume:
         self._calculate_metrics()
 
     def __len__(self):
-        """__len__ Return the length of the UEFI Firmware Volume
+        """Returns the length of the UEFI Firmware Volume
 
         :return: Length of the UEFI Firmware Volume
         :rtype: int
@@ -691,7 +693,7 @@ class UEFIVolume:
         return self.volume_size
 
     def __repr__(self):
-        """__repr__ UEFIVolume class representation
+        """UEFIVolume class representation
 
         :return: class representation
         :rtype: str
@@ -699,7 +701,7 @@ class UEFIVolume:
         return "UEFIVolume()"
 
     def __str__(self):
-        """__str__ Returns string representation of the UEFI Firmware Volume.
+        """Returns string representation of the UEFI Firmware Volume
 
         Prints the firmware image statistics.
 
@@ -707,13 +709,13 @@ class UEFIVolume:
         :rtype: str
         """
         return 'UEFI Volume:\n' \
-                '\tBase: %s\n' \
-                '\tSize: %s\n' \
-                '\tNumber of entries: %d\n' \
-                '\tOpen-source code size: %d\n' \
-                '\tClosed-source code size: %d\n' \
-                '\tData size: %d\n' \
-                '\tEmpty size: %d' % (
+               '\tBase: %s\n' \
+               '\tSize: %s\n' \
+               '\tNumber of entries: %d\n' \
+               '\tOpen-source code size: %d\n' \
+               '\tClosed-source code size: %d\n' \
+               '\tData size: %d\n' \
+               '\tEmpty size: %d' % (
                     hex(self.volume_base),
                     hex(self.volume_size),
                     len(self.volume_entries),
@@ -723,12 +725,13 @@ class UEFIVolume:
                     self.empty_size)
 
     def _entry_is_inside_volume(self, entry):
-        """_entry_is_inside_volume Helper function to check if UEFI entry
-        resides inside this UEFI Firmware Volume
+        """Helper function to check if UEFI entry resides inside this UEFI
+        Firmware Volume
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
-        :return: True if entry is inside this Firmware Volume, False otherwise.
+        :return: True if entry is inside this Firmware Volume, False
+                 otherwise.
         :rtype: bool
         """
         # Each volume starts with an entry that has a base and size.
@@ -762,8 +765,8 @@ class UEFIVolume:
                 return False
 
     def _is_end_of_volume(self, entry):
-        """_is_end_of_volume Helper function to check if UEFI entry is the last
-        entry in this UEFI Firmware Volume
+        """Helper function to check if UEFI entry is the last entry in this
+        UEFI Firmware Volume
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -782,7 +785,7 @@ class UEFIVolume:
             return False
 
     def _entry_is_region(self, entry):
-        """_entry_is_region Helper function to check if UEFI entry is a region
+        """Helper function to check if UEFI entry is a region
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -795,8 +798,8 @@ class UEFIVolume:
             return False
 
     def _entry_is_self_volume(self, entry):
-        """_entry_is_region Helper function to check if UEFI entry is the
-        current UEFI Firmware Volume
+        """Helper function to check if UEFI entry is the current UEFI Firmware
+        Volume
 
         :param entry: UEFI image entry from the entries dictionary
         :type entry: dict
@@ -812,8 +815,8 @@ class UEFIVolume:
             return False
 
     def _entry_is_nested_volume(self, entry):
-        """_entry_is_region Helper function to check if UEFI entry is a
-        an UEFI Firmware Volume nested in the current UEFI Firmware Volume.
+        """Helper function to check if given UEFI entry is an UEFI Firmware
+        Volume nested in the current UEFI Firmware Volume
 
         Only FFSv2 volumes are counted, FFSv3 are compressed and do not have
         size, thus cannot be used to measure metrics.
@@ -837,9 +840,8 @@ class UEFIVolume:
         return False
 
     def _parse_volume_files(self):
-        """_parse_volume_files Extracts the UEFI entries that belong to the
-        given Firmware Volumes and append them to
-        :attr:`uefi.UEFIVolume.volume_entries`.
+        """Extracts the UEFI entries that belong to the given Firmware Volumes
+        and append them to :attr:`uefi.UEFIVolume.volume_entries`
 
         The function also detects nested uncompressed volumes and creates new
         instance of :class:`uefi.UEFIVolume` and appends them to
@@ -874,8 +876,8 @@ class UEFIVolume:
                 print(self.volume_entries[i])
 
     def _classify_entries(self):
-        """_classify_entries Checks all entries belonging to the UEFI Firmware
-        Volume and classifies them.
+        """Checks all entries belonging to the UEFI Firmware Volume and
+        classifies them
 
         Entries are classified to the two basic categories: data or empty
         Everything else is considered either closed-source code or data (in
@@ -907,7 +909,7 @@ class UEFIVolume:
             [print(self.data_files[i]) for i in range(len(self.data_files))]
 
     def _is_entry_empty_padding(self, entry):
-        """_is_entry_empty_padding Checks if an entry is an empty padding.
+        """Checks if an entry is an empty padding
 
         :param entry: A dictionary entry from the UEFI Firmware Volume entries
         :type entry: dict
@@ -925,8 +927,7 @@ class UEFIVolume:
         return False
 
     def _is_entry_non_empty_padding(self, entry):
-        """_is_entry_non_empty_padding Checks if an entry is a non-empty
-        padding.
+        """Checks if an entry is a non-empty padding
 
         :param entry: A dictionary entry from the UEFI Firmware Volume entries
         :type entry: dict
@@ -943,7 +944,7 @@ class UEFIVolume:
         return False
 
     def _is_entry_free_space(self, entry):
-        """_is_entry_free_space Checks if an entry is a free space.
+        """Checks if an entry is a free space
 
         :param entry: A dictionary entry from the UEFI Firmware Volume entries
         :type entry: dict
@@ -959,7 +960,7 @@ class UEFIVolume:
         return False
 
     def _is_entry_empty_pad_file(self, entry):
-        """_is_entry_empty_pad_file Checks if an entry is an empty pad file.
+        """Checks if an entry is an empty pad file
 
         :param entry: A dictionary entry from the UEFI Firmware Volume entries
         :type entry: dict
@@ -977,8 +978,7 @@ class UEFIVolume:
         return False
 
     def _is_entry_non_empty_pad_file(self, entry):
-        """_is_entry_non_empty_pad_file Checks if an entry is a non-empty pad
-        file.
+        """Checks if an entry is a non-empty pad file
 
         :param entry: A dictionary entry from the UEFI Firmware Volume entries
         :type entry: dict
@@ -996,7 +996,7 @@ class UEFIVolume:
         return False
 
     def _sum_sizes(self, files):
-        """_sum_sizes Sums the size of the UEFI Firmware Volume files.
+        """Sums the size of the UEFI Firmware Volume files
 
         :param files: Dictionary of files to sum
         :type files: dict
@@ -1006,12 +1006,11 @@ class UEFIVolume:
         return sum(list(f['size'] for f in files))
 
     def _is_nvar_store_volume(self):
-        """_is_nvar_store_volume Determines if given UEFI Firmware Volume is a
-        variable store
+        """Determines if given UEFI Firmware Volume is a variable store
 
-        :return: True if the Firmware Volume consists of NVAR entries exceeding
-                 the :const:`uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD`, False
-                 otherwise.
+        :return: True if the Firmware Volume consists of NVAR entries
+                 exceeding the :const:`uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD`,
+                 False otherwise.
         :rtype: bool
         """
         nvar_count = 0
@@ -1028,8 +1027,8 @@ class UEFIVolume:
             return False
 
     def _calculate_metrics(self):
-        """_calculate_metrics Calculates the sizes of the four basic firmware
-        components categories
+        """Calculates the sizes of the four basic firmware components
+        categories
 
         Calls :meth:`~uefi.UEFIVolume._classify_entries` then sums the regions
         sizes from all 3 lists
@@ -1054,8 +1053,8 @@ class UEFIVolume:
         self._normalize_sizes()
 
     def _normalize_sizes(self):
-        """_normalize_sizes Checks if all Firmware Volume components sizes sum
-        up to whole Firmware Volume size.
+        """Checks if all Firmware Volume components sizes sum up to whole
+        Firmware Volume size.
 
         For all nested volumes in :attr:`uefi.UEFIVolume.nested_volumes` sums
         the sizes from all 3 lists:
@@ -1092,13 +1091,13 @@ class UEFIVolume:
             self.closed_code_size += (self.volume_size - classified_files_size)
 
     def _export_files_md(self, file, volume_files, category):
-        """_export_regions_md Write the Firmware Volume entries for given
-        category to the markdown file
+        """Write the Firmware Volume entries for given category to the
+        markdown file
 
         :param file: Markdown file handle to write the entries' info to
         :type file: file
-        :param volume_files: Dictionary containing entires to be written to the
-                             markdown file.
+        :param volume_files: Dictionary containing entires to be written to
+                             the markdown file.
         :type volume_files: dict
         :param category: Category of the entries to be written to the markdown
                          file. Should be one of: open-source, closed-source,
@@ -1112,8 +1111,8 @@ class UEFIVolume:
                         category))
 
     def export_markdown(self, file):
-        """export_markdown Saves the openness report in markdown format for
-        given UEFI Firmware Volume
+        """Saves the openness report in markdown format for given UEFI
+        Firmware Volume
 
         Saves the parsed information and classified UEFI Firmware Volume
         components into a markdown file.

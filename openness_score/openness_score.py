@@ -16,9 +16,9 @@ from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
 version = 'v0.1.0'
 """The utility's version"""
 
+
 class ObligingArgumentParser(ArgumentParser):
-    """ObligingArgumentParser An extension to ArgumentParser class providing
-    better error handling.
+    """An extension to ArgumentParser class providing better error handling
 
     :param ArgumentParser: The class to be inherited from.
     :type ArgumentParser: ArgumentParser
@@ -38,8 +38,8 @@ class ObligingArgumentParser(ArgumentParser):
 
 
 def check_file(file):
-    """check_file The function performs all safety checks and detects the
-    input file format.
+    """The function performs all safety checks and detects the input file
+    format
 
     Function checks if all required external utilities like cbfstool,
     UEFIExtract and lzma are present. It also recognizes whether the input
@@ -95,8 +95,8 @@ def check_file(file):
 
 
 def export_data(args, image):
-    """export_data Calls the image's class methods to export data to markdown
-    and pie charts
+    """Calls the image's class methods to export data to the markdown and pie
+    charts
 
     :param args: Program arguments
     :type args: argparse.Namespace
@@ -121,8 +121,8 @@ def export_data(args, image):
     image.export_charts(output_path)
 
 
-def main():
-    """main Utilitie's entry point responsible for argument parsing and
+def OpennessScore():
+    """Utility's entry point responsible for argument parsing and
     creating firmware image class instances based on detected image format.
     Calls functions to create the reports and pie charts.
     """
@@ -137,7 +137,7 @@ def main():
                         'Specifies the directory where to store the results']))
     parser.add_argument('-v', '--verbose', help='\n'.join([
                         'Print verbose information during the image parsing']),
-                         action='store_true')
+                        action='store_true')
     parser.add_argument('-V', '--version', action='version',
                         version='Dasharo Openness Score {}'.format(version))
 
@@ -167,4 +167,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    OpennessScore()
