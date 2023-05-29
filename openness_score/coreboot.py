@@ -933,7 +933,7 @@ class CBFSImage:
     def _get_kconfig_value(self, option):
         """Returns a value of given coreboot's Kconfig option
 
-        :param option: Name of the Kconfig option without 'CONFIG_' prefix.
+        :param option: Name of the Kconfig option without 'CONFIG\_' prefix.
         :type option: str
         :return: The value of Kconfig option
         :rtype: str
