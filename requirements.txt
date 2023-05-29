@@ -1,5 +1,6 @@
 bluepy
 sphinx
+sphinx-autobuild 
 sphinx-rtd-theme
 matplotlib
 pycodestyle

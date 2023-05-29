@@ -88,7 +88,7 @@ For more details please refer to the [methodology documentation](docs/methodolog
 
 Python requirements:
 
-```
+```bash
 virtualenv -p $(which python3) venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -102,14 +102,20 @@ We use [Python Docstring](https://peps.python.org/pep-0257/) in
 [Sphinx format](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html)
 to generate detailed code documentation automatically.
 
-To view the documentation run the following:
+To generate the documentation run the following:
 
-```
+```bash
 (venv) make html
-(venv) python -m http.server -d build/html 8080
+python -m http.server 8000
 ```
 
-Open the web browser and type `localhost:8080` as address. Or alternatively
+For live preview run:
+
+```bash
+(venv) make livehtml
+```
+
+Open the web browser and type `localhost:8000` as address. Or alternatively
 open `build/html/index.html` file in the web browser directly.
 
 ## Checking Python style

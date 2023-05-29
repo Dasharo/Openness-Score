@@ -24,12 +24,16 @@ if errorlevel 9009 (
 )
 
 if "%1" == "" goto help
+if "%1" == "livehtml" goto help
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+
+:livehtml
+sphinx-autobuild %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :end
 popd
