@@ -3,6 +3,7 @@ coreboot module
 
 .. automodule:: coreboot
    :members:
-   :undoc-members:
+   :private-members:
+   :special-members:
    :show-inheritance:
    :no-value:

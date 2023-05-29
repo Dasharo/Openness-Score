@@ -3,6 +3,7 @@ uefi module
 
 .. automodule:: uefi
    :members:
-   :undoc-members:
+   :private-members:
+   :special-members:
    :show-inheritance:
    :no-value:
