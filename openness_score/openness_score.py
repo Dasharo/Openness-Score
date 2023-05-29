@@ -11,6 +11,8 @@ from coreboot import DasharoCorebootImage
 from uefi import UEFIImage
 from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
 
+"""The Dasharo Openness Score utility's entrypoint"""
+
 version = 'v0.1.0'
 """The utility's version"""
 

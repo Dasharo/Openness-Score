@@ -1,7 +1,8 @@
-openness\-score module
+openness_score module
 ======================
 
-.. automodule:: openness-score
+.. automodule:: openness_score
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-value:

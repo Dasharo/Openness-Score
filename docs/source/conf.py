@@ -31,7 +31,7 @@ html_static_path = ['_static']
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../openness-score/'))
+sys.path.insert(0, os.path.abspath('../../openness_score/'))
 
 extensions.append('sphinx.ext.autodoc')
 extensions.append('sphinx.ext.viewcode')

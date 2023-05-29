@@ -5,3 +5,4 @@ uefi module
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-value:

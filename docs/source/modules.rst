@@ -1,9 +1,9 @@
-openness-score
+openness_score
 ==============
 
 .. toctree::
    :maxdepth: 4
 
    coreboot
-   openness-score
+   openness_score
    uefi

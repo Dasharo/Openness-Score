@@ -24,7 +24,7 @@ but also many more coreboot distributions like heads.
 ## Usage
 
 ```bash
-usage: openness-score.py [-o OUTPUT] [-v] [-V] [file]
+usage: openness_score.py [-o OUTPUT] [-v] [-V] [file]
 
 Calculate Dasharo Openness Score for firmware images
 
@@ -42,7 +42,7 @@ options:
 For example:
 
 ```bash
-./openness-score.py ~/msi_ms7d25_v1.1.1_ddr4.rom
+./openness_score.py ~/msi_ms7d25_v1.1.1_ddr4.rom
 ```
 
 The utility will produce 3 files:
@@ -117,7 +117,7 @@ open `build/html/index.html` file in the web browser directly.
 Test the code style with:
 
 ```bash
-pycodestyle --show-source openness-score/*.py
+pycodestyle --show-source openness_score/*.py
 ```
 
 We do not accept code that does not pass the style check.
