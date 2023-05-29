@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import List
 import matplotlib.pyplot as plt
 
+"""This module is responsible for parsing coreobot images."""
 
 class DasharoCorebootImage:
     """ DasharoCorebootImage class
@@ -23,8 +24,10 @@ class DasharoCorebootImage:
         r"\((?P<attribute>(read-only, |preserve, |CBFS, ){0,1}?)",
         r"size (?P<size>\d+?), offset (?P<offset>\d+?)\)"
     ]
+    """Set of regular expressions used to extract the flashmap regions"""
 
     region_regexp = re.compile(''.join(region_patterns), re.MULTILINE)
+    """Regular expression variable used to extract the flashmap regions"""
 
     # Regions to consider as data, they should not contain any code ever.
     # Some of the regions are used only by certain platforms and may not be met
@@ -81,9 +84,9 @@ class DasharoCorebootImage:
         self.image_size = os.path.getsize(image_path)
         """Image size in bytes"""
         self.fmap_regions = {}
-        """Dictionary holding the coreboot image flashmap regions"""
+        """A dictionary holding the coreboot image flashmap regions"""
         self.cbfs_images = []
-        """List holding the regions with CBFS"""
+        """A list holding the regions with CBFS"""
         self.num_regions = 0
         """Total number of flashmap regions"""
         self.num_cbfses = 0
@@ -97,18 +100,18 @@ class DasharoCorebootImage:
         self.empty_size = 0
         """Total number of bytes classified as empty"""
         self.open_code_regions = []
-        """List holding flashmap regions filled with open-source code"""
+        """A list holding flashmap regions filled with open-source code"""
         self.closed_code_regions = []
-        """List holding flashmap regions filled with closed-source code"""
+        """A list holding flashmap regions filled with closed-source code"""
         self.data_regions = []
-        """List holding flashmap regions filled with data"""
+        """A list holding flashmap regions filled with data"""
         self.empty_regions = []
-        """List holding empty flashmap regions"""
+        """A list holding empty flashmap regions"""
         # This type of regions will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
         self.uncategorized_regions = []
-        """List holding flashmap regions that could not be classified. Counted
+        """A list holding flashmap regions that could not be classified. Counted
         as closed-source code at the end of calculation process.
         """
 
@@ -598,8 +601,10 @@ class CBFSImage:
         r"(?P<filetype>(" + "|".join(CBFS_FILETYPES) + r"){1}?)\s+",
         r"(?P<size>\d+?)\s+(?P<compression>\w+?)(\s+\(\d+ \w+\))?$"
     ]
+    """Set of regular expressions used to parse the cbfstool output"""
 
     file_regexp = re.compile(''.join(file_patterns), re.MULTILINE)
+    """Regular expression variable used to parse the cbfstool output"""
 
     def __init__(self, image_path, region, verbose=False):
         """__init__ CBFSImage class init method.
@@ -626,9 +631,9 @@ class CBFSImage:
         self.cbfs_size = region['size']
         """The region size where the CBFS is located"""
         self.cbfs_files = {}
-        """Dictionary holding the CBFS files and their attributes"""
+        """A dictionary holding the CBFS files and their attributes"""
         self.kconfig_opts = {}
-        """Dictionary holding the coreboot config used to produce the CBFS"""
+        """A dictionary holding the coreboot config used to produce the CBFS"""
         self.num_files = 0
         """Number of files in the CBFS"""
         self.num_opts = 0
@@ -642,18 +647,18 @@ class CBFSImage:
         self.empty_size = 0
         """Total number of bytes classified as empty"""
         self.open_code_files = []
-        """List holding CBFS files classified as open-source code"""
+        """A list holding CBFS files classified as open-source code"""
         self.closed_code_files = []
-        """List holding CBFS files classified as closed-source code"""
+        """A list holding CBFS files classified as closed-source code"""
         self.data_files = []
-        """List holding CBFS files classified as data"""
+        """A list holding CBFS files classified as data"""
         self.empty_files = []
-        """List holding CBFS empty spaces"""
+        """A list holding CBFS empty spaces"""
         # This type of files will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
         self.uncategorized_files = []
-        """List holding CBFS files that could not be classified. Counted
+        """A list holding CBFS files that could not be classified. Counted
         as closed-source code at the end of calculation process.
         """
         self.edk2_ipxe = False
