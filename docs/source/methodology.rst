@@ -1,0 +1,3 @@
+Dasharo Openness Score methodology
+==================================
+
