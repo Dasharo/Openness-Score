@@ -10,7 +10,7 @@ Welcome to Dasharo Openness Score's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   modules
 
 Indices and tables
 ==================

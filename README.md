@@ -84,33 +84,40 @@ For more details please refer to the [methodology documentation](docs/methodolog
 - [UEFIExtract NE](https://github.com/LongSoft/UEFITool) installed in host
   system
 - `lzma` compression tool installed on host system
+- `make`
 
 Python requirements:
 
 ```
-pip3 install -r requirements.txt
+virtualenv -p $(which python3) venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ## Documentation
 
-General documentation can be found in [docs directory](docs).
+The documentation sources can be found in [docs directory](docs).
 
-For detailed code documentation we use [Python Docstring](https://peps.python.org/pep-0257/)
-in [Sphinx format](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html).
+We use [Python Docstring](https://peps.python.org/pep-0257/) in
+[Sphinx format](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html)
+to generate detailed code documentation automatically.
 
 To view the documentation run the following:
 
 ```
-make html
-python -m http.server -d build/html 8080
+(venv) make html
+(venv) python -m http.server -d build/html 8080
 ```
+
+Open the web browser and type `localhost:8080` as address. Or alternatively
+open `build/html/index.html` file in the web browser directly.
 
 ## Checking Python style
 
 Test the code style with:
 
 ```bash
-pycodestyle --show-source *.py
+pycodestyle --show-source openness-score/*.py
 ```
 
 We do not accept code that does not pass the style check.
