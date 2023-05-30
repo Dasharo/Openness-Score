@@ -17,7 +17,11 @@ Dasharo Openness Score general rules
      closed-source and open-source code only
    * Markdown report should print general image statistics and any additional
      statistic per region or firmware integral part (firmware image type
-     dependent).
+     dependent) includign the category the component has been classified
+   * General image statistic at minimum are: image size, open-source size,
+     closed-source size, data size and empty size
+
+3. The utility must be sa precise as possible to avoid falsified results.
 
 Dasharo Openness Score module design rules
 ------------------------------------------
@@ -43,4 +47,5 @@ Each class representing a firmware image (or its integral part):
   ``__init__`` method
 9. Must implement ``export_charts`` method to generate pie charts (only for
    classes representing the whole firmware image)
-
+10. Must assume a component as closed-source if unable to classify to any
+    category.
