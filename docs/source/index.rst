@@ -11,6 +11,7 @@ Welcome to Dasharo Openness Score's documentation!
    :caption: Contents:
 
    methodology
+   design
    modules
 
 What is Dasharo Openness Score

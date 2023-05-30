@@ -1,5 +1,5 @@
-openness_score
-==============
+Dasharo Openness Score modules documentation
+============================================
 
 .. toctree::
    :maxdepth: 4
