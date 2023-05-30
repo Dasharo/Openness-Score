@@ -2,6 +2,9 @@
 
 Openness Score for asus_kgpe-d16_v0.4.0_16M_vboot_notpm.rom
 
+Open-source code percentage: **100.0%**
+Closed-source code percentage: **0.0%**
+
 * Image size: 16777216 (0x1000000)
 * Number of regions: 19
 * Number of CBFSes: 2
@@ -9,9 +12,6 @@ Openness Score for asus_kgpe-d16_v0.4.0_16M_vboot_notpm.rom
 * Total closed-source code size: 0 (0x0)
 * Total data size: 765974 (0xbb016)
 * Total empty size: 15101476 (0xe66e24)
-
-Open-source code percentage: **100.0%**
-Closed-source code percentage: **0.0%**
 
 > Numbers given above already include the calculations from CBFS regions
 > presented below

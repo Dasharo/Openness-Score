@@ -2,6 +2,9 @@
 
 Openness Score for msi_ms7d25_v1.1.1_ddr4.rom
 
+Open-source code percentage: **42.8%**
+Closed-source code percentage: **57.2%**
+
 * Image size: 33554432 (0x2000000)
 * Number of regions: 33
 * Number of CBFSes: 3
@@ -9,9 +12,6 @@ Openness Score for msi_ms7d25_v1.1.1_ddr4.rom
 * Total closed-source code size: 8846847 (0x86fdff)
 * Total data size: 939652 (0xe5684)
 * Total empty size: 17135512 (0x1057798)
-
-Open-source code percentage: **42.8%**
-Closed-source code percentage: **57.2%**
 
 > Numbers given above already include the calculations from CBFS regions
 > presented below
