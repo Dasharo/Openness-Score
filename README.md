@@ -65,7 +65,7 @@ The [examples directory](examples) contains sample Openness Score reports for:
 
 - [Dasharo compatible with MSI PRO Z690-A DDR4 v1.1.1](examples/msi_ms7d25_v1.1.1_ddr4.rom_openness_score.md)
 - [MSI PRO Z690-A DDR4 BIOS v1.20](examples/E7D25IMS.120_openness_score.md)
-- [heads-x230-maximized-v0.2.0-1525-g77b5933](examples/heads-x230-maximized-v0.2.0-1525-g77b5933.rom_openness_score.md)
+- [heads-x230-maximized-v0.2.0-1544-g21b87ff](examples/heads-x230-maximized-v0.2.0-1554-g21b87ff.rom_openness_score.md)
 - [Dasharo compatible with ASUS KGPE-D16 v0.4.0](examples/asus_kgpe-d16_v0.4.0_16M_vboot_notpm.rom_openness_score.md)
 
 ## How does it work?
