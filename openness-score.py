@@ -96,7 +96,7 @@ def main():
     parser.add_argument('file', help='Firmware binary file to be parsed',
                         nargs='?')
     parser.add_argument('-h', '--help', action='help', help=SUPPRESS)
-    parser.add_argument('-o', '--output', help='\n'.join([
+    parser.add_argument('-o', '--output', default='out/', help='\n'.join([
                         'Specifies the directory where to store the results']))
     parser.add_argument('-v', '--verbose', help=SUPPRESS, action='store_true')
     parser.add_argument('-V', '--version', action='version',
