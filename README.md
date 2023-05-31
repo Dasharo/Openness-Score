@@ -81,17 +81,14 @@ For more details please refer to the [methodology documentation](docs/methodolog
 
 * Install [Nix pakcage manager](https://nixos.org/download.html) 
 
-```bash
-sh <(curl -L https://nixos.org/nix/install) --no-daemon
-```
+> We recommend `Single-user` installation. Especially on SELinux-enabled
+> systems, where `Multi-user` installation is [currently not
+> supported](https://github.com/NixOS/nix/issues/2374)
 
 * Install [devenv](https://devenv.sh/getting-started/)
 
-```bash
-nix-env -iA cachix -f https://cachix.org/api/v1/install
-cachix use devenv
-nix-env -if https://github.com/cachix/devenv/tarball/latest
-```
+> We recommend to install both `Cachix` and `devenv` using the `Newcomers`
+> method.
 
 * Enter devenv shell
 
