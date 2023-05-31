@@ -79,20 +79,28 @@ For more details please refer to the [methodology documentation](docs/methodolog
 
 ## Requirements
 
-- [cbfstool](https://github.com/coreboot/coreboot/tree/master/util/cbfstool)
-  installed on host system
-- [UEFIExtract NE](https://github.com/LongSoft/UEFITool) installed in host
-  system
-- `lzma` compression tool installed on host system
-- `make`
-
-Python requirements:
+* Install [Nix pakcage manager](https://nixos.org/download.html) 
 
 ```bash
-virtualenv -p $(which python3) venv
-source venv/bin/activate
-pip install -r requirements.txt
+sh <(curl -L https://nixos.org/nix/install) --no-daemon
 ```
+
+* Install [devenv](https://devenv.sh/getting-started/)
+
+```bash
+nix-env -iA cachix -f https://cachix.org/api/v1/install
+cachix use devenv
+nix-env -if https://github.com/cachix/devenv/tarball/latest
+```
+
+* Enter devenv shell
+
+```bash
+devenv shell
+```
+
+* Now you have all dependencies in place, and can proceed with using the
+  scripts
 
 ## Documentation
 

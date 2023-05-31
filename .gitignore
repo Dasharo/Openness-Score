@@ -3,3 +3,7 @@ __pycache__
 *.bin
 *.rom
 build
+
+# Devenv
+.devenv*
+devenv.local.nix
