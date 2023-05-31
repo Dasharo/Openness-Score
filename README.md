@@ -79,7 +79,7 @@ For more details please refer to the [methodology documentation](docs/methodolog
 
 ## Requirements
 
-* Install [Nix pakcage manager](https://nixos.org/download.html) 
+* Install [Nix package manager](https://nixos.org/download.html) 
 
 > We recommend `Single-user` installation. Especially on SELinux-enabled
 > systems, where `Multi-user` installation is [currently not
