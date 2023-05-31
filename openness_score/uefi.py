@@ -548,6 +548,11 @@ class UEFIImage:
                         self.data_size, hex(self.data_size),
                         self.empty_size, hex(self.empty_size)))
 
+            md.write('![](%s_openness_chart.png)\n\n' %
+                     Path(self.image_path).name)
+            md.write('![](%s_openness_chart_full_image.png)\n\n' %
+                     Path(self.image_path).name)
+
             md.write('> Numbers given above already include the calculations')
             md.write(' from UEFI volumes\n> presented below. Only top level'
                      ' volumes have been presented\n\n')
