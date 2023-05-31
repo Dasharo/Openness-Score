@@ -13,6 +13,10 @@ Closed-source code percentage: **0.0%**
 * Total data size: 765974 (0xbb016)
 * Total empty size: 15101476 (0xe66e24)
 
+![](asus_kgpe-d16_v0.4.0_16M_vboot_notpm.rom_openness_chart.png)
+
+![](asus_kgpe-d16_v0.4.0_16M_vboot_notpm.rom_openness_chart_full_image.png)
+
 > Numbers given above already include the calculations from CBFS regions
 > presented below
 

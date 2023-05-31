@@ -13,6 +13,10 @@ Closed-source code percentage: **2.1%**
 * Total data size: 74513 (0x12311)
 * Total empty size: 4952228 (0x4b90a4)
 
+![](heads-x230-maximized-v0.2.0-1554-g21b87ff.rom_openness_chart.png)
+
+![](heads-x230-maximized-v0.2.0-1554-g21b87ff.rom_openness_chart_full_image.png)
+
 > Numbers given above already include the calculations from CBFS regions
 > presented below
 

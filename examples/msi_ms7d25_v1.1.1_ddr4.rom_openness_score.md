@@ -13,6 +13,10 @@ Closed-source code percentage: **57.2%**
 * Total data size: 939652 (0xe5684)
 * Total empty size: 17135512 (0x1057798)
 
+![](msi_ms7d25_v1.1.1_ddr4.rom_openness_chart.png)
+
+![](msi_ms7d25_v1.1.1_ddr4.rom_openness_chart_full_image.png)
+
 > Numbers given above already include the calculations from CBFS regions
 > presented below
 

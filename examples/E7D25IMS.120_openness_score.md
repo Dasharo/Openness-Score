@@ -14,6 +14,10 @@ Closed-source code percentage: **100.0%**
 * Total data size: 143376 (0x23010)
 * Total empty size: 21870195 (0x14db673)
 
+![](E7D25IMS.120_openness_chart.png)
+
+![](E7D25IMS.120_openness_chart_full_image.png)
+
 > Numbers given above already include the calculations from UEFI volumes
 > presented below. Only top level volumes have been presented
 
