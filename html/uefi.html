@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UEFI module &mdash; Dasharo Openness Score v0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="coreboot module" href="coreboot.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Dasharo Openness Score
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Dasharo Openness Score methodology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Dasharo Openness Score design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Dasharo Openness Score modules documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="openness_score.html">openness_score module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coreboot.html">coreboot module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">UEFI module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uefi.UEFIImage"><code class="docutils literal notranslate"><span class="pre">UEFIImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.EMPTY_REGION_PADDING"><code class="docutils literal notranslate"><span class="pre">UEFIImage.EMPTY_REGION_PADDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.EMPTY_BIOS_PADDING"><code class="docutils literal notranslate"><span class="pre">UEFIImage.EMPTY_BIOS_PADDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.NON_EMPTY_REGION_PADDING"><code class="docutils literal notranslate"><span class="pre">UEFIImage.NON_EMPTY_REGION_PADDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.NON_EMPTY_BIOS_PADDING"><code class="docutils literal notranslate"><span class="pre">UEFIImage.NON_EMPTY_BIOS_PADDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.CLOSED_SOURCE_REGIONS"><code class="docutils literal notranslate"><span class="pre">UEFIImage.CLOSED_SOURCE_REGIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.DATA_REGIONS"><code class="docutils literal notranslate"><span class="pre">UEFIImage.DATA_REGIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.__init__"><code class="docutils literal notranslate"><span class="pre">UEFIImage.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.image_path"><code class="docutils literal notranslate"><span class="pre">UEFIImage.image_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.image_size"><code class="docutils literal notranslate"><span class="pre">UEFIImage.image_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.uefi_entries"><code class="docutils literal notranslate"><span class="pre">UEFIImage.uefi_entries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.volumes"><code class="docutils literal notranslate"><span class="pre">UEFIImage.volumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.regions"><code class="docutils literal notranslate"><span class="pre">UEFIImage.regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.bios_region"><code class="docutils literal notranslate"><span class="pre">UEFIImage.bios_region</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.num_regions"><code class="docutils literal notranslate"><span class="pre">UEFIImage.num_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.num_volumes"><code class="docutils literal notranslate"><span class="pre">UEFIImage.num_volumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.num_entries"><code class="docutils literal notranslate"><span class="pre">UEFIImage.num_entries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.open_code_size"><code class="docutils literal notranslate"><span class="pre">UEFIImage.open_code_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.closed_code_size"><code class="docutils literal notranslate"><span class="pre">UEFIImage.closed_code_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.data_size"><code class="docutils literal notranslate"><span class="pre">UEFIImage.data_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.empty_size"><code class="docutils literal notranslate"><span class="pre">UEFIImage.empty_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.closed_code_regions"><code class="docutils literal notranslate"><span class="pre">UEFIImage.closed_code_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.data_regions"><code class="docutils literal notranslate"><span class="pre">UEFIImage.data_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.empty_spaces"><code class="docutils literal notranslate"><span class="pre">UEFIImage.empty_spaces</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.debug"><code class="docutils literal notranslate"><span class="pre">UEFIImage.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.__len__"><code class="docutils literal notranslate"><span class="pre">UEFIImage.__len__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.__repr__"><code class="docutils literal notranslate"><span class="pre">UEFIImage.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.__str__"><code class="docutils literal notranslate"><span class="pre">UEFIImage.__str__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._parse_uefi_image"><code class="docutils literal notranslate"><span class="pre">UEFIImage._parse_uefi_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._entry_is_volume"><code class="docutils literal notranslate"><span class="pre">UEFIImage._entry_is_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._is_entry_nested_volume"><code class="docutils literal notranslate"><span class="pre">UEFIImage._is_entry_nested_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._entry_is_region"><code class="docutils literal notranslate"><span class="pre">UEFIImage._entry_is_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._is_entry_inside_bios_region"><code class="docutils literal notranslate"><span class="pre">UEFIImage._is_entry_inside_bios_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._classify_entries"><code class="docutils literal notranslate"><span class="pre">UEFIImage._classify_entries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._sum_sizes"><code class="docutils literal notranslate"><span class="pre">UEFIImage._sum_sizes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._calculate_metrics"><code class="docutils literal notranslate"><span class="pre">UEFIImage._calculate_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._normalize_sizes"><code class="docutils literal notranslate"><span class="pre">UEFIImage._normalize_sizes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._get_percentage"><code class="docutils literal notranslate"><span class="pre">UEFIImage._get_percentage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage._export_regions_md"><code class="docutils literal notranslate"><span class="pre">UEFIImage._export_regions_md()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.export_markdown"><code class="docutils literal notranslate"><span class="pre">UEFIImage.export_markdown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIImage.export_charts"><code class="docutils literal notranslate"><span class="pre">UEFIImage.export_charts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#uefi.UEFIVolume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.NVAR_VOLUME_THRESHOLD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.__init__"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.uefi_entries"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.uefi_entries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_idx"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_idx</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_base"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_base</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_size"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_end"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_type"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_guid"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_guid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.volume_entries"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.volume_entries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.nested_volumes"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.nested_volumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.open_code_size"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.open_code_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.closed_code_size"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.closed_code_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.data_size"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.data_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.empty_size"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.empty_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.open_code_files"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.open_code_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.closed_code_files"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.closed_code_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.data_files"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.data_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.empty_files"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.empty_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.debug"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.__len__"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.__len__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.__repr__"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.__str__"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.__str__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._entry_is_inside_volume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._entry_is_inside_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_end_of_volume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_end_of_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._entry_is_region"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._entry_is_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._entry_is_self_volume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._entry_is_self_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._entry_is_nested_volume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._entry_is_nested_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._parse_volume_files"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._parse_volume_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._classify_entries"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._classify_entries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_entry_empty_padding"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_entry_empty_padding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_entry_non_empty_padding"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_entry_non_empty_padding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_entry_free_space"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_entry_free_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_entry_empty_pad_file"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_entry_empty_pad_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_entry_non_empty_pad_file"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_entry_non_empty_pad_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._sum_sizes"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._sum_sizes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._is_nvar_store_volume"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._is_nvar_store_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._calculate_metrics"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._calculate_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._normalize_sizes"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._normalize_sizes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume._export_files_md"><code class="docutils literal notranslate"><span class="pre">UEFIVolume._export_files_md()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uefi.UEFIVolume.export_markdown"><code class="docutils literal notranslate"><span class="pre">UEFIVolume.export_markdown()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dasharo Openness Score</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Dasharo Openness Score modules documentation</a></li>
+      <li class="breadcrumb-item active">UEFI module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/uefi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-uefi">
+<span id="uefi-module"></span><h1>UEFI module<a class="headerlink" href="#module-uefi" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="uefi.UEFIImage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uefi.</span></span><span class="sig-name descname"><span class="pre">UEFIImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>UEFIImage class</p>
+<p>The main class representing an UEFI firmware image</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.EMPTY_REGION_PADDING">
+<span class="sig-name descname"><span class="pre">EMPTY_REGION_PADDING</span></span><a class="headerlink" href="#uefi.UEFIImage.EMPTY_REGION_PADDING" title="Permalink to this definition"></a></dt>
+<dd><p>A list of entries known to be top-level empty paddings</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.EMPTY_BIOS_PADDING">
+<span class="sig-name descname"><span class="pre">EMPTY_BIOS_PADDING</span></span><a class="headerlink" href="#uefi.UEFIImage.EMPTY_BIOS_PADDING" title="Permalink to this definition"></a></dt>
+<dd><p>A list of entries known to be second-level empty paddings</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.NON_EMPTY_REGION_PADDING">
+<span class="sig-name descname"><span class="pre">NON_EMPTY_REGION_PADDING</span></span><a class="headerlink" href="#uefi.UEFIImage.NON_EMPTY_REGION_PADDING" title="Permalink to this definition"></a></dt>
+<dd><p>A list of entries known to be top-level non-empty paddings</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.NON_EMPTY_BIOS_PADDING">
+<span class="sig-name descname"><span class="pre">NON_EMPTY_BIOS_PADDING</span></span><a class="headerlink" href="#uefi.UEFIImage.NON_EMPTY_BIOS_PADDING" title="Permalink to this definition"></a></dt>
+<dd><p>A list of entries known to be second-level non-empty paddings</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.CLOSED_SOURCE_REGIONS">
+<span class="sig-name descname"><span class="pre">CLOSED_SOURCE_REGIONS</span></span><a class="headerlink" href="#uefi.UEFIImage.CLOSED_SOURCE_REGIONS" title="Permalink to this definition"></a></dt>
+<dd><p>A list of regions known to be closed-source</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.DATA_REGIONS">
+<span class="sig-name descname"><span class="pre">DATA_REGIONS</span></span><a class="headerlink" href="#uefi.UEFIImage.DATA_REGIONS" title="Permalink to this definition"></a></dt>
+<dd><p>A list of regions known to contain data only</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>UEFIImage class init method</p>
+<p>Initializes the class fields for storing the firmware image components
+classified to specific groups. Also calls
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_parse_uefi_image()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_calculate_metrics()</span></code> methods to parse the
+image and calculate the metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_path</strong> (<em>str</em>) – Path the the firmware image file being parsed.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Optional parameter to turn on debug information during
+the image parsing, defaults to False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.image_path">
+<span class="sig-name descname"><span class="pre">image_path</span></span><a class="headerlink" href="#uefi.UEFIImage.image_path" title="Permalink to this definition"></a></dt>
+<dd><p>Path to the image represented by UEFIImage class</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.image_size">
+<span class="sig-name descname"><span class="pre">image_size</span></span><a class="headerlink" href="#uefi.UEFIImage.image_size" title="Permalink to this definition"></a></dt>
+<dd><p>Image size in bytes</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.uefi_entries">
+<span class="sig-name descname"><span class="pre">uefi_entries</span></span><a class="headerlink" href="#uefi.UEFIImage.uefi_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Dictionary holding the UEFI image entries</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.volumes">
+<span class="sig-name descname"><span class="pre">volumes</span></span><a class="headerlink" href="#uefi.UEFIImage.volumes" title="Permalink to this definition"></a></dt>
+<dd><p>List holding the UEFI Firmware Volumes</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.regions">
+<span class="sig-name descname"><span class="pre">regions</span></span><a class="headerlink" href="#uefi.UEFIImage.regions" title="Permalink to this definition"></a></dt>
+<dd><p>List holding the Intel firmware image regions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.bios_region">
+<span class="sig-name descname"><span class="pre">bios_region</span></span><a class="headerlink" href="#uefi.UEFIImage.bios_region" title="Permalink to this definition"></a></dt>
+<dd><p>Dictionary holding the UEFI image entries inside BIOS region</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.num_regions">
+<span class="sig-name descname"><span class="pre">num_regions</span></span><a class="headerlink" href="#uefi.UEFIImage.num_regions" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of Intel firmare image regions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.num_volumes">
+<span class="sig-name descname"><span class="pre">num_volumes</span></span><a class="headerlink" href="#uefi.UEFIImage.num_volumes" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of the UEFI Firmware Volumes</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.num_entries">
+<span class="sig-name descname"><span class="pre">num_entries</span></span><a class="headerlink" href="#uefi.UEFIImage.num_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of all UEFI image entries</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.open_code_size">
+<span class="sig-name descname"><span class="pre">open_code_size</span></span><a class="headerlink" href="#uefi.UEFIImage.open_code_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as open-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.closed_code_size">
+<span class="sig-name descname"><span class="pre">closed_code_size</span></span><a class="headerlink" href="#uefi.UEFIImage.closed_code_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as closed-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.data_size">
+<span class="sig-name descname"><span class="pre">data_size</span></span><a class="headerlink" href="#uefi.UEFIImage.data_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.empty_size">
+<span class="sig-name descname"><span class="pre">empty_size</span></span><a class="headerlink" href="#uefi.UEFIImage.empty_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as empty</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.closed_code_regions">
+<span class="sig-name descname"><span class="pre">closed_code_regions</span></span><a class="headerlink" href="#uefi.UEFIImage.closed_code_regions" title="Permalink to this definition"></a></dt>
+<dd><p>List holding image regions filled with closed-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.data_regions">
+<span class="sig-name descname"><span class="pre">data_regions</span></span><a class="headerlink" href="#uefi.UEFIImage.data_regions" title="Permalink to this definition"></a></dt>
+<dd><p>List holding image regions filled with data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.empty_spaces">
+<span class="sig-name descname"><span class="pre">empty_spaces</span></span><a class="headerlink" href="#uefi.UEFIImage.empty_spaces" title="Permalink to this definition"></a></dt>
+<dd><p>List holding empty image regions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIImage.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><a class="headerlink" href="#uefi.UEFIImage.debug" title="Permalink to this definition"></a></dt>
+<dd><p>Used to enable verbose debug output from the parsing process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.__len__" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the length of the UEFI firmware image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Length of the firmware binary file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.__repr__" title="Permalink to this definition"></a></dt>
+<dd><p>UEFIImage class representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Returns string representation of the firmware image</p>
+<p>Prints the firmware image statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>UEFIImage string representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._parse_uefi_image">
+<span class="sig-name descname"><span class="pre">_parse_uefi_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._parse_uefi_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._parse_uefi_image" title="Permalink to this definition"></a></dt>
+<dd><p>Parses the UEFI image with UEFIExtract and extracts information
+about its components</p>
+<p>Parses the output of ‘UEFIExtract self.image_path report’ and extract
+the UEFI image components to a self.uefi_entries dictionary using the
+<code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.report_regexp</span></code> regular expression.</p>
+<p>UEFI regions are saved in the <a class="reference internal" href="#uefi.UEFIImage.regions" title="uefi.UEFIImage.regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.regions</span></code></a>. If the
+region is a BIOS region, it is also saved to
+<a class="reference internal" href="#uefi.UEFIImage.bios_region" title="uefi.UEFIImage.bios_region"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.bios_region</span></code></a> for later use.</p>
+<p>If self.debug is True, all UEFI entries and regions with their
+attributes are printed on the console at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._entry_is_volume">
+<span class="sig-name descname"><span class="pre">_entry_is_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._entry_is_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._entry_is_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is an UEFI Firmware Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is a Firmware Volume, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._is_entry_nested_volume">
+<span class="sig-name descname"><span class="pre">_is_entry_nested_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._is_entry_nested_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._is_entry_nested_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is an UEFI Firmware Volume
+nested in another already detected UEFI Firmware Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is a Firmware Volume is nested, False
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._entry_is_region">
+<span class="sig-name descname"><span class="pre">_entry_is_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._entry_is_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._entry_is_region" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is a region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is a region, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._is_entry_inside_bios_region">
+<span class="sig-name descname"><span class="pre">_is_entry_inside_bios_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._is_entry_inside_bios_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._is_entry_inside_bios_region" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry resides inside the BIOS
+region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is inside the BIOS region, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._classify_entries">
+<span class="sig-name descname"><span class="pre">_classify_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._classify_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._classify_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Classifies the UEFI entries and regions into basic categories</p>
+<p>Each detected UEFI region is being classified into 2 basic categories
+(utility assumes there is no open-source code in vendor images and
+empty spaces are counted separately - nto as regions) and appended to
+respective lists. UEFI Firmware Volumes inside the BIOS region are
+processed separately and not included here.</p>
+<p><a class="reference internal" href="#uefi.UEFIImage.closed_code_regions" title="uefi.UEFIImage.closed_code_regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_regions</span></code></a> are appended with UEFI
+regions which type is found in
+<a class="reference internal" href="#uefi.UEFIImage.CLOSED_SOURCE_REGIONS" title="uefi.UEFIImage.CLOSED_SOURCE_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.CLOSED_SOURCE_REGIONS</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIImage.data_regions" title="uefi.UEFIImage.data_regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.data_regions</span></code></a> are appended with UEFI regions
+which type is found in <a class="reference internal" href="#uefi.UEFIImage.DATA_REGIONS" title="uefi.UEFIImage.DATA_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.DATA_REGIONS</span></code></a>. Every
+other regions which did not fall into these categories are classified
+as closed-source code and appended to
+<a class="reference internal" href="#uefi.UEFIImage.closed_code_regions" title="uefi.UEFIImage.closed_code_regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_regions</span></code></a>.</p>
+<p>Next, the entries are being processed. For simplicity we only classify
+entries that do not belong to Firmware Volumes, so they are either
+data (non-empty pads) or empty (empty padding). If an entry is a
+Firmware Volume and resides inside the BISO region, a new instance of
+<a class="reference internal" href="#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> is created and appended to
+<a class="reference internal" href="#uefi.UEFIImage.volumes" title="uefi.UEFIImage.volumes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.volumes</span></code></a> list.</p>
+<p>Entries are counted as data if their names are found in
+<a class="reference internal" href="#uefi.UEFIImage.NON_EMPTY_REGION_PADDING" title="uefi.UEFIImage.NON_EMPTY_REGION_PADDING"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.NON_EMPTY_REGION_PADDING</span></code></a> or are inside BIOS
+region and their names are found in
+<a class="reference internal" href="#uefi.UEFIImage.NON_EMPTY_BIOS_PADDING" title="uefi.UEFIImage.NON_EMPTY_BIOS_PADDING"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.NON_EMPTY_BIOS_PADDING</span></code></a>. Entries are counted as
+empty if their names are found in
+<a class="reference internal" href="#uefi.UEFIImage.EMPTY_REGION_PADDING" title="uefi.UEFIImage.EMPTY_REGION_PADDING"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.EMPTY_REGION_PADDING</span></code></a> or are inside BIOS region
+and their names are found in
+<a class="reference internal" href="#uefi.UEFIImage.EMPTY_BIOS_PADDING" title="uefi.UEFIImage.EMPTY_BIOS_PADDING"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIImage.EMPTY_BIOS_PADDING</span></code></a>.</p>
+<p>If self.debug is True, all so far classified regions with their
+attributes are printed on the console at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._sum_sizes">
+<span class="sig-name descname"><span class="pre">_sum_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._sum_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._sum_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>Sums the size of the regions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>regions</strong> (<em>dict</em>) – Dictionary of regions to sum</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sum of the region sizes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._calculate_metrics">
+<span class="sig-name descname"><span class="pre">_calculate_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._calculate_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._calculate_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the sizes of the four basic firmware components
+categories</p>
+<p>The function calls the <a class="reference internal" href="#uefi.UEFIImage._classify_entries" title="uefi.UEFIImage._classify_entries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIImage._classify_entries()</span></code></a> and
+then sums up the classified regions sizes.</p>
+<p><a class="reference internal" href="#uefi.UEFIImage.closed_code_regions" title="uefi.UEFIImage.closed_code_regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_regions</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIImage.closed_code_size" title="uefi.UEFIImage.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIImage.data_regions" title="uefi.UEFIImage.data_regions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.data_regions</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIImage.data_size" title="uefi.UEFIImage.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.data_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIImage.empty_spaces" title="uefi.UEFIImage.empty_spaces"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.empty_spaces</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIImage.empty_size" title="uefi.UEFIImage.empty_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.empty_size</span></code></a></p>
+<p>Additionally for each detected UEFI Firmware Volume region their four
+basic component’s categories are also added to the total metrics.</p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.open_code_size" title="uefi.UEFIVolume.open_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.open_code_size</span></code></a> is added to
+<a class="reference internal" href="#uefi.UEFIImage.open_code_size" title="uefi.UEFIImage.open_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.open_code_size</span></code></a> (although it is expected to be
+0).</p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.closed_code_size" title="uefi.UEFIVolume.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_size</span></code></a> is added to
+<a class="reference internal" href="#uefi.UEFIImage.closed_code_size" title="uefi.UEFIImage.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.data_size" title="uefi.UEFIVolume.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_size</span></code></a> is added to
+<a class="reference internal" href="#uefi.UEFIImage.data_size" title="uefi.UEFIImage.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.data_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.empty_size" title="uefi.UEFIVolume.empty_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.empty_size</span></code></a> is added to
+<a class="reference internal" href="#uefi.UEFIImage.empty_size" title="uefi.UEFIImage.empty_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.empty_size</span></code></a></p>
+<p>At the end the method calls <a class="reference internal" href="#uefi.UEFIImage._normalize_sizes" title="uefi.UEFIImage._normalize_sizes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIImage._normalize_sizes()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._normalize_sizes">
+<span class="sig-name descname"><span class="pre">_normalize_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._normalize_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._normalize_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if all firmware image components sizes sum up to whole image
+size</p>
+<p>This method acts as a safety check if there was no error during
+parsing and classification. It may happen that the total size of
+classified entries does not sum up to full image size. In such case
+the size difference are counted as data (possibly some metadata) and
+added to <a class="reference internal" href="#uefi.UEFIImage.closed_code_size" title="uefi.UEFIImage.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.closed_code_size</span></code></a>. Additionally and
+error is printed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._get_percentage">
+<span class="sig-name descname"><span class="pre">_get_percentage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._get_percentage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._get_percentage" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to generate code share percentage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metric</strong> (<em>int</em>) – The size of open-source or closed-source code</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Percentage share of given metric compared to the sum of
+open-source and closed-source code size.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage._export_regions_md">
+<span class="sig-name descname"><span class="pre">_export_regions_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage._export_regions_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage._export_regions_md" title="Permalink to this definition"></a></dt>
+<dd><p>Write the regions for given category to the markdown file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>file</em>) – Markdown file handle to write the regions’s info to</p></li>
+<li><p><strong>regions</strong> (<em>dict</em>) – Dictionary containing regions to be written to the
+markdown file.</p></li>
+<li><p><strong>category</strong> (<em>str</em>) – Category of the regions to be written to the markdown
+file. Should be one of: open-source, closed-source,
+data, empty.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.export_markdown">
+<span class="sig-name descname"><span class="pre">export_markdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.export_markdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.export_markdown" title="Permalink to this definition"></a></dt>
+<dd><p>Opens a file and saves the openness report in markdown format</p>
+<p>Saves the parsed information and classified image components into a
+markdown file. Also for each UEFI firmware volume in
+<a class="reference internal" href="#uefi.UEFIImage.volumes" title="uefi.UEFIImage.volumes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIImage.volumes</span></code></a> it calls
+<a class="reference internal" href="#uefi.UEFIVolume.export_markdown" title="uefi.UEFIVolume.export_markdown"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIVolume.export_markdown()</span></code></a> to save the UEFI Firmware
+Volume statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – Path to markdown file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIImage.export_charts">
+<span class="sig-name descname"><span class="pre">export_charts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIImage.export_charts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIImage.export_charts" title="Permalink to this definition"></a></dt>
+<dd><p>Plots the pie charts with firmware image statistics</p>
+<p>Method plots two pie charts. One containing only the closed-source to
+open-source code ratio. Second the share percentage of all four image
+components categories: closed-source, open-source, data and empty
+space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dir</strong> (<em>str</em>) – Path to the directory where the charts will be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uefi.UEFIVolume">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uefi.</span></span><span class="sig-name descname"><span class="pre">UEFIVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uefi_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>UEFIVolume class</p>
+<p>The main class representing an UEFI Firmware Volume.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD">
+<span class="sig-name descname"><span class="pre">NVAR_VOLUME_THRESHOLD</span></span><a class="headerlink" href="#uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD" title="Permalink to this definition"></a></dt>
+<dd><p>Threshold used to determine if given UEFI Firmware Volume is NVAR
+storage. The threshold is defined as the number of NVAR entries divided by
+the total number of entries in given Firmware Volume expressed in
+percentage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uefi_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>UEFIVolume class init method</p>
+<p>Initializes the class fields for storing the UEFI Firmware Volume
+components classified to specific groups. Also calls
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_parse_volume_files()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_calculate_metrics()</span></code> methods to parse the
+image and calculate the metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uefi_entries</strong> (<em>dict</em>) – Dictionary with the UEFI entries from the report.</p></li>
+<li><p><strong>entry_idx</strong> (<em>int</em>) – Index in the UEFI entries dictionary pointing to the
+beginning of the Firmware Volume</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Optional parameter to turn on debug information during
+the image parsing, defaults to False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.uefi_entries">
+<span class="sig-name descname"><span class="pre">uefi_entries</span></span><a class="headerlink" href="#uefi.UEFIVolume.uefi_entries" title="Permalink to this definition"></a></dt>
+<dd><p>A copy of UEFI entries used to parse the Firmware Volume contents</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_idx">
+<span class="sig-name descname"><span class="pre">volume_idx</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_idx" title="Permalink to this definition"></a></dt>
+<dd><p>Index in the UEFI entries dictionary pointing to the beginning of
+the Firmware Volume</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_base">
+<span class="sig-name descname"><span class="pre">volume_base</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_base" title="Permalink to this definition"></a></dt>
+<dd><p>The Firmware Volume base address in flash</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_size">
+<span class="sig-name descname"><span class="pre">volume_size</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_size" title="Permalink to this definition"></a></dt>
+<dd><p>The Firmware Volume size in flash</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_end">
+<span class="sig-name descname"><span class="pre">volume_end</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_end" title="Permalink to this definition"></a></dt>
+<dd><p>The Firmware Volume end address in flash</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_type">
+<span class="sig-name descname"><span class="pre">volume_type</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_type" title="Permalink to this definition"></a></dt>
+<dd><p>The Firmware Volume subtype (FFSv2, FFSv3)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_guid">
+<span class="sig-name descname"><span class="pre">volume_guid</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_guid" title="Permalink to this definition"></a></dt>
+<dd><p>Firmware Volume GUID</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.volume_entries">
+<span class="sig-name descname"><span class="pre">volume_entries</span></span><a class="headerlink" href="#uefi.UEFIVolume.volume_entries" title="Permalink to this definition"></a></dt>
+<dd><p>A list of entries residing inside this Firmware Volume</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.nested_volumes">
+<span class="sig-name descname"><span class="pre">nested_volumes</span></span><a class="headerlink" href="#uefi.UEFIVolume.nested_volumes" title="Permalink to this definition"></a></dt>
+<dd><p>A list of Firmware Volumes nested inside this Firmware Volume</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.open_code_size">
+<span class="sig-name descname"><span class="pre">open_code_size</span></span><a class="headerlink" href="#uefi.UEFIVolume.open_code_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as open-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.closed_code_size">
+<span class="sig-name descname"><span class="pre">closed_code_size</span></span><a class="headerlink" href="#uefi.UEFIVolume.closed_code_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as closed-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.data_size">
+<span class="sig-name descname"><span class="pre">data_size</span></span><a class="headerlink" href="#uefi.UEFIVolume.data_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.empty_size">
+<span class="sig-name descname"><span class="pre">empty_size</span></span><a class="headerlink" href="#uefi.UEFIVolume.empty_size" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of bytes classified as empty</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.open_code_files">
+<span class="sig-name descname"><span class="pre">open_code_files</span></span><a class="headerlink" href="#uefi.UEFIVolume.open_code_files" title="Permalink to this definition"></a></dt>
+<dd><p>List holding Firmware Volume files classified as open-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.closed_code_files">
+<span class="sig-name descname"><span class="pre">closed_code_files</span></span><a class="headerlink" href="#uefi.UEFIVolume.closed_code_files" title="Permalink to this definition"></a></dt>
+<dd><p>List holding Firmware Volume files classified as closed-source
+code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.data_files">
+<span class="sig-name descname"><span class="pre">data_files</span></span><a class="headerlink" href="#uefi.UEFIVolume.data_files" title="Permalink to this definition"></a></dt>
+<dd><p>List holding Firmware Volume files classified as data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.empty_files">
+<span class="sig-name descname"><span class="pre">empty_files</span></span><a class="headerlink" href="#uefi.UEFIVolume.empty_files" title="Permalink to this definition"></a></dt>
+<dd><p>List holding Firmware Volume empty spaces</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><a class="headerlink" href="#uefi.UEFIVolume.debug" title="Permalink to this definition"></a></dt>
+<dd><p>Used to enable verbose debug output from the parsing process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume.__len__" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the length of the UEFI Firmware Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Length of the UEFI Firmware Volume</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume.__repr__" title="Permalink to this definition"></a></dt>
+<dd><p>UEFIVolume class representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Returns string representation of the UEFI Firmware Volume</p>
+<p>Prints the firmware image statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>UEFIVolume string representation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._entry_is_inside_volume">
+<span class="sig-name descname"><span class="pre">_entry_is_inside_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._entry_is_inside_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._entry_is_inside_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry resides inside this UEFI
+Firmware Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is inside this Firmware Volume, False
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_end_of_volume">
+<span class="sig-name descname"><span class="pre">_is_end_of_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_end_of_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_end_of_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is the last entry in this
+UEFI Firmware Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is the last one in this Firmware Volume, False
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._entry_is_region">
+<span class="sig-name descname"><span class="pre">_entry_is_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._entry_is_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._entry_is_region" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is a region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is a region, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._entry_is_self_volume">
+<span class="sig-name descname"><span class="pre">_entry_is_self_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._entry_is_self_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._entry_is_self_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if UEFI entry is the current UEFI Firmware
+Volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is the current UEFI Firmware Volume, False
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._entry_is_nested_volume">
+<span class="sig-name descname"><span class="pre">_entry_is_nested_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._entry_is_nested_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._entry_is_nested_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to check if given UEFI entry is an UEFI Firmware
+Volume nested in the current UEFI Firmware Volume</p>
+<p>Only FFSv2 volumes are counted, FFSv3 are compressed and do not have
+size, thus cannot be used to measure metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – UEFI image entry from the entries dictionary</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if entry is a nested UEFI Firmware Volume, False
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._parse_volume_files">
+<span class="sig-name descname"><span class="pre">_parse_volume_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._parse_volume_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._parse_volume_files" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts the UEFI entries that belong to the given Firmware Volumes
+and append them to <a class="reference internal" href="#uefi.UEFIVolume.volume_entries" title="uefi.UEFIVolume.volume_entries"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.volume_entries</span></code></a></p>
+<p>The function also detects nested uncompressed volumes and creates new
+instance of <a class="reference internal" href="#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> and appends them to
+<a class="reference internal" href="#uefi.UEFIVolume.nested_volumes" title="uefi.UEFIVolume.nested_volumes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.nested_volumes</span></code></a>.</p>
+<p>If <a class="reference internal" href="#uefi.UEFIVolume.debug" title="uefi.UEFIVolume.debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.debug</span></code></a> is True, all Firmware Volume entries
+with their attributes are printed on the console at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._classify_entries">
+<span class="sig-name descname"><span class="pre">_classify_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._classify_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._classify_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Checks all entries belonging to the UEFI Firmware Volume and
+classifies them</p>
+<p>Entries are classified to the two basic categories: data or empty
+Everything else is considered either closed-source code or data (in
+case of UEFI NVAR).</p>
+<p>If <a class="reference internal" href="#uefi.UEFIVolume.debug" title="uefi.UEFIVolume.debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.debug</span></code></a> is True, all Firmware Volume entries
+classified so far as data and empty are printed on the console at the
+end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_entry_empty_padding">
+<span class="sig-name descname"><span class="pre">_is_entry_empty_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_entry_empty_padding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_entry_empty_padding" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if an entry is an empty padding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – A dictionary entry from the UEFI Firmware Volume entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if an entry is an empty padding, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_entry_non_empty_padding">
+<span class="sig-name descname"><span class="pre">_is_entry_non_empty_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_entry_non_empty_padding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_entry_non_empty_padding" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if an entry is a non-empty padding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – A dictionary entry from the UEFI Firmware Volume entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if an entry is a non-empty pad file, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_entry_free_space">
+<span class="sig-name descname"><span class="pre">_is_entry_free_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_entry_free_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_entry_free_space" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if an entry is a free space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – A dictionary entry from the UEFI Firmware Volume entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if an entry is a free space, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_entry_empty_pad_file">
+<span class="sig-name descname"><span class="pre">_is_entry_empty_pad_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_entry_empty_pad_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_entry_empty_pad_file" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if an entry is an empty pad file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – A dictionary entry from the UEFI Firmware Volume entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if an entry is an empty pad file, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_entry_non_empty_pad_file">
+<span class="sig-name descname"><span class="pre">_is_entry_non_empty_pad_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_entry_non_empty_pad_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_entry_non_empty_pad_file" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if an entry is a non-empty pad file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – A dictionary entry from the UEFI Firmware Volume entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if an entry is a non-empty pad file, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._sum_sizes">
+<span class="sig-name descname"><span class="pre">_sum_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._sum_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._sum_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>Sums the size of the UEFI Firmware Volume files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>files</strong> (<em>dict</em>) – Dictionary of files to sum</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sum of the files’ sizes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._is_nvar_store_volume">
+<span class="sig-name descname"><span class="pre">_is_nvar_store_volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._is_nvar_store_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._is_nvar_store_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Determines if given UEFI Firmware Volume is a variable store</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the Firmware Volume consists of NVAR entries
+exceeding the <a class="reference internal" href="#uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD" title="uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD</span></code></a>,
+False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._calculate_metrics">
+<span class="sig-name descname"><span class="pre">_calculate_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._calculate_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._calculate_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the sizes of the four basic firmware components
+categories</p>
+<p>Calls <a class="reference internal" href="#uefi.UEFIVolume._classify_entries" title="uefi.UEFIVolume._classify_entries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_classify_entries()</span></code></a> then sums the regions
+sizes from all 3 lists</p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.closed_code_files" title="uefi.UEFIVolume.closed_code_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.closed_code_size" title="uefi.UEFIVolume.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.data_files" title="uefi.UEFIVolume.data_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.data_size" title="uefi.UEFIVolume.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.empty_files" title="uefi.UEFIVolume.empty_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.empty_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.empty_size" title="uefi.UEFIVolume.empty_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.empty_size</span></code></a></p>
+<p>At the end the method calls <a class="reference internal" href="#uefi.UEFIVolume._normalize_sizes" title="uefi.UEFIVolume._normalize_sizes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIVolume._normalize_sizes()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._normalize_sizes">
+<span class="sig-name descname"><span class="pre">_normalize_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._normalize_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._normalize_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if all Firmware Volume components sizes sum up to whole
+Firmware Volume size.</p>
+<p>For all nested volumes in <a class="reference internal" href="#uefi.UEFIVolume.nested_volumes" title="uefi.UEFIVolume.nested_volumes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.nested_volumes</span></code></a> sums
+the sizes from all 3 lists:</p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.closed_code_files" title="uefi.UEFIVolume.closed_code_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.closed_code_size" title="uefi.UEFIVolume.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.data_files" title="uefi.UEFIVolume.data_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.data_size" title="uefi.UEFIVolume.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_size</span></code></a></p>
+<p><a class="reference internal" href="#uefi.UEFIVolume.empty_files" title="uefi.UEFIVolume.empty_files"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.empty_files</span></code></a> sizes sum is added to
+<a class="reference internal" href="#uefi.UEFIVolume.empty_size" title="uefi.UEFIVolume.empty_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.empty_size</span></code></a></p>
+<p>At the end it sums all classified files and add the difference between
+the Firmware Volume size and classified files size to the
+<a class="reference internal" href="#uefi.UEFIVolume.closed_code_size" title="uefi.UEFIVolume.closed_code_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.closed_code_size</span></code></a> or to the
+<a class="reference internal" href="#uefi.UEFIVolume.data_size" title="uefi.UEFIVolume.data_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uefi.UEFIVolume.data_size</span></code></a> if given Firmware Volume is variable
+storage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume._export_files_md">
+<span class="sig-name descname"><span class="pre">_export_files_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume._export_files_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume._export_files_md" title="Permalink to this definition"></a></dt>
+<dd><p>Write the Firmware Volume entries for given category to the
+markdown file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>file</em>) – Markdown file handle to write the entries’ info to</p></li>
+<li><p><strong>volume_files</strong> (<em>dict</em>) – Dictionary containing entires to be written to
+the markdown file.</p></li>
+<li><p><strong>category</strong> (<em>str</em>) – Category of the entries to be written to the markdown
+file. Should be one of: open-source, closed-source,
+data, empty.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uefi.UEFIVolume.export_markdown">
+<span class="sig-name descname"><span class="pre">export_markdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uefi.html#UEFIVolume.export_markdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uefi.UEFIVolume.export_markdown" title="Permalink to this definition"></a></dt>
+<dd><p>Saves the openness report in markdown format for given UEFI
+Firmware Volume</p>
+<p>Saves the parsed information and classified UEFI Firmware Volume
+components into a markdown file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – Markdown file handle</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="coreboot.html" class="btn btn-neutral float-left" title="coreboot module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dasharo Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

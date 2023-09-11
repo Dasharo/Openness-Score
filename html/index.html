@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Dasharo Openness Score’s documentation! &mdash; Dasharo Openness Score v0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dasharo Openness Score methodology" href="methodology.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Dasharo Openness Score
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Dasharo Openness Score methodology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Dasharo Openness Score design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Dasharo Openness Score modules documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Dasharo Openness Score</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Dasharo Openness Score’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-dasharo-openness-score-s-documentation">
+<h1>Welcome to Dasharo Openness Score’s documentation!<a class="headerlink" href="#welcome-to-dasharo-openness-score-s-documentation" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Dasharo Openness Score methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#calculating-dasharo-openness-score-for-uefi-images">Calculating Dasharo Openness Score for UEFI images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#calculating-dasharo-openness-score-for-coreboot-images">Calculating Dasharo Openness Score for coreboot images</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Dasharo Openness Score design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design.html#dasharo-openness-score-general-rules">Dasharo Openness Score general rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#dasharo-openness-score-module-design-rules">Dasharo Openness Score module design rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Dasharo Openness Score modules documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="openness_score.html">openness_score module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coreboot.html">coreboot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uefi.html">UEFI module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="what-is-dasharo-openness-score">
+<h1>What is Dasharo Openness Score<a class="headerlink" href="#what-is-dasharo-openness-score" title="Permalink to this heading"></a></h1>
+<p>Have you ever wondered how open is your open-source firmware? How much
+closed-source and binary blobs is still there? Dasharo Openness Score utility
+answers those questions.</p>
+<p>Dasharo Openness is a report showing the open-source code to closed-source
+code ratio in the Dasharo firmware images. The results are also presented as a
+pie chart for better visual representation of the firmware image components
+and their share percentage.</p>
+<p>Dasharo Openness Score utility is capable of parsing Dasharo coreboot-based
+images as well as vendor UEFI images. Thanks to that one can easily compare
+how many bytes of the firmware have been liberated as well as by how much the
+Trusted Computing Base (TCB) has been reduced.</p>
+<p>Dasharo Openness Score utility not only support Dasharo coreboot-based images,
+but also many more coreboot distributions like heads.</p>
+</section>
+<section id="how-does-it-work">
+<h1>How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading"></a></h1>
+<p>The utility leverages various tools like <a class="reference external" href="https://github.com/coreboot/coreboot/tree/master/util/cbfstool">coreboot’s cbfstool</a> or
+<a class="reference external" href="https://github.com/LongSoft/UEFITool">LongSoft’s UEFIExtract</a> to decompose and parse the firmware images. The
+output from the utilities is used to detect the image type and then to
+calculate the openness metrics.</p>
+<p>For more details please refer to the <a class="reference internal" href="methodology.html"><span class="doc">methodology document</span></a>.</p>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="methodology.html" class="btn btn-neutral float-right" title="Dasharo Openness Score methodology" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dasharo Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

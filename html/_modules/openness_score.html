@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>openness_score &mdash; Dasharo Openness Score v0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Dasharo Openness Score
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../methodology.html">Dasharo Openness Score methodology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Dasharo Openness Score design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Dasharo Openness Score modules documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dasharo Openness Score</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">openness_score</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for openness_score</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-FileCopyrightText: 2023 3mdeb &lt;contact@3mdeb.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">coreboot</span> <span class="kn">import</span> <span class="n">DasharoCorebootImage</span>
+<span class="kn">from</span> <span class="nn">uefi</span> <span class="kn">import</span> <span class="n">UEFIImage</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span><span class="p">,</span> <span class="n">SUPPRESS</span>
+
+<span class="sd">&quot;&quot;&quot;The Dasharo Openness Score utility&#39;s entrypoint&quot;&quot;&quot;</span>
+
+<span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;v0.1.0&#39;</span>
+<span class="sd">&quot;&quot;&quot;The utility&#39;s version&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ObligingArgumentParser"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser">[docs]</a><span class="k">class</span> <span class="nc">ObligingArgumentParser</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An extension to ArgumentParser class providing better error handling</span>
+
+<span class="sd">    :param ArgumentParser: The class to be inherited from.</span>
+<span class="sd">    :type ArgumentParser: ArgumentParser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ObligingArgumentParser.error"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;error Prints an error message if there was an error parsing the</span>
+<span class="sd">        arguments.</span>
+
+<span class="sd">        The function also prints a help section and returns an exit code 2.</span>
+
+<span class="sd">        :param message: Message to be printed on error.</span>
+<span class="sd">        :type message: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Error: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="check_file"><a class="viewcode-back" href="../openness_score.html#openness_score.check_file">[docs]</a><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The function performs all safety checks and detects the input file</span>
+<span class="sd">    format</span>
+
+<span class="sd">    Function checks if all required external utilities like cbfstool,</span>
+<span class="sd">    UEFIExtract and lzma are present. It also recognizes whether the input</span>
+<span class="sd">    file is a coreboot image or UEFI image.</span>
+
+<span class="sd">    :param file: The input firmware image path</span>
+<span class="sd">    :type file: str</span>
+<span class="sd">    :return: Two booleans indicating the CBFS and UEFI format compliance</span>
+<span class="sd">    :rtype: bool, bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fw_img</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">cbfs_error_string</span> <span class="o">=</span> <span class="s1">&#39;E: Selected image region is not a valid CBFS.&#39;</span>
+    <span class="n">uefiextract_error_string</span> <span class="o">=</span> <span class="s1">&#39;parse: not a single Volume Top File &#39;</span> \
+                               <span class="s1">&#39;is found, the image may be corrupted&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fw_img</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> file does not exist&#39;</span> <span class="o">%</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;cbfstool&#39;</span><span class="p">],</span>
+                       <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+                       <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: cbfstool not found, please install it first.&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;UEFIExtract&#39;</span><span class="p">],</span>
+                       <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+                       <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: UEFIExtract not found, please install it first.&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;lzma&#39;</span><span class="p">,</span> <span class="s1">&#39;-V&#39;</span><span class="p">],</span>
+                       <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+                       <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: lzma not found, please install it first.&#39;</span><span class="p">)</span>
+
+    <span class="n">cbfstool_check</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;cbfstool&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="s1">&#39;print&#39;</span><span class="p">],</span>
+                                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fw_is_cbfs</span> <span class="o">=</span> <span class="n">cbfs_error_string</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cbfstool_check</span><span class="o">.</span><span class="n">stderr</span>
+
+    <span class="n">uefiextract_check</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;UEFIExtract&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">],</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fw_is_uefi</span> <span class="o">=</span> <span class="n">uefiextract_error_string</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uefiextract_check</span><span class="o">.</span><span class="n">stdout</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fw_is_uefi</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: Could not recognize firmware binary.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span></div>
+
+
+<div class="viewcode-block" id="export_data"><a class="viewcode-back" href="../openness_score.html#openness_score.export_data">[docs]</a><span class="k">def</span> <span class="nf">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls the image&#39;s class methods to export data to the markdown and pie</span>
+<span class="sd">    charts</span>
+
+<span class="sd">    :param args: Program arguments</span>
+<span class="sd">    :type args: argparse.Namespace</span>
+<span class="sd">    :param image: An instance of DasharoCorebootImage or UEFIImage</span>
+<span class="sd">    :type image: DasharoCorebootImage or UEFIImage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;You do not have permission to write to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span>
+                              <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span>
+                              <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span>
+                          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">export_charts</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OpennessScore"><a class="viewcode-back" href="../openness_score.html#openness_score.OpennessScore">[docs]</a><span class="k">def</span> <span class="nf">OpennessScore</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility&#39;s entry point responsible for argument parsing and</span>
+<span class="sd">    creating firmware image class instances based on detected image format.</span>
+<span class="sd">    Calls functions to create the reports and pie charts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ObligingArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Calculate Dasharo Openness Score for firmware images</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Firmware binary file to be parsed&#39;</span><span class="p">,</span>
+                        <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;help&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">SUPPRESS</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;out/&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="s1">&#39;Specifies the directory where to store the results&#39;</span><span class="p">]))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--verbose&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="s1">&#39;Print verbose information during the image parsing&#39;</span><span class="p">]),</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
+                        <span class="n">version</span><span class="o">=</span><span class="s1">&#39;Dasharo Openness Score </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span> <span class="o">=</span> <span class="n">check_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as Dasharo image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> Dasharo image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">DasharoCbImg</span> <span class="o">=</span> <span class="n">DasharoCorebootImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">DasharoCbImg</span><span class="p">)</span>
+        <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">DasharoCbImg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">fw_is_uefi</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as vendor image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> vendor image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">VendorImg</span> <span class="o">=</span> <span class="n">UEFIImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">VendorImg</span><span class="p">)</span>
+        <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">VendorImg</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">OpennessScore</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dasharo Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

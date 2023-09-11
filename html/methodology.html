@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dasharo Openness Score methodology &mdash; Dasharo Openness Score v0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dasharo Openness Score design" href="design.html" />
+    <link rel="prev" title="Welcome to Dasharo Openness Score’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Dasharo Openness Score
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dasharo Openness Score methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculating-dasharo-openness-score-for-uefi-images">Calculating Dasharo Openness Score for UEFI images</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculating-metrics-for-uefi-firmware-volumes">Calculating metrics for UEFI Firmware Volumes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#calculating-dasharo-openness-score-for-coreboot-images">Calculating Dasharo Openness Score for coreboot images</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculating-metrics-for-cbfs-images">Calculating metrics for CBFS images</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Dasharo Openness Score design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Dasharo Openness Score modules documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dasharo Openness Score</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Dasharo Openness Score methodology</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/methodology.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dasharo-openness-score-methodology">
+<h1>Dasharo Openness Score methodology<a class="headerlink" href="#dasharo-openness-score-methodology" title="Permalink to this heading"></a></h1>
+<p>Dasharo Openness Score calculation methodology is different for UEFI images
+and coreboot-based images mainly due to their different structure, but also
+for calculation simplicity.</p>
+<section id="calculating-dasharo-openness-score-for-uefi-images">
+<h2>Calculating Dasharo Openness Score for UEFI images<a class="headerlink" href="#calculating-dasharo-openness-score-for-uefi-images" title="Permalink to this heading"></a></h2>
+<p>Axiom: UEFI images are always assumed to be vendor firmware images, thus the
+methodology assumes no open-source code.</p>
+<p>The utility makes decisions based on the report produced by UEFIExtract.
+The calculation flow looks as follows:</p>
+<ol class="arabic simple">
+<li><p>Look for the entries of type <code class="docutils literal notranslate"><span class="pre">Region</span></code> and save their properties for later.
+Also separate the BIOS Region which will be used later.</p></li>
+<li><p>Start classifying entries:</p>
+<ul class="simple">
+<li><p>Take all non-BIOS regions and classify them as either closed-source group
+or data regions, based on known region types. For unknown region
+types, classify it as closed-source region.</p></li>
+<li><p>Take all entries in the BIOS region and extract UEFI Firmware Volumes
+from them. Create new <a class="reference internal" href="uefi.html#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> instances, which trigger
+the UEFI Volume calculations described in section <a class="reference internal" href="#calculating-metrics-for-uefi-firmware-volumes">Calculating metrics
+for UEFI Firmware Volumes</a>. Save all instances in the array for future
+calculations.</p></li>
+<li><p>Take all empty paddings between UEFI Firmware Volumes in BIOS region and
+between regions and add them to the empty region group.</p></li>
+<li><p>Take all non-empty paddings between UEFI Firmware Volumes in BIOS region
+and between regions and add them to the data region group.</p></li>
+</ul>
+</li>
+<li><p>Sum up the size of all region groups: empty, data and closed-source.</p></li>
+<li><p>Sum up the size of all groups from all <a class="reference internal" href="uefi.html#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> instances
+saved in the array previously: empty, data and closed-source.</p></li>
+<li><p>Check if the sums from point 3 and 4 give the total size of the image. If
+yes, do nothing. If not add the difference to the data group and print an
+error.</p></li>
+<li><p>Export the data to markdown and pie charts using the
+<a class="reference internal" href="uefi.html#uefi.UEFIVolume.export_markdown" title="uefi.UEFIVolume.export_markdown"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIVolume.export_markdown()</span></code></a>.</p></li>
+</ol>
+<section id="calculating-metrics-for-uefi-firmware-volumes">
+<h3>Calculating metrics for UEFI Firmware Volumes<a class="headerlink" href="#calculating-metrics-for-uefi-firmware-volumes" title="Permalink to this heading"></a></h3>
+<p>Axiom: Some UEFI Firmware Volumes may cotnain nested volumes that are
+compressed. Compressed entries i nthe UEFIExtract report do not have the base
+address of the components, just uncompressed size. To simplify the
+calculations and reliably present the data on charts, compressed UEFI Firmware
+Volumes are classified as closed-source as a whole.</p>
+<p>Whenever a new instance of <a class="reference internal" href="uefi.html#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> is created, the utility
+performs the following steps:</p>
+<ol class="arabic simple">
+<li><p>Parse the report entries and extract only those belonging to given volume.</p></li>
+<li><p>Create a new instance of <a class="reference internal" href="uefi.html#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a> for each nested
+uncompressed UEFI Firmware Volume (FFSv2). This triggers the whole UEFI
+Firmware Volume calculation procedure recursively.</p></li>
+<li><p>Start classifying entries:</p>
+<ul class="simple">
+<li><p>Take all empty paddings and volume free space inside the current UEFI
+Firmware Volume and add them to the empty group.</p></li>
+<li><p>Take all non-empty paddings inside the current UEFI Firmware Volume and
+add them to the data group.</p></li>
+<li><p>As the UEFI Firmware Volume is comprised of executable code mainly or
+blobs, we do not classify anything else.</p></li>
+</ul>
+</li>
+<li><p>Sum up the size of all groups classified up to now: empty, data and
+closed-source (there is currently no closed-source classified yet, so it
+will be 0).</p></li>
+<li><p>Sum up the size of all groups from all nested <a class="reference internal" href="uefi.html#uefi.UEFIVolume" title="uefi.UEFIVolume"><code class="xref py py-class docutils literal notranslate"><span class="pre">uefi.UEFIVolume</span></code></a>
+instances: empty, data and closed-source.</p></li>
+<li><p>Check if given UEFI Firmware Volume is an NVAR storage using
+<a class="reference internal" href="uefi.html#uefi.UEFIVolume._is_nvar_store_volume" title="uefi.UEFIVolume._is_nvar_store_volume"><code class="xref py py-meth docutils literal notranslate"><span class="pre">uefi.UEFIVolume._is_nvar_store_volume()</span></code></a>. The volume is considered an
+NVAR storage if at least 90% (currently defined as 90% by
+<a class="reference internal" href="uefi.html#uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD" title="uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD"><code class="xref py py-const docutils literal notranslate"><span class="pre">uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD</span></code></a>) of the volume entries are
+<code class="docutils literal notranslate"><span class="pre">NVAR</span> <span class="pre">entry</span></code>.</p></li>
+<li><p>If the volume is an NVAR storage, the difference between the volume size
+and classified entries size (so the unclassified bytes) are added up to the
+data group. Otherwise, if the volume is not NVAR storage, it must contain
+executabel code, thus the difference is counted as closed-source.</p></li>
+</ol>
+<p>At this point the UEFI Firmware Volume metrics are ready to be included in
+total calculations in step 4 of
+<a class="reference internal" href="#calculating-dasharo-openness-score-for-uefi-images">Calculating Dasharo Openness Score for UEFI images</a>.</p>
+</section>
+</section>
+<section id="calculating-dasharo-openness-score-for-coreboot-images">
+<h2>Calculating Dasharo Openness Score for coreboot images<a class="headerlink" href="#calculating-dasharo-openness-score-for-coreboot-images" title="Permalink to this heading"></a></h2>
+<p>coreboot images are processed with cbfstool and the output of cbfstool is
+parsed by the utility to make decisions about the image components. The
+calculation flow looks as follows:</p>
+<ol class="arabic simple">
+<li><p>Parse the flashmap layout printed by cbfstool and extract regions’
+attributes.</p></li>
+<li><p>For each flashmap region containing CBFS, create a new instance of
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage" title="coreboot.CBFSImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">coreboot.CBFSImage</span></code></a> and save it to an array. Creating new instance
+of <a class="reference internal" href="coreboot.html#coreboot.CBFSImage" title="coreboot.CBFSImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">coreboot.CBFSImage</span></code></a> triggers the CBFS image calculations
+described in section <a class="reference internal" href="#calculating-metrics-for-cbfs-images">Calculating metrics for CBFS images</a>.</p></li>
+<li><p>Start classifying regions:</p>
+<ul class="simple">
+<li><p>Skip regions containing CBFSes, they are calcululated inside
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage" title="coreboot.CBFSImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">coreboot.CBFSImage</span></code></a> instances</p></li>
+<li><p>Flashmap regions, which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.CODE_REGIONS" title="coreboot.DasharoCorebootImage.CODE_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.CODE_REGIONS</span></code></a>, classify as
+open-source. Currently the only region applicable is BOOTBLOCK. Some
+architectures do not store bootblock as a CBFS file but as flashmap
+region.</p></li>
+<li><p>Flashmap regions, which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.BLOB_REGIONS" title="coreboot.DasharoCorebootImage.BLOB_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.BLOB_REGIONS</span></code></a> (where regions known
+to contain blobs are defined), classify as closed-source.</p></li>
+<li><p>Flashmap regions, which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.EMPTY_REGIONS" title="coreboot.DasharoCorebootImage.EMPTY_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.EMPTY_REGIONS</span></code></a>, classify as
+empty. Currently only the <code class="docutils literal notranslate"><span class="pre">UNUSED</span></code> flashmap region name applies.</p></li>
+<li><p>Flashmap regions, which name is found in
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.DATA_REGIONS" title="coreboot.DasharoCorebootImage.DATA_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.DATA_REGIONS</span></code></a> (where regions known
+to contain data only are defined), classify as data.</p></li>
+<li><p>Flashmap regions, which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.SKIP_REGIONS" title="coreboot.DasharoCorebootImage.SKIP_REGIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.SKIP_REGIONS</span></code></a> are not classified
+due to being cotnainers or aliases to other regions. Counting them would
+result in duplication of the sizes when calculating metrics. These are
+standard flashmap region names aggregating smaller, nested regions.</p></li>
+<li><p>If any region does not apply to above rules, save it in a separate array
+of uncategorized regions. It will be counted as closed-source in next
+step.</p></li>
+</ul>
+</li>
+<li><p>Sum up the size of all region groups: empty, data, open-source and
+closed-source. Add the sum of uncategorized regions to closed-source.</p></li>
+<li><p>Sum up the size of all groups from all <a class="reference internal" href="coreboot.html#coreboot.CBFSImage" title="coreboot.CBFSImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">coreboot.CBFSImage</span></code></a>
+instances saved in the array previously: empty, data, open-source and
+closed-source.</p></li>
+<li><p>Check if the first flashmap region offset in flash starts at 0. If yes,
+then do nothing. Otherwise count all bytes from 0 to the given offset as
+closed-source (we don’t know what lies before the first flashmap region, it
+can be ME or something else).</p></li>
+<li><p>Check if all classified components sizes (empty, data, open-source and
+closed-source) calculated in point 4-6 sum up to the full image size. If
+not, print a warning.</p></li>
+<li><p>Export the data to markdown and pie charts using the
+<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.export_markdown" title="coreboot.DasharoCorebootImage.export_markdown"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.export_markdown()</span></code></a>.</p></li>
+</ol>
+<section id="calculating-metrics-for-cbfs-images">
+<h3>Calculating metrics for CBFS images<a class="headerlink" href="#calculating-metrics-for-cbfs-images" title="Permalink to this heading"></a></h3>
+<p>Axiom: coreboot’s payload is always assumed to be open-source (with a small
+exception known to Dasharo images which sometimes include EFI drivers for
+Ethernet NICs).</p>
+<p>CBFS regions are processed with cbfstool and the output of cbfstool is
+parsed by the utility to make decisions about the CBFS components. The
+calculation flow looks as follows:</p>
+<ol class="arabic">
+<li><p>Parse the CBFS content printed by cbfstool and extract CBFS files’
+attributes.</p></li>
+<li><p>Extract the config file from CBFS and parse the build options used to
+produce given CBFS.</p></li>
+<li><p>Check if iPXE has been included:</p>
+<ul>
+<li><p>Check for EDK2_ENABLE_IPXE Kconfig value. If set, save the information
+that iPXE was built for EFI and included in EUFI payload.</p></li>
+<li><p>If EDK2_ENABLE_IPXE was not set, check for PXE Kconfig vlaue. If set iPXE
+was added as a legacy OptionROM.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Check for PXE_ROM Kconfig value. If set, it means the iPXE was
+included as an external binary. It will be later counted as
+closed-source as we don’t know its origin. If PXE_ROM was not set, it
+means it was built from source.</p></li>
+<li><p>If iPXE was built from source, extract the PXE_ROM_ID Kconfig value
+and save the PCI ID used for the iPXE CBFS file name. If PXE_ROM_ID
+not present, assume default <code class="docutils literal notranslate"><span class="pre">10ec,8168</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>Check if external Ethernet NIC EFI driver was included:</p>
+<ul class="simple">
+<li><p>Check if EDK2_LAN_ROM_DRIVER Kconfig value is set. If not, go to step 5.</p></li>
+<li><p>If yes, extract the <code class="docutils literal notranslate"><span class="pre">fallback/payload</span></code> from the CBFS and use
+UEFIExtract on it to extract the file with
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.DASHARO_LAN_ROM_GUID" title="coreboot.CBFSImage.DASHARO_LAN_ROM_GUID"><code class="xref py py-attr docutils literal notranslate"><span class="pre">coreboot.CBFSImage.DASHARO_LAN_ROM_GUID</span></code></a>.</p></li>
+<li><p>Compress the extracted EFI driver with LZMA to estimate the compressed
+size.</p></li>
+<li><p>Save the size of compressed EFI driver for later calculations.</p></li>
+</ul>
+</li>
+<li><p>Start classifying CBFS files:</p>
+<ul class="simple">
+<li><p>CBFS files which type is found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.OPEN_SOURCE_FILETYPES" title="coreboot.CBFSImage.OPEN_SOURCE_FILETYPES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.OPEN_SOURCE_FILETYPES</span></code></a> and names are not
+found in <a class="reference internal" href="coreboot.html#coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS" title="coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS</span></code></a> classify
+as open-source.</p></li>
+<li><p>CBFS files of type <code class="docutils literal notranslate"><span class="pre">raw</span></code>, which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES" title="coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES</span></code></a> classify as
+open-source.</p></li>
+<li><p>If the iPXE was detected to be built from source and included as legacy
+OptionROM CBFS file, classify <code class="docutils literal notranslate"><span class="pre">pci&lt;PXE_ROM_ID&gt;.rom</span></code> as open-source.</p></li>
+<li><p>CBFS files which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES" title="coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES</span></code></a>, classify as
+closed-source. or with CBFS file’s type found in</p></li>
+<li><p>CBFS files which type is found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.OPEN_SOURCE_FILETYPES" title="coreboot.CBFSImage.OPEN_SOURCE_FILETYPES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.OPEN_SOURCE_FILETYPES</span></code></a> and name is found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS" title="coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS</span></code></a>, classify as
+closed-source.</p></li>
+<li><p>CBFS files of type <code class="docutils literal notranslate"><span class="pre">raw</span></code> which names are found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES" title="coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES</span></code></a>, classify as
+close-source.</p></li>
+<li><p>CBFS files with type <code class="docutils literal notranslate"><span class="pre">null</span></code> classify as empty.</p></li>
+<li><p>CBFS files which type is found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.DATA_FILETYPES" title="coreboot.CBFSImage.DATA_FILETYPES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.DATA_FILETYPES</span></code></a> classify as data.</p></li>
+<li><p>CBFS files of type <code class="docutils literal notranslate"><span class="pre">raw</span></code> and names found in
+<a class="reference internal" href="coreboot.html#coreboot.CBFSImage.RAW_DATA_FILES" title="coreboot.CBFSImage.RAW_DATA_FILES"><code class="xref py py-const docutils literal notranslate"><span class="pre">coreboot.CBFSImage.RAW_DATA_FILES</span></code></a> classify as data.</p></li>
+<li><p>CBFS files not applying to above rules should be save to an array of
+uncategorized files. They will be counted as closed-source code in next
+steps because we were unable to identify what can be inside.</p></li>
+</ul>
+</li>
+<li><p>Sum up the size of all file groups: empty, data, open-source and
+closed-source. Add the sum of uncategorized files to closed-source.</p></li>
+<li><p>If an external Ethernet NIC EFI driver was detected, subtract the
+previously saved compressed EFI driver size from open-source and add it to
+closed-source group.</p></li>
+<li><p>Check for truncated CBFS:</p>
+<ul class="simple">
+<li><p>vboot RW CBFSes are often truncated from empty space and the cbfstool
+does not print empty space file at the end of CBFS. Check if the
+difference between last file offset + its size and the CBFS image size is
+bigger than 64 bytes. If yes, count the difference as empty. The 64 bytes
+is the size of metadata following the end of CBFSfile.</p></li>
+<li><p>cbfstool prints the size of the files in CBFS, but does not account for
+file’s metadata size. Sum up the size of all file groups: empty, data,
+open-source and closed-source. Then subtract it from the CBFS region size
+to obtain metadata size. Add the metadata size to data group. It will
+also ensure that the CBFS file groups sum up to whole CBFS size.</p></li>
+</ul>
+</li>
+</ol>
+<p>At this point the CBFS image metrics are ready to be included in total
+calculations in step 5 of
+<a class="reference internal" href="#calculating-dasharo-openness-score-for-coreboot-images">Calculating Dasharo Openness Score for coreboot images</a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Dasharo Openness Score’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="design.html" class="btn btn-neutral float-right" title="Dasharo Openness Score design" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dasharo Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
