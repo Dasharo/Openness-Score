@@ -1125,9 +1125,9 @@ class CBFSImage:
                    ' closed-source LAN drivers included in the payload\n'
                    ' > which are not visible in the table below)\n\n')
 
-        file.write('| CBFS filname | CBFS filetype | Size | Compression |'
+        file.write('| CBFS filename | CBFS filetype | Size | Compression |'
                    ' Category |\n')
-        file.write('| ------------ | ------------- | ---- | ----------- |'
+        file.write('| ------------- | ------------- | ---- | ----------- |'
                    ' -------- |\n')
 
         self._export_files_md(file, self.open_code_files, 'open-source')
