@@ -1137,7 +1137,7 @@ class CBFSImage:
         file.write('> Numbers given above are already normalized (i.e. they'
                    ' already include size\n> of metadata and possible'
                    ' closed-source LAN drivers included in the payload\n'
-                   ' > which are not visible in the table below)\n\n')
+                   '> which are not visible in the table below)\n\n')
 
         file.write('| CBFS filename | CBFS filetype | Size | Compression |'
                    ' Category |\n')
