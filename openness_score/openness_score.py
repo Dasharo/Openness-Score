@@ -117,7 +117,8 @@ def export_data(args, image):
     Path(output_path.joinpath('%s_openness_score.md' %
                               Path(args.file).name)).touch()
     image.export_markdown(output_path.joinpath(
-                          '%s_openness_score.md' % Path(args.file).name))
+                          '%s_openness_score.md' % Path(args.file).name),
+                          args.mkdocs)
     image.export_charts(output_path)
 
 
@@ -137,6 +138,9 @@ def OpennessScore():
                         'Specifies the directory where to store the results']))
     parser.add_argument('-v', '--verbose', help='\n'.join([
                         'Print verbose information during the image parsing']),
+                        action='store_true')
+    parser.add_argument('-m', '--mkdocs', help='\n'.join([
+                        'Export the report for Dasharo mkdocs']),
                         action='store_true')
     parser.add_argument('-V', '--version', action='version',
                         version='Dasharo Openness Score {}'.format(version))

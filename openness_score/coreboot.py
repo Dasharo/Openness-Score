@@ -403,7 +403,7 @@ class DasharoCorebootImage:
                         region['name'], hex(region['offset']),
                         hex(region['size']), category))
 
-    def export_markdown(self, file):
+    def export_markdown(self, file, mkdocs):
         """Opens a file and saves the openness report in markdown format
 
         Saves the parsed information and classified image components into a
@@ -414,9 +414,13 @@ class DasharoCorebootImage:
 
         :param file: Path to markdown file
         :type file: str
+        :param mkdocs: Switch to export the report for mkdocs
+        :type mkdocs: bool
         """
         with open(file, 'w') as md:
-            md.write('# Dasharo Openness Score\n\n')
+            if not mkdocs:
+                md.write('# Dasharo Openness Score\n\n')
+
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
             md.write('Open-source code percentage: **%1.1f%%**\n' %
                      self._get_percentage(self.open_code_size))
@@ -447,7 +451,11 @@ class DasharoCorebootImage:
             md.write(' from CBFS regions\n> presented below\n\n')
 
             # Regions first
-            md.write('## FMAP regions\n\n')
+            if not mkdocs:
+                md.write('## FMAP regions\n\n')
+            else:
+                md.write('### FMAP regions\n\n')
+
             md.write('| FMAP region | Offset | Size | Category |\n')
             md.write('| ----------- | ------ | ---- | -------- |\n')
             self._export_regions_md(md, self.open_code_regions, 'open-source')
@@ -458,7 +466,7 @@ class DasharoCorebootImage:
 
             for cbfs in self.cbfs_images:
                 md.write('\n')
-                cbfs.export_markdown(md)
+                cbfs.export_markdown(md, mkdocs)
 
     def export_charts(self, dir):
         """Plots the pie charts with firmware image statistics
@@ -1097,7 +1105,7 @@ class CBFSImage:
                         f['filename'], f['filetype'],
                         f['size'], f['compression'], category))
 
-    def export_markdown(self, file):
+    def export_markdown(self, file, mkdocs):
         """Saves the openness report in markdown format for given CBFS region
 
         Saves the parsed information and classified CBFS components into a
@@ -1105,8 +1113,14 @@ class CBFSImage:
 
         :param file: Markdown file handle
         :type file: str
+        :param mkdocs: Switch to export the report for mkdocs
+        :type mkdocs: bool
         """
-        file.write('## CBFS %s\n\n' % self.region_name)
+        if not mkdocs:
+            file.write('## CBFS %s\n\n' % self.region_name)
+        else:
+            file.write('### CBFS %s\n\n' % self.region_name)
+
         file.write('* CBFS size: %d\n'
                    '* Number of files: %d\n'
                    '* Open-source files size: %d (%s)\n'
