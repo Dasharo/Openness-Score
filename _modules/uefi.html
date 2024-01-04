@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>uefi &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -584,7 +586,7 @@
                         <span class="n">region</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]),</span>
                         <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span> <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIImage.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens a file and saves the openness report in markdown format</span>
 
 <span class="sd">        Saves the parsed information and classified image components into a</span>
@@ -595,9 +597,13 @@
 
 <span class="sd">        :param file: Path to markdown file</span>
 <span class="sd">        :type file: str</span>
+<span class="sd">        :param mkdocs: Switch to export the report for mkdocs</span>
+<span class="sd">        :type mkdocs: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
-            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# Dasharo Openness Score</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mkdocs</span><span class="p">:</span>
+                <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# Dasharo Openness Score</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Openness Score for </span><span class="si">%s</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Open-source code percentage: **</span><span class="si">%1.1f%%</span><span class="s1">**</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
                      <span class="bp">self</span><span class="o">.</span><span class="n">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_code_size</span><span class="p">))</span>
@@ -631,7 +637,11 @@
                      <span class="s1">&#39; volumes have been presented</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
             <span class="c1"># Regions first</span>
-            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## UEFI regions</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mkdocs</span><span class="p">:</span>
+                <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## UEFI regions</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;### UEFI regions</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| Region | Base | Size | Category |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| ------ | ---- | ---- | -------- |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_export_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="p">,</span>
@@ -645,7 +655,7 @@
 
             <span class="k">for</span> <span class="n">uefi_fv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">:</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">uefi_fv</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">md</span><span class="p">)</span></div>
+                <span class="n">uefi_fv</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="UEFIImage.export_charts"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_charts">[docs]</a>    <span class="k">def</span> <span class="nf">export_charts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots the pie charts with firmware image statistics</span>
@@ -1188,7 +1198,7 @@
                         <span class="n">f</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]),</span> <span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span>
                         <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIVolume.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the openness report in markdown format for given UEFI</span>
 <span class="sd">        Firmware Volume</span>
 
@@ -1197,8 +1207,14 @@
 
 <span class="sd">        :param file: Markdown file handle</span>
 <span class="sd">        :type file: str</span>
+<span class="sd">        :param mkdocs: Switch to export the report for mkdocs</span>
+<span class="sd">        :type mkdocs: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## UEFI Volume </span><span class="si">%s</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_guid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mkdocs</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## UEFI Volume </span><span class="si">%s</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_guid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;### UEFI Volume </span><span class="si">%s</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_guid</span><span class="p">)</span>
+
         <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;* Base: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
                    <span class="s1">&#39;* Size: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
                    <span class="s1">&#39;* Number of entries: </span><span class="si">%d</span><span class="se">\n</span><span class="s1">&#39;</span>

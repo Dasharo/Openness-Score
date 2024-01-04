@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>openness_score &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -190,7 +192,8 @@
     <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span>
                               <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
     <span class="n">image</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span>
-                          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_openness_score.md&#39;</span> <span class="o">%</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                          <span class="n">args</span><span class="o">.</span><span class="n">mkdocs</span><span class="p">)</span>
     <span class="n">image</span><span class="o">.</span><span class="n">export_charts</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
 
 
@@ -210,6 +213,9 @@
                         <span class="s1">&#39;Specifies the directory where to store the results&#39;</span><span class="p">]))</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--verbose&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                         <span class="s1">&#39;Print verbose information during the image parsing&#39;</span><span class="p">]),</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--mkdocs&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="s1">&#39;Export the report for Dasharo mkdocs&#39;</span><span class="p">]),</span>
                         <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
                         <span class="n">version</span><span class="o">=</span><span class="s1">&#39;Dasharo Openness Score </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
