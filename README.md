@@ -35,8 +35,8 @@ options:
   -o OUTPUT, --output OUTPUT
                         Specifies the directory where to store the results
   -v, --verbose         Print verbose information during the image parsing
+  -m, --mkdocs          Export the report for Dasharo mkdocs
   -V, --version         show program's version number and exit
-
 ```
 
 For example:

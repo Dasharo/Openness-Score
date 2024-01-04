@@ -511,7 +511,7 @@ class UEFIImage:
                         region['subtype'], hex(region['base']),
                         hex(region['size']), category))
 
-    def export_markdown(self, file):
+    def export_markdown(self, file, mkdocs):
         """Opens a file and saves the openness report in markdown format
 
         Saves the parsed information and classified image components into a
@@ -522,9 +522,13 @@ class UEFIImage:
 
         :param file: Path to markdown file
         :type file: str
+        :param mkdocs: Switch to export the report for mkdocs
+        :type mkdocs: bool
         """
         with open(file, 'w') as md:
-            md.write('# Dasharo Openness Score\n\n')
+            if not mkdocs:
+                md.write('# Dasharo Openness Score\n\n')
+
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
             md.write('Open-source code percentage: **%1.1f%%**\n' %
                      self._get_percentage(self.open_code_size))
@@ -558,7 +562,11 @@ class UEFIImage:
                      ' volumes have been presented\n\n')
 
             # Regions first
-            md.write('## UEFI regions\n\n')
+            if not mkdocs:
+                md.write('## UEFI regions\n\n')
+            else:
+                md.write('### UEFI regions\n\n')
+
             md.write('| Region | Base | Size | Category |\n')
             md.write('| ------ | ---- | ---- | -------- |\n')
             self._export_regions_md(md, self.closed_code_regions,
@@ -572,7 +580,7 @@ class UEFIImage:
 
             for uefi_fv in self.volumes:
                 md.write('\n')
-                uefi_fv.export_markdown(md)
+                uefi_fv.export_markdown(md, mkdocs)
 
     def export_charts(self, dir):
         """Plots the pie charts with firmware image statistics
@@ -1115,7 +1123,7 @@ class UEFIVolume:
                         f['subtype'], hex(f['base']), hex(f['size']),
                         category))
 
-    def export_markdown(self, file):
+    def export_markdown(self, file, mkdocs):
         """Saves the openness report in markdown format for given UEFI
         Firmware Volume
 
@@ -1124,8 +1132,14 @@ class UEFIVolume:
 
         :param file: Markdown file handle
         :type file: str
+        :param mkdocs: Switch to export the report for mkdocs
+        :type mkdocs: bool
         """
-        file.write('## UEFI Volume %s\n\n' % self.volume_guid)
+        if not mkdocs:
+            file.write('## UEFI Volume %s\n\n' % self.volume_guid)
+        else:
+            file.write('### UEFI Volume %s\n\n' % self.volume_guid)
+
         file.write('* Base: %s\n'
                    '* Size: %s\n'
                    '* Number of entries: %d\n'
