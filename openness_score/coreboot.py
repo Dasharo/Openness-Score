@@ -38,7 +38,7 @@ class DasharoCorebootImage:
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
-                    'RW_DDR_TRAINING', 'GBB']
+                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER' ]
     """A list of region names known to contain data"""
 
     # Regions that are not CBFSes and may contain open-source code
@@ -61,7 +61,7 @@ class DasharoCorebootImage:
     regions. These regions are skipped from classification."""
 
     # Regions to count as empty/unused
-    EMPTY_REGIONS = ['UNUSED']
+    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED' ]
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
@@ -571,7 +571,9 @@ class CBFSImage:
         'etc/s3-resume-vga-init', 'etc/screen-and-debug', 'etc/sercon-port',
         'etc/advertise-serial-debug-port', 'etc/floppy0', 'etc/floppy1',
         'etc/usb-time-sigatt', 'etc/sdcard0', 'etc/sdcard1', 'etc/sdcard2',
-        'etc/sdcard3'
+        'etc/sdcard3',
+        # PC Engines apu specific
+        'bootorder_def', 'bootorder_map'
     ]
     """A list of CBFS filenames known to be data"""
 
