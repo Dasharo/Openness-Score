@@ -885,6 +885,8 @@ class CBFSImage:
                 if file['filename'] == 'pci' + self.ipxe_rom_id + '.rom' or \
                    file['filename'] == 'pci' + self.ipxe_rom_id + '.rom.lzma':
                     self.open_code_files.append(file)
+                else:
+                    self.uncategorized_files.append(file)
             else:
                 self.uncategorized_files.append(file)
         else:
