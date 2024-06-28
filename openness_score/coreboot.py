@@ -564,7 +564,7 @@ class CBFSImage:
         'txt_bios_policy.bin', 'apu/amdfw_a', 'apu/amdfw_b', 'me_rw.hash',
         'me_rw.version', 'vboot_public_key.bin',
         # SeaBIOS runtime config below https://www.seabios.org/Runtime_config
-        'links', 'bootorder', 'etc/show-boot-menu', 'boot-menu-message',
+        'links', 'bootorder', 'etc/show-boot-menu', 'etc/boot-menu-message',
         'etc/boot-menu-key', 'etc/boot-menu-wait', 'etc/boot-fail-wait',
         'etc/extra-pci-roots', 'etc/ps2-keyboard-spinup', 'etc/threads',
         'etc/optionroms-checksum', 'etc/pci-optionrom-exec',
@@ -589,7 +589,7 @@ class CBFSImage:
     # PSE binary is treated as closed source as there is no guarantee of open
     # code availability for given build.
     RAW_CLOSED_SOURCE_FILES = [
-        'doom.wad', 'ecfw1.bin', 'ecfw2.bin', 'apu/ecfw', 'ec/ecfw',
+        'doom.wad', 'ecfw1.bin', 'ecfw2.bin', 'apu/amdfw', 'ec/ecfw',
         'sch5545_ecfw.bin', 'txt_bios_acm.bin', 'txt_sinit_acm.bin',
         'apu/amdfw_a_body', 'apu/amdfw_b_body', 'smu_fw', 'smu_fw2',
         'dmic-1ch-48khz-16b.bin', 'dmic-2ch-48khz-16b.bin', 'me_rw',
