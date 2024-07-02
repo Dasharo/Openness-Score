@@ -38,7 +38,7 @@ class DasharoCorebootImage:
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
-                    'RW_DDR_TRAINING', 'GBB']
+                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER' ]
     """A list of region names known to contain data"""
 
     # Regions that are not CBFSes and may contain open-source code
@@ -61,7 +61,7 @@ class DasharoCorebootImage:
     regions. These regions are skipped from classification."""
 
     # Regions to count as empty/unused
-    EMPTY_REGIONS = ['UNUSED']
+    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED' ]
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
@@ -564,14 +564,16 @@ class CBFSImage:
         'txt_bios_policy.bin', 'apu/amdfw_a', 'apu/amdfw_b', 'me_rw.hash',
         'me_rw.version', 'vboot_public_key.bin',
         # SeaBIOS runtime config below https://www.seabios.org/Runtime_config
-        'links', 'bootorder', 'etc/show-boot-menu', 'boot-menu-message',
+        'links', 'bootorder', 'etc/show-boot-menu', 'etc/boot-menu-message',
         'etc/boot-menu-key', 'etc/boot-menu-wait', 'etc/boot-fail-wait',
         'etc/extra-pci-roots', 'etc/ps2-keyboard-spinup', 'etc/threads',
         'etc/optionroms-checksum', 'etc/pci-optionrom-exec',
         'etc/s3-resume-vga-init', 'etc/screen-and-debug', 'etc/sercon-port',
         'etc/advertise-serial-debug-port', 'etc/floppy0', 'etc/floppy1',
         'etc/usb-time-sigatt', 'etc/sdcard0', 'etc/sdcard1', 'etc/sdcard2',
-        'etc/sdcard3'
+        'etc/sdcard3',
+        # PC Engines apu specific
+        'bootorder_def', 'bootorder_map'
     ]
     """A list of CBFS filenames known to be data"""
 
@@ -587,7 +589,7 @@ class CBFSImage:
     # PSE binary is treated as closed source as there is no guarantee of open
     # code availability for given build.
     RAW_CLOSED_SOURCE_FILES = [
-        'doom.wad', 'ecfw1.bin', 'ecfw2.bin', 'apu/ecfw', 'ec/ecfw',
+        'doom.wad', 'ecfw1.bin', 'ecfw2.bin', 'apu/amdfw', 'ec/ecfw',
         'sch5545_ecfw.bin', 'txt_bios_acm.bin', 'txt_sinit_acm.bin',
         'apu/amdfw_a_body', 'apu/amdfw_b_body', 'smu_fw', 'smu_fw2',
         'dmic-1ch-48khz-16b.bin', 'dmic-2ch-48khz-16b.bin', 'me_rw',
@@ -883,6 +885,8 @@ class CBFSImage:
                 if file['filename'] == 'pci' + self.ipxe_rom_id + '.rom' or \
                    file['filename'] == 'pci' + self.ipxe_rom_id + '.rom.lzma':
                     self.open_code_files.append(file)
+                else:
+                    self.uncategorized_files.append(file)
             else:
                 self.uncategorized_files.append(file)
         else:
