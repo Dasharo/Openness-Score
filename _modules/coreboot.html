@@ -113,7 +113,7 @@
                     <span class="s1">&#39;CONSOLE&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_FWID_A&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_FWID_B&#39;</span><span class="p">,</span> <span class="s1">&#39;VBLOCK_A&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_VPD&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;VBLOCK_B&#39;</span><span class="p">,</span> <span class="s1">&#39;HSPHY_FW&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_ELOG&#39;</span><span class="p">,</span> <span class="s1">&#39;FMAP&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_FRID&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;RO_FRID_PAD&#39;</span><span class="p">,</span> <span class="s1">&#39;SPD_CACHE&#39;</span><span class="p">,</span> <span class="s1">&#39;FPF_STATUS&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_LIMITS_CFG&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;RW_DDR_TRAINING&#39;</span><span class="p">,</span> <span class="s1">&#39;GBB&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;RW_DDR_TRAINING&#39;</span><span class="p">,</span> <span class="s1">&#39;GBB&#39;</span><span class="p">,</span> <span class="s1">&#39;BOOTORDER&#39;</span> <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to contain data&quot;&quot;&quot;</span>
 
     <span class="c1"># Regions that are not CBFSes and may contain open-source code</span>
@@ -136,7 +136,7 @@
 <span class="sd">    regions. These regions are skipped from classification.&quot;&quot;&quot;</span>
 
     <span class="c1"># Regions to count as empty/unused</span>
-    <span class="n">EMPTY_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UNUSED&#39;</span><span class="p">]</span>
+    <span class="n">EMPTY_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UNUSED&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_UNUSED&#39;</span> <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to be empty spaces, e.g. between IFD</span>
 <span class="sd">    regions.&quot;&quot;&quot;</span>
 
@@ -639,14 +639,16 @@
         <span class="s1">&#39;txt_bios_policy.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;apu/amdfw_a&#39;</span><span class="p">,</span> <span class="s1">&#39;apu/amdfw_b&#39;</span><span class="p">,</span> <span class="s1">&#39;me_rw.hash&#39;</span><span class="p">,</span>
         <span class="s1">&#39;me_rw.version&#39;</span><span class="p">,</span> <span class="s1">&#39;vboot_public_key.bin&#39;</span><span class="p">,</span>
         <span class="c1"># SeaBIOS runtime config below https://www.seabios.org/Runtime_config</span>
-        <span class="s1">&#39;links&#39;</span><span class="p">,</span> <span class="s1">&#39;bootorder&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/show-boot-menu&#39;</span><span class="p">,</span> <span class="s1">&#39;boot-menu-message&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;links&#39;</span><span class="p">,</span> <span class="s1">&#39;bootorder&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/show-boot-menu&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/boot-menu-message&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/boot-menu-key&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/boot-menu-wait&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/boot-fail-wait&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/extra-pci-roots&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/ps2-keyboard-spinup&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/threads&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/optionroms-checksum&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/pci-optionrom-exec&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/s3-resume-vga-init&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/screen-and-debug&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/sercon-port&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/advertise-serial-debug-port&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/floppy0&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/floppy1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;etc/usb-time-sigatt&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/sdcard0&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/sdcard1&#39;</span><span class="p">,</span> <span class="s1">&#39;etc/sdcard2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;etc/sdcard3&#39;</span>
+        <span class="s1">&#39;etc/sdcard3&#39;</span><span class="p">,</span>
+        <span class="c1"># PC Engines apu specific</span>
+        <span class="s1">&#39;bootorder_def&#39;</span><span class="p">,</span> <span class="s1">&#39;bootorder_map&#39;</span>
     <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of CBFS filenames known to be data&quot;&quot;&quot;</span>
 
@@ -662,7 +664,7 @@
     <span class="c1"># PSE binary is treated as closed source as there is no guarantee of open</span>
     <span class="c1"># code availability for given build.</span>
     <span class="n">RAW_CLOSED_SOURCE_FILES</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;doom.wad&#39;</span><span class="p">,</span> <span class="s1">&#39;ecfw1.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;ecfw2.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;apu/ecfw&#39;</span><span class="p">,</span> <span class="s1">&#39;ec/ecfw&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;doom.wad&#39;</span><span class="p">,</span> <span class="s1">&#39;ecfw1.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;ecfw2.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;apu/amdfw&#39;</span><span class="p">,</span> <span class="s1">&#39;ec/ecfw&#39;</span><span class="p">,</span>
         <span class="s1">&#39;sch5545_ecfw.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;txt_bios_acm.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;txt_sinit_acm.bin&#39;</span><span class="p">,</span>
         <span class="s1">&#39;apu/amdfw_a_body&#39;</span><span class="p">,</span> <span class="s1">&#39;apu/amdfw_b_body&#39;</span><span class="p">,</span> <span class="s1">&#39;smu_fw&#39;</span><span class="p">,</span> <span class="s1">&#39;smu_fw2&#39;</span><span class="p">,</span>
         <span class="s1">&#39;dmic-1ch-48khz-16b.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;dmic-2ch-48khz-16b.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;me_rw&#39;</span><span class="p">,</span>
@@ -958,6 +960,8 @@
                 <span class="k">if</span> <span class="n">file</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pci&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ipxe_rom_id</span> <span class="o">+</span> <span class="s1">&#39;.rom&#39;</span> <span class="ow">or</span> \
                    <span class="n">file</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pci&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ipxe_rom_id</span> <span class="o">+</span> <span class="s1">&#39;.rom.lzma&#39;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">open_code_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
