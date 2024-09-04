@@ -21,7 +21,7 @@ class DasharoCorebootImage:
     debug = False
 
     region_patterns = [
-        r"'(?P<region>[A-Z_]+?)' ",
+        r"'(?P<region>\w+?)' ",
         r"\((?P<attribute>(read-only, |preserve, |CBFS, ){0,1}?)",
         r"size (?P<size>\d+?), offset (?P<offset>\d+?)\)"
     ]
@@ -38,7 +38,7 @@ class DasharoCorebootImage:
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
-                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER' ]
+                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER']
     """A list of region names known to contain data"""
 
     # Regions that are not CBFSes and may contain open-source code
@@ -56,12 +56,13 @@ class DasharoCorebootImage:
     # Regions to not account for in calculations.
     # These are containers aggregating smaller regions.
     SKIP_REGIONS = ['RW_MISC', 'UNIFIED_MRC_CACHE', 'RW_SHARED', 'SI_ALL',
-                    'RW_SECTION_A', 'RW_SECTION_B', 'WP_RO', 'RO_SECTION']
+                    'RW_SECTION_A', 'RW_SECTION_B', 'WP_RO', 'RO_SECTION',
+                    'SI_BIOS']
     """A list of region names known to be containers or aliases of other
     regions. These regions are skipped from classification."""
 
     # Regions to count as empty/unused
-    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED' ]
+    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED', 'SI_DEVICEEXT2']
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
@@ -215,6 +216,46 @@ class DasharoCorebootImage:
             print('Dasharo image regions:')
             [print(self.fmap_regions[i]) for i in range(self.num_regions)]
 
+    def _validate_fmap_layout(self):
+        offset = 0
+        hole_size = 0
+        for i in range(self.num_regions - 1):
+
+            # Skip containers as they may have bigger size than offset of the
+            # next region. Exception: FMAP is always read-only but is not a
+            # container.
+            if self.fmap_regions[i]['attributes'] == 'read-only':
+                if self.fmap_regions[i]['name'] != 'FMAP':
+                    continue
+
+            offset += self.fmap_regions[i]['size']
+            if offset != self.fmap_regions[i + 1]['offset']:
+                if offset > self.fmap_regions[i + 1]['offset']:
+                    print('ERROR: Broken FMAP layout!\n'
+                          'End of %s region in the middle of %s region\n' %
+                          (self.fmap_regions[i]['name'],
+                           self.fmap_regions[i + 1]['name'])
+                          )
+                    return -1
+                else:
+                    print('WARNING: FMAP layout is not contiguous.\n'
+                          'The space between region %s and %s is not described'
+                          ' in the FMAP layout and will be classified as '
+                          'closed-source.\n'
+                          % (self.fmap_regions[i]['name'],
+                             self.fmap_regions[i + 1]['name']))
+                    hole_size += (self.fmap_regions[i + 1]['offset'] - offset)
+                    # Reset the offset to detect more non-contiguous regions
+                    offset = self.fmap_regions[i + 1]['offset']
+
+        offset += self.fmap_regions[self.num_regions - 1]['size']
+        if offset != self.image_size:
+            print('WARNING: The last region (%s) offset + size is not equal '
+                  'the image size and will be classified as closed-source.\n'
+                  % self.fmap_regions[self.num_regions - 1]['name'])
+
+        return hole_size
+
     def _classify_region(self, region):
         """Classifies the flashmap regions into basic categories
 
@@ -317,6 +358,10 @@ class DasharoCorebootImage:
         """
         for i in range(self.num_regions):
             self._classify_region(self.fmap_regions[i])
+
+        fmap_hole = self._validate_fmap_layout()
+        if fmap_hole > 0:
+            self.closed_code_size += fmap_hole
 
         self.open_code_size += self._sum_sizes(self.open_code_regions)
         self.closed_code_size += self._sum_sizes(self.closed_code_regions)
@@ -606,6 +651,14 @@ class CBFSImage:
         'cdt.mbn', 'ddr.mbn', 'rpm.mbn'
     ]
     """A list of CBFS filenames known to be closed-source"""
+
+    # A list of regions that are supposed to have a config file. We use this
+    # list to skip a warning and reduce confusion when a config file is not
+    # found in a region that is not listed here.
+    REGIONS_WITH_CONFIG = [
+        'COREBOOT', 'FW_MAIN_A', 'FW_MAIN_B'
+    ]
+    """A list of CBFS regions that should contain a config file"""
 
     DASHARO_LAN_ROM_GUID = 'DEB917C0-C56A-4860-A05B-BF2F22EBB717'
     """GUID of the Dasharo UEFI Paylaod file that contains closed-source
@@ -950,7 +1003,7 @@ class CBFSImage:
     def _get_kconfig_value(self, option):
         """Returns a value of given coreboot's Kconfig option
 
-        :param option: Name of the Kconfig option without 'CONFIG\_' prefix.
+        :param option: Name of the Kconfig option without 'CONFIG_' prefix.
         :type option: str
         :return: The value of Kconfig option
         :rtype: str
@@ -986,7 +1039,8 @@ class CBFSImage:
             cb_config = file.read()
             file.close()
         except FileNotFoundError:
-            print('WARNING: Could not extract coreboot config')
+            if self.region_name in self.REGIONS_WITH_CONFIG or self.debug:
+                print('WARNING: Could not extract coreboot config')
             return
 
         for match in re.finditer(kconfig_pregexp, cb_config):
@@ -1048,7 +1102,8 @@ class CBFSImage:
         lzma to estimate the driver's size occupying the UEFI Payload. The
         result is saved to :attr:`coreboot.CBFSImage.lan_rom_size`.
         """
-        if self._get_kconfig_value('EDK2_LAN_ROM_DRIVER') is None:
+        lan_rom_path = self._get_kconfig_value('EDK2_LAN_ROM_DRIVER')
+        if lan_rom_path is None or lan_rom_path == '""':
             return
         # We determined there was an external LAN driver included. Now we
         # have to determine it's compressed size, because we have to
