@@ -100,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.RAW_DATA_FILES"><code class="docutils literal notranslate"><span class="pre">CBFSImage.RAW_DATA_FILES</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES"><code class="docutils literal notranslate"><span class="pre">CBFSImage.RAW_OPEN_SOURCE_FILES</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES"><code class="docutils literal notranslate"><span class="pre">CBFSImage.RAW_CLOSED_SOURCE_FILES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.REGIONS_WITH_CONFIG"><code class="docutils literal notranslate"><span class="pre">CBFSImage.REGIONS_WITH_CONFIG</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.DASHARO_LAN_ROM_GUID"><code class="docutils literal notranslate"><span class="pre">CBFSImage.DASHARO_LAN_ROM_GUID</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.file_patterns"><code class="docutils literal notranslate"><span class="pre">CBFSImage.file_patterns</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.CBFSImage.file_regexp"><code class="docutils literal notranslate"><span class="pre">CBFSImage.file_regexp</span></code></a></li>
@@ -639,6 +640,12 @@ space.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.CBFSImage.REGIONS_WITH_CONFIG">
+<span class="sig-name descname"><span class="pre">REGIONS_WITH_CONFIG</span></span><a class="headerlink" href="#coreboot.CBFSImage.REGIONS_WITH_CONFIG" title="Permalink to this definition"></a></dt>
+<dd><p>A list of CBFS regions that should contain a config file</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.CBFSImage.DASHARO_LAN_ROM_GUID">
 <span class="sig-name descname"><span class="pre">DASHARO_LAN_ROM_GUID</span></span><a class="headerlink" href="#coreboot.CBFSImage.DASHARO_LAN_ROM_GUID" title="Permalink to this definition"></a></dt>
 <dd><p>GUID of the Dasharo UEFI Paylaod file that contains closed-source
@@ -968,7 +975,7 @@ region size. The metadata size is then added to the
 <dd><p>Returns a value of given coreboot’s Kconfig option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>option</strong> (<em>str</em>) – Name of the Kconfig option without ‘CONFIG_’ prefix.</p>
+<dd class="field-odd"><p><strong>option</strong> (<em>str</em>) – Name of the Kconfig option without ‘<a href="#id1"><span class="problematic" id="id2">CONFIG_</span></a>’ prefix.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The value of Kconfig option</p>
