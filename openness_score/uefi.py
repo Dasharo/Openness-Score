@@ -76,8 +76,8 @@ class UEFIImage:
 
         Initializes the class fields for storing the firmware image components
         classified to specific groups. Also calls
-        :meth:`~coreboot.UEFIImage._parse_uefi_image` and
-        :meth:`~coreboot.UEFIImage._calculate_metrics` methods to parse the
+        `coreboot.UEFIImage._parse_uefi_image` and
+        `coreboot.UEFIImage._calculate_metrics` methods to parse the
         image and calculate the metrics.
 
         :param image_path: Path the the firmware image file being parsed.
@@ -174,11 +174,11 @@ class UEFIImage:
 
         Parses the output of 'UEFIExtract self.image_path report' and extract
         the UEFI image components to a self.uefi_entries dictionary using the
-        :const:`uefi.UEFIImage.report_regexp` regular expression.
+        `uefi.UEFIImage.report_regexp` regular expression.
 
-        UEFI regions are saved in the :attr:`uefi.UEFIImage.regions`. If the
+        UEFI regions are saved in the `uefi.UEFIImage.regions`. If the
         region is a BIOS region, it is also saved to
-        :attr:`uefi.UEFIImage.bios_region` for later use.
+        `uefi.UEFIImage.bios_region` for later use.
 
         If self.debug is True, all UEFI entries and regions with their
         attributes are printed on the console at the end.
@@ -320,31 +320,31 @@ class UEFIImage:
         respective lists. UEFI Firmware Volumes inside the BIOS region are
         processed separately and not included here.
 
-        :attr:`uefi.UEFIImage.closed_code_regions` are appended with UEFI
+        `uefi.UEFIImage.closed_code_regions` are appended with UEFI
         regions which type is found in
-        :const:`uefi.UEFIImage.CLOSED_SOURCE_REGIONS`
+        `uefi.UEFIImage.CLOSED_SOURCE_REGIONS`
 
-        :attr:`uefi.UEFIImage.data_regions` are appended with UEFI regions
-        which type is found in :const:`uefi.UEFIImage.DATA_REGIONS`. Every
+        `uefi.UEFIImage.data_regions` are appended with UEFI regions
+        which type is found in `uefi.UEFIImage.DATA_REGIONS`. Every
         other regions which did not fall into these categories are classified
         as closed-source code and appended to
-        :attr:`uefi.UEFIImage.closed_code_regions`.
+        `uefi.UEFIImage.closed_code_regions`.
 
         Next, the entries are being processed. For simplicity we only classify
         entries that do not belong to Firmware Volumes, so they are either
         data (non-empty pads) or empty (empty padding). If an entry is a
         Firmware Volume and resides inside the BISO region, a new instance of
-        :class:`uefi.UEFIVolume` is created and appended to
-        :attr:`uefi.UEFIImage.volumes` list.
+        `uefi.UEFIVolume` is created and appended to
+        `uefi.UEFIImage.volumes` list.
 
         Entries are counted as data if their names are found in
-        :const:`uefi.UEFIImage.NON_EMPTY_REGION_PADDING` or are inside BIOS
+        `uefi.UEFIImage.NON_EMPTY_REGION_PADDING` or are inside BIOS
         region and their names are found in
-        :const:`uefi.UEFIImage.NON_EMPTY_BIOS_PADDING`. Entries are counted as
+        `uefi.UEFIImage.NON_EMPTY_BIOS_PADDING`. Entries are counted as
         empty if their names are found in
-        :const:`uefi.UEFIImage.EMPTY_REGION_PADDING` or are inside BIOS region
+        `uefi.UEFIImage.EMPTY_REGION_PADDING` or are inside BIOS region
         and their names are found in
-        :const:`uefi.UEFIImage.EMPTY_BIOS_PADDING`.
+        `uefi.UEFIImage.EMPTY_BIOS_PADDING`.
 
         If self.debug is True, all so far classified regions with their
         attributes are printed on the console at the end.
@@ -415,35 +415,35 @@ class UEFIImage:
         """Calculates the sizes of the four basic firmware components
         categories
 
-        The function calls the :meth:`uefi.UEFIImage._classify_entries` and
+        The function calls the `uefi.UEFIImage._classify_entries` and
         then sums up the classified regions sizes.
 
-        :attr:`uefi.UEFIImage.closed_code_regions` sizes sum is added to
-        :attr:`uefi.UEFIImage.closed_code_size`
+        `uefi.UEFIImage.closed_code_regions` sizes sum is added to
+        `uefi.UEFIImage.closed_code_size`
 
-        :attr:`uefi.UEFIImage.data_regions` sizes sum is added to
-        :attr:`uefi.UEFIImage.data_size`
+        `uefi.UEFIImage.data_regions` sizes sum is added to
+        `uefi.UEFIImage.data_size`
 
-        :attr:`uefi.UEFIImage.empty_spaces` sizes sum is added to
-        :attr:`uefi.UEFIImage.empty_size`
+        `uefi.UEFIImage.empty_spaces` sizes sum is added to
+        `uefi.UEFIImage.empty_size`
 
         Additionally for each detected UEFI Firmware Volume region their four
         basic component's categories are also added to the total metrics.
 
-        :attr:`uefi.UEFIVolume.open_code_size` is added to
-        :attr:`uefi.UEFIImage.open_code_size` (although it is expected to be
+        `uefi.UEFIVolume.open_code_size` is added to
+        `uefi.UEFIImage.open_code_size` (although it is expected to be
         0).
 
-        :attr:`uefi.UEFIVolume.closed_code_size` is added to
-        :attr:`uefi.UEFIImage.closed_code_size`
+        `uefi.UEFIVolume.closed_code_size` is added to
+        `uefi.UEFIImage.closed_code_size`
 
-        :attr:`uefi.UEFIVolume.data_size` is added to
-        :attr:`uefi.UEFIImage.data_size`
+        `uefi.UEFIVolume.data_size` is added to
+        `uefi.UEFIImage.data_size`
 
-        :attr:`uefi.UEFIVolume.empty_size` is added to
-        :attr:`uefi.UEFIImage.empty_size`
+        `uefi.UEFIVolume.empty_size` is added to
+        `uefi.UEFIImage.empty_size`
 
-        At the end the method calls :meth:`uefi.UEFIImage._normalize_sizes`
+        At the end the method calls `uefi.UEFIImage._normalize_sizes`
         """
         self._classify_entries()
         # We do not calculate any open-source code. Let's be honest, there
@@ -468,7 +468,7 @@ class UEFIImage:
         parsing and classification. It may happen that the total size of
         classified entries does not sum up to full image size. In such case
         the size difference are counted as data (possibly some metadata) and
-        added to :attr:`uefi.UEFIImage.closed_code_size`. Additionally and
+        added to `uefi.UEFIImage.closed_code_size`. Additionally and
         error is printed.
         """
         # Final check if all sizes are summing up to whole image size
@@ -516,8 +516,8 @@ class UEFIImage:
 
         Saves the parsed information and classified image components into a
         markdown file. Also for each UEFI firmware volume in
-        :attr:`uefi.UEFIImage.volumes` it calls
-        :meth:`uefi.UEFIVolume.export_markdown` to save the UEFI Firmware
+        `uefi.UEFIImage.volumes` it calls
+        `uefi.UEFIVolume.export_markdown` to save the UEFI Firmware
         Volume statistics.
 
         :param file: Path to markdown file
@@ -639,8 +639,8 @@ class UEFIVolume:
 
         Initializes the class fields for storing the UEFI Firmware Volume
         components classified to specific groups. Also calls
-        :meth:`~coreboot.UEFIVolume._parse_volume_files` and
-        :meth:`~coreboot.UEFIVolume._calculate_metrics` methods to parse the
+        `coreboot.UEFIVolume._parse_volume_files` and
+        `coreboot.UEFIVolume._calculate_metrics` methods to parse the
         image and calculate the metrics.
 
         :param uefi_entries: Dictionary with the UEFI entries from the report.
@@ -854,13 +854,13 @@ class UEFIVolume:
 
     def _parse_volume_files(self):
         """Extracts the UEFI entries that belong to the given Firmware Volumes
-        and append them to :attr:`uefi.UEFIVolume.volume_entries`
+        and append them to `uefi.UEFIVolume.volume_entries`
 
         The function also detects nested uncompressed volumes and creates new
-        instance of :class:`uefi.UEFIVolume` and appends them to
-        :attr:`uefi.UEFIVolume.nested_volumes`.
+        instance of `uefi.UEFIVolume` and appends them to
+        `uefi.UEFIVolume.nested_volumes`.
 
-        If :attr:`uefi.UEFIVolume.debug` is True, all Firmware Volume entries
+        If `uefi.UEFIVolume.debug` is True, all Firmware Volume entries
         with their attributes are printed on the console at the end.
         """
         for i in range(self.volume_idx + 1, len(self.uefi_entries)):
@@ -896,7 +896,7 @@ class UEFIVolume:
         Everything else is considered either closed-source code or data (in
         case of UEFI NVAR).
 
-        If :attr:`uefi.UEFIVolume.debug` is True, all Firmware Volume entries
+        If `uefi.UEFIVolume.debug` is True, all Firmware Volume entries
         classified so far as data and empty are printed on the console at the
         end.
         """
@@ -1022,7 +1022,7 @@ class UEFIVolume:
         """Determines if given UEFI Firmware Volume is a variable store
 
         :return: True if the Firmware Volume consists of NVAR entries
-                 exceeding the :const:`uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD`,
+                 exceeding the `uefi.UEFIVolume.NVAR_VOLUME_THRESHOLD`,
                  False otherwise.
         :rtype: bool
         """
@@ -1043,19 +1043,19 @@ class UEFIVolume:
         """Calculates the sizes of the four basic firmware components
         categories
 
-        Calls :meth:`~uefi.UEFIVolume._classify_entries` then sums the regions
+        Calls `~uefi.UEFIVolume._classify_entries` then sums the regions
         sizes from all 3 lists
 
-        :attr:`uefi.UEFIVolume.closed_code_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.closed_code_size`
+        `uefi.UEFIVolume.closed_code_files` sizes sum is added to
+        `uefi.UEFIVolume.closed_code_size`
 
-        :attr:`uefi.UEFIVolume.data_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.data_size`
+        `uefi.UEFIVolume.data_files` sizes sum is added to
+        `uefi.UEFIVolume.data_size`
 
-        :attr:`uefi.UEFIVolume.empty_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.empty_size`
+        `uefi.UEFIVolume.empty_files` sizes sum is added to
+        `uefi.UEFIVolume.empty_size`
 
-        At the end the method calls :meth:`uefi.UEFIVolume._normalize_sizes`
+        At the end the method calls `uefi.UEFIVolume._normalize_sizes`
         """
         self._classify_entries()
         # We do not calculate any open-source code. Let's be honest, there
@@ -1069,22 +1069,22 @@ class UEFIVolume:
         """Checks if all Firmware Volume components sizes sum up to whole
         Firmware Volume size.
 
-        For all nested volumes in :attr:`uefi.UEFIVolume.nested_volumes` sums
+        For all nested volumes in `uefi.UEFIVolume.nested_volumes` sums
         the sizes from all 3 lists:
 
-        :attr:`uefi.UEFIVolume.closed_code_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.closed_code_size`
+        `uefi.UEFIVolume.closed_code_files` sizes sum is added to
+        `uefi.UEFIVolume.closed_code_size`
 
-        :attr:`uefi.UEFIVolume.data_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.data_size`
+        `uefi.UEFIVolume.data_files` sizes sum is added to
+        `uefi.UEFIVolume.data_size`
 
-        :attr:`uefi.UEFIVolume.empty_files` sizes sum is added to
-        :attr:`uefi.UEFIVolume.empty_size`
+        `uefi.UEFIVolume.empty_files` sizes sum is added to
+        `uefi.UEFIVolume.empty_size`
 
         At the end it sums all classified files and add the difference between
         the Firmware Volume size and classified files size to the
-        :attr:`uefi.UEFIVolume.closed_code_size` or to the
-        :attr:`uefi.UEFIVolume.data_size` if given Firmware Volume is variable
+        `uefi.UEFIVolume.closed_code_size` or to the
+        `uefi.UEFIVolume.data_size` if given Firmware Volume is variable
         storage.
         """
         for i in range(len(self.nested_volumes)):

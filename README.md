@@ -110,18 +110,11 @@ to generate detailed code documentation automatically.
 To generate the documentation run the following:
 
 ```bash
-(venv) make html
+(venv) mkdocs serve
 python -m http.server 8000
 ```
 
-For live preview run:
-
-```bash
-(venv) make livehtml
-```
-
-Open the web browser and type `localhost:8000` as address. Or alternatively
-open `build/html/index.html` file in the web browser directly.
+Open the web browser and type `localhost:8000` as address.
 
 ## Checking Python style
 

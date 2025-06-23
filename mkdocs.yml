@@ -1,0 +1,14 @@
+---
+site_name: Openness Score
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - Methodology: methodology.md
+  - Design: design.md
+  - API Reference:
+    - openness_score: openness_score.md
+    - coreboot: coreboot.md
+    - uefi: uefi.md
