@@ -122,6 +122,57 @@ def export_data(args, image):
     image.export_charts(output_path)
 
 
+def compare_scores(dasharo_image, proprietary_image):
+    """Compares metrics between Dasharo and proprietary firmware.
+
+    :param dasharo_image: Dasharo image
+    :type dasharo_image: DasharoCorebootImage
+    :param proprietary_image: Proprietary firmware image
+    :type proprietary_image: DasharoCorebootImage
+
+    :return: Three metrics as percentages rounded to 1 decimal: Closed source difference, Data size difference, Empty space size difference
+    :rtype: float, float, float
+    """
+    closed_source_diff = 100 * (dasharo_image.closed_code_size - proprietary_image.closed_code_size) / proprietary_image.closed_code_size
+    data_size_diff = 100 * (dasharo_image.data_size - proprietary_image.data_size) / proprietary_image.data_size
+    empty_diff = 100 * (dasharo_image.empty_size - proprietary_image.empty_size) / proprietary_image.empty_size
+    return round(closed_source_diff, 1), round(data_size_diff, 1), round(empty_diff, 1)
+
+
+def export_compared_data(args, dasharo_image, proprietary_image):
+    """Calls `openness_score.compare_scores` and saves the output to a Markdown file.
+
+    :param args: Program arguments
+    :type args: argparse.Namespace
+    :param dasharo_image: Dasharo image
+    :type dasharo_image: DasharoCorebootImage
+    :param proprietary_image: Proprietary firmware image
+    :type proprietary_image: DasharoCorebootImage
+    """
+    output_path = Path.cwd()
+
+    if args.output is not None:
+        output_path = Path(args.output)
+        try:
+            output_path.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            sys.exit('You do not have permission to write to %s' % args.output)
+
+    closed_source_diff, data_size_diff, empty_diff = compare_scores(dasharo_image, proprietary_image)
+    dasharo_name = Path(args.file).name
+    proprietary_name = Path(args.compare).name
+    output_file = output_path.joinpath('compare.md')
+    if Path(output_file).is_file():
+        with open(output_file, 'a') as md:
+            md.write("| %s | %s | %s | %s | %s | %s |\n" % (args.platform, dasharo_name, proprietary_name, closed_source_diff, data_size_diff, empty_diff))
+    else:
+        with open(output_file, 'w') as md:
+            md.write("# Openness score comparison table\n\n")
+            md.write("|Platform | Dasharo Firmware file | Proprietary Firmware file | closed-source diff [%] | data size diff [%] | empty space diff [%] |\n")
+            md.write("| --- | --- | --- | --- | --- | --- |\n")
+            md.write("| %s | %s | %s | %s | %s | %s |\n" % (args.platform, dasharo_name, proprietary_name, closed_source_diff, data_size_diff, empty_diff))
+
+
 def OpennessScore():
     """Utility's entry point responsible for argument parsing and
     creating firmware image class instances based on detected image format.
@@ -133,6 +184,10 @@ def OpennessScore():
 
     parser.add_argument('file', help='Firmware binary file to be parsed',
                         nargs='?')
+    parser.add_argument('-c', '--compare', metavar='proprietary_file',
+                         help='Compare Dasharo and proprietary firmware scores and store result in a Markdown table.' \
+                        ' file should be the Dasharo binary and proprietary_file should  be the proprietary firmware binary.')
+    parser.add_argument('-p', '--platform', default='-', help='Platform model to provide to the table when --compare is set.')
     parser.add_argument('-h', '--help', action='help', help=SUPPRESS)
     parser.add_argument('-o', '--output', default='out/', help='\n'.join([
                         'Specifies the directory where to store the results']))
@@ -156,20 +211,33 @@ def OpennessScore():
         parser.print_help(sys.stderr)
         sys.exit(0)
 
-    fw_is_cbfs, fw_is_uefi = check_file(args.file)
+    if args.compare:
+        fw_is_cbfs, _ = check_file(args.file)
+        if not fw_is_cbfs:
+            print("File must be Dasharo!")
+            sys.exit(1)
+        DasharoImage = DasharoCorebootImage(args.file, args.verbose)
+        fw_is_cbfs, fw_is_uefi = check_file(args.compare)
+        if fw_is_cbfs:
+            ProprietaryImage = DasharoCorebootImage(args.compare, args.verbose)
+        elif fw_is_uefi:
+            ProprietaryImage = UEFIImage(args.compare, args.verbose)
+        export_compared_data(args, DasharoImage, ProprietaryImage)
+    else:
+        fw_is_cbfs, fw_is_uefi = check_file(args.file)
 
-    if fw_is_cbfs:
-        print('\'%s\' detected as Dasharo image' % args.file)
-        print('\n\n\'%s\' Dasharo image statistics:' % args.file)
-        DasharoCbImg = DasharoCorebootImage(args.file, args.verbose, args.microarch)
-        print(DasharoCbImg)
-        export_data(args, DasharoCbImg)
-    elif fw_is_uefi:
-        print('\'%s\' detected as vendor image' % args.file)
-        print('\n\n\'%s\' vendor image statistics:' % args.file)
-        VendorImg = UEFIImage(args.file, args.verbose)
-        print(VendorImg)
-        export_data(args, VendorImg)
+        if fw_is_cbfs:
+            print('\'%s\' detected as Dasharo image' % args.file)
+            print('\n\n\'%s\' Dasharo image statistics:' % args.file)
+            DasharoCbImg = DasharoCorebootImage(args.file, args.verbose, args.microarch)
+            print(DasharoCbImg)
+            export_data(args, DasharoCbImg)
+        elif fw_is_uefi:
+            print('\'%s\' detected as vendor image' % args.file)
+            print('\n\n\'%s\' vendor image statistics:' % args.file)
+            VendorImg = UEFIImage(args.file, args.verbose)
+            print(VendorImg)
+            export_data(args, VendorImg)
 
 
 if __name__ == '__main__':
