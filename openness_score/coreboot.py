@@ -30,6 +30,9 @@ class DasharoCorebootImage:
     region_regexp = re.compile(''.join(region_patterns), re.MULTILINE)
     """Regular expression variable used to extract the flashmap regions"""
 
+    ifdtool_pattern = r'^FLREG(?P<id>\d+):\s+(?P<reg_val>0x[0-9a-fA-F]+)\s*?\n\s+Flash Region \d+ \((?P<name>.+?)\): (?P<start>[0-9a-fA-F]+) - (?P<end>[0-9a-fA-F]+)(?: \((?P<status>unused)\))?'
+    ifdtool_regexp = re.compile(ifdtool_pattern, re.MULTILINE)
+
     # Regions to consider as data, they should not contain any code ever.
     # Some of the regions are used only by certain platforms and may not be met
     # on Dasharo builds.
@@ -38,8 +41,12 @@ class DasharoCorebootImage:
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
-                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER']
+                    'RW_DDR_TRAINING', 'GBB', 'BOOTORDER', 'RESERVED', 'BPA',
+                    'ROMHOLE']
     """A list of region names known to contain data"""
+
+    IFD_DATA_REGIONS = ['Flash Descriptor', 'Platform Data', 'GbE']
+    """A list of IFD regions known to contain data"""
 
     # Regions that are not CBFSes and may contain open-source code
     # Their whole size is counted as code.
@@ -53,6 +60,9 @@ class DasharoCorebootImage:
                     'SIGN_CSE']
     """A list of region names known to contain closed-source code"""
 
+    IFD_BLOB_REGIONS = ['Intel ME', 'IE', 'PTT', '10GbE_0', '10GbE_1', 'EC']
+    """A list of closed-source code IFD regions"""
+
     # Regions to not account for in calculations.
     # These are containers aggregating smaller regions.
     SKIP_REGIONS = ['RW_MISC', 'UNIFIED_MRC_CACHE', 'RW_SHARED', 'SI_ALL',
@@ -61,12 +71,20 @@ class DasharoCorebootImage:
     """A list of region names known to be containers or aliases of other
     regions. These regions are skipped from classification."""
 
+    # Regions to not account for in calculations when ifdtool is used.
+    # These regions will be classified based on their presence in IFD.
+    IFD_SKIP_REGIONS = ['SI_DESC', 'SI_ME', 'SI_GBE', 'SI_PDR', 'SI_EC',
+                        'SI_DEVICEEXT', 'SI_BIOS2',  'SI_DEVICEEXT2',
+                        'SI_IE', 'SI_10GBE0', 'SI_10GBE1', 'SI_PTT']
+    """A list of region names to be skipped when ifdtool is used.
+    These regions willbe classified by IFD region purpose."""
+
     # Regions to count as empty/unused
     EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED', 'SI_DEVICEEXT2']
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
-    def __init__(self, image_path, verbose=False):
+    def __init__(self, image_path, verbose=False, microarch=""):
         """DasharoCorebootImage class init method
 
         Initializes the class fields for storing the firmware image components
@@ -83,14 +101,22 @@ class DasharoCorebootImage:
         """
         self.image_path = image_path
         """Path to the image represented by DasharoCorebootImage class"""
+        self.microarch = microarch
+        """CPU michroarchitecture supported by the firmware binary to be passed to ifdtool.
+        For a complete list of supported microarchitectures, use 'ifdtool -h'.
+        """
         self.image_size = os.path.getsize(image_path)
         """Image size in bytes"""
         self.fmap_regions = {}
         """A dictionary holding the coreboot image flashmap regions"""
+        self.ifdtool_regions = {}
+        """A dictionary holding regions found by ifdtool"""
         self.cbfs_images = []
         """A list holding the regions with CBFS"""
         self.num_regions = 0
         """Total number of flashmap regions"""
+        self.num_ifdtool_regions = 0
+        """Total number of regions found by ifdtool"""
         self.num_cbfses = 0
         """Total number of flashmap regions containing CBFSes"""
         self.open_code_size = 0
@@ -109,6 +135,12 @@ class DasharoCorebootImage:
         """A list holding flashmap regions filled with data"""
         self.empty_regions = []
         """A list holding empty flashmap regions"""
+        self.closed_code_regions_ifdtool = []
+        """A list holding ifdtool regions filled with closed-source code"""
+        self.data_regions_ifdtool = []
+        """A list holding ifdtool regions filled with data"""
+        self.empty_regions_ifdtool = []
+        """A list holding empty ifdtool regions"""
         # This type of regions will be counted as closed-source at the end of
         # metrics calculation. Keep them in separate array to export them into
         # CSV later for review.
@@ -116,11 +148,18 @@ class DasharoCorebootImage:
         """A list holding flashmap regions that could not be classified.
         Counted as closed-source code at the end of calculation process.
         """
-
+        self.uncategorized_regions_ifdtool = []
+        """A list holding ifdtool regions that could not be classified.
+        Counted as closed-source code at the end of calculation process.
+        """
         self.debug = verbose
         """Used to enable verbose debug output from the parsing process"""
+        self.use_ifdtool = bool(microarch)
+        """If `microarch` argument is set, use ifdtool"""
 
         self._parse_cb_fmap_layout()
+        if self.use_ifdtool:
+            self._parse_ifdtool_regions(microarch)
         self._calculate_metrics()
 
     def __len__(self):
@@ -256,6 +295,84 @@ class DasharoCorebootImage:
 
         return hole_size
 
+    def _parse_ifdtool_regions(self, microarch):
+        """Parses `ifdtool --dump` output
+        Extracts IFD regions to the `self.ifdtool_regions` dictionary
+        using the `coreboot.DasharoCorebootImage.ifdtool_regexp` regular expression.
+        If `coreboot.DasharoCorebootImage.debug` is True, all IFD regions with their
+        attributes are printed on the console at the end.
+        """
+        cmd = ['ifdtool', '-p', microarch, '-d', self.image_path]
+        output = subprocess.run(cmd, text=True, capture_output=True)
+        for match in re.finditer(self.ifdtool_regexp, output.stdout):
+            # Do not add regions marked as unused
+            if not bool(match.group('status')):
+                self.ifdtool_regions[self.num_ifdtool_regions] = {
+                    'id': int(match.group('id')),
+                    'reg_val': match.group('reg_val'),
+                    'name': match.group('name'),
+                    'start': f"0x{match.group('start')}",
+                    'end': f"0x{match.group('end')}",
+                }
+                start_int = int(self.ifdtool_regions[self.num_ifdtool_regions]['start'], 16)
+                end_int = int(self.ifdtool_regions[self.num_ifdtool_regions]['end'], 16)
+                self.ifdtool_regions[self.num_ifdtool_regions]['size'] = end_int - start_int + 1
+                self.num_ifdtool_regions += 1
+        if self.debug:
+            print('IFD regions:')
+            [print(self.ifdtool_regions[i]) for i in range(self.num_ifdtool_regions)]
+
+    def _classify_ifdtool_region(self, region):
+        """Classifies the IFD regions into basic categories
+
+        Each region is being classified into 3 basic categories and appended
+        to respective lists.
+
+        `coreboot.DasharoCorebootImage.closed_code_regions_ifdtool` are appended
+        with regions found in `coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS`
+
+        `coreboot.DasharoCorebootImage.data_regions_ifdtool` are appended
+        with regions found in `coreboot.DasharoCorebootImage.IFD_DATA_REGIONS`
+
+        `coreboot.DasharoCorebootImage.empty_regions_ifdtool` are appended
+        with regions that are detected to be empty using
+        `coreboot.DasharoCorebootImage._is_empty`
+
+        Any other unrecognized region falls into
+        `coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool` list which
+        will be counted as closed-source code region because we were unable to
+        identify what can be inside.
+
+        :param region: IFD region entry from dictionary
+        :type region: dict
+        """
+        if self._is_empty(int(region["start"], 16), int(region["end"],16)):
+            self.empty_regions_ifdtool.append(region)
+            return
+        if region["name"] in self.IFD_BLOB_REGIONS:
+            self.closed_code_regions_ifdtool.append(region)
+        elif region["name"] in self.IFD_DATA_REGIONS:
+            self.data_regions_ifdtool.append(region)
+        elif region["name"] == "BIOS":
+            return
+        else:
+            self.uncategorized_regions_ifdtool.append(region)
+    
+    def _is_empty(self, start, end):
+        """Checks if a flash region is empty, where empty is defined as filled with 0x00 or 0xFF bytes.
+        
+        :param: start: Start address of the region
+        :type start: int
+        :param end: End address of the region
+        :type end: int
+
+        :rtype: bool
+        """
+        with open(self.image_path, 'rb') as f:
+            f.seek(start)
+            region_data = f.read(end - start + 1)
+            return all(b in (0x00, 0xFF) for b in region_data)
+
     def _classify_region(self, region):
         """Classifies the flashmap regions into basic categories
 
@@ -295,6 +412,8 @@ class DasharoCorebootImage:
         if self._region_is_cbfs(region):
             # Skip CBFSes because they have separate class and methods to
             # calculate metrics
+            return
+        elif self.use_ifdtool and region['name'] in self.IFD_SKIP_REGIONS:
             return
         elif region['name'] in self.SKIP_REGIONS:
             return
@@ -363,11 +482,15 @@ class DasharoCorebootImage:
         if fmap_hole > 0:
             self.closed_code_size += fmap_hole
 
+        if self.use_ifdtool:
+            for i in range(self.num_ifdtool_regions):
+                self._classify_ifdtool_region(self.ifdtool_regions[i])
+
         self.open_code_size += self._sum_sizes(self.open_code_regions)
-        self.closed_code_size += self._sum_sizes(self.closed_code_regions)
-        self.data_size += self._sum_sizes(self.data_regions)
-        self.empty_size += self._sum_sizes(self.empty_regions)
-        self.closed_code_size += self._sum_sizes(self.uncategorized_regions)
+        self.closed_code_size += self._sum_sizes(self.closed_code_regions) + self._sum_sizes(self.closed_code_regions_ifdtool)
+        self.data_size += self._sum_sizes(self.data_regions) + self._sum_sizes(self.data_regions_ifdtool)
+        self.empty_size += self._sum_sizes(self.empty_regions) + self._sum_sizes(self.empty_regions_ifdtool)
+        self.closed_code_size += self._sum_sizes(self.uncategorized_regions) + self._sum_sizes(self.uncategorized_regions_ifdtool)
         if len(self.uncategorized_regions) != 0:
             print('INFO: Found %d uncategorized regions of total size %d bytes'
                   % (len(self.uncategorized_regions),
@@ -407,8 +530,9 @@ class DasharoCorebootImage:
         # It may happen that the FMAP does not cover whole flash size and the
         # first region will start with non-zero offset. Check if first region
         # offset is zero, if not count all bytes from the start of flash to the
-        # start of first region as closed source.
-        if self.fmap_regions[0]['offset'] != 0:
+        # start of first region as closed source. This is only done if ifdtool
+        # is not used, because ifdtool will always parse those regions correctly.
+        if self.fmap_regions[0]['offset'] != 0 and not self.use_ifdtool:
             self.closed_code_size += self.fmap_regions[0]['offset']
 
         # Final check if all sizes are summing up to whole image size
@@ -431,7 +555,7 @@ class DasharoCorebootImage:
         return metric * 100 / (self.open_code_size + self.closed_code_size)
 
     def _export_regions_md(self, file, regions, category):
-        """Write the regions for given category to the markdown file
+        """Write flashmap regions for given category to the markdown file
 
         :param file: Markdown file handle to write the regions's info to
         :type file: file
@@ -447,6 +571,24 @@ class DasharoCorebootImage:
             file.write('| {} | {} | {} | {} |\n'.format(
                         region['name'], hex(region['offset']),
                         hex(region['size']), category))
+
+    def _export_ifdtool_regions_md(self, file, regions, category):
+        """Write IFD regions for given category to the markdown file
+
+        :param file: Markdown file handle to write the regions's info to
+        :type file: file
+        :param regions: Dictionary containing regions to be written to the
+                        markdown file.
+        :type regions: dict
+        :param category: Category of the regions to be written to the markdown
+                         file. Should be one of: open-source, closed-source,
+                         data, empty.
+        :type category: str
+        """
+        for region in regions:
+            file.write('| {} | {} | {} | {} | {} |\n'.format(
+                region['name'], region['start'], region['end'],
+                hex(region['size']), category))
 
     def export_markdown(self, file, mkdocs):
         """Opens a file and saves the openness report in markdown format
@@ -508,6 +650,19 @@ class DasharoCorebootImage:
                                     'closed-source')
             self._export_regions_md(md, self.data_regions, 'data')
             self._export_regions_md(md, self.empty_regions, 'empty')
+
+            if self.use_ifdtool:
+                if not mkdocs:
+                    md.write('\n## IFD regions\n\n')
+                else:
+                    md.write('\n### IFD regions\n\n')
+
+                md.write('| IFD region | Start | End | Size | Category |\n')
+                md.write('| -------------- | ----- | --- | ---- | -------- |\n')
+                self._export_ifdtool_regions_md(md, self.closed_code_regions_ifdtool,
+                                                'closed-source')
+                self._export_ifdtool_regions_md(md, self.data_regions_ifdtool, 'data')
+                self._export_ifdtool_regions_md(md, self.empty_regions_ifdtool, 'empty')
 
             for cbfs in self.cbfs_images:
                 md.write('\n')

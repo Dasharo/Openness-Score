@@ -136,6 +136,8 @@ def OpennessScore():
     parser.add_argument('-h', '--help', action='help', help=SUPPRESS)
     parser.add_argument('-o', '--output', default='out/', help='\n'.join([
                         'Specifies the directory where to store the results']))
+    parser.add_argument('-a', '--microarch', default="", help='\n'.join([
+                        'CPU michroarchitecture supported by the firmware binary to be passed to ifdtool']))
     parser.add_argument('-v', '--verbose', help='\n'.join([
                         'Print verbose information during the image parsing']),
                         action='store_true')
@@ -159,7 +161,7 @@ def OpennessScore():
     if fw_is_cbfs:
         print('\'%s\' detected as Dasharo image' % args.file)
         print('\n\n\'%s\' Dasharo image statistics:' % args.file)
-        DasharoCbImg = DasharoCorebootImage(args.file, args.verbose)
+        DasharoCbImg = DasharoCorebootImage(args.file, args.verbose, args.microarch)
         print(DasharoCbImg)
         export_data(args, DasharoCbImg)
     elif fw_is_uefi:
