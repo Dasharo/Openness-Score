@@ -1029,7 +1029,7 @@ class UEFIVolume:
         nvar_count = 0
 
         for i in range(len(self.volume_entries)):
-            if self.volume_entries[i]['type'] == 'NVAR entry':
+            if self.volume_entries[i]['type'] in ['NVAR entry', 'VSS entry']:
                 nvar_count += 1
 
         nvar_ratio = (nvar_count * 100) / len(self.volume_entries)
