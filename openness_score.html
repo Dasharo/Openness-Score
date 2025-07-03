@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
@@ -5,19 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>openness_score module &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -56,6 +54,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openness_score.OpennessScore"><code class="docutils literal notranslate"><span class="pre">OpennessScore()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openness_score.check_file"><code class="docutils literal notranslate"><span class="pre">check_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openness_score.compare_scores"><code class="docutils literal notranslate"><span class="pre">compare_scores()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openness_score.export_compared_data"><code class="docutils literal notranslate"><span class="pre">export_compared_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openness_score.export_data"><code class="docutils literal notranslate"><span class="pre">export_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#openness_score.version"><code class="docutils literal notranslate"><span class="pre">version</span></code></a></li>
 </ul>
@@ -143,6 +143,41 @@ file is a coreboot image or UEFI image.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool, bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openness_score.compare_scores">
+<span class="sig-prename descclassname"><span class="pre">openness_score.</span></span><span class="sig-name descname"><span class="pre">compare_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dasharo_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proprietary_image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/openness_score.html#compare_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openness_score.compare_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compares metrics between Dasharo and proprietary firmware.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dasharo_image</strong> (<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage" title="coreboot.DasharoCorebootImage"><em>DasharoCorebootImage</em></a>) – Dasharo image</p></li>
+<li><p><strong>proprietary_image</strong> (<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage" title="coreboot.DasharoCorebootImage"><em>DasharoCorebootImage</em></a>) – Proprietary firmware image</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Three metrics as percentages rounded to 1 decimal: Closed source difference, Data size difference, Empty space size difference</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, float, float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="openness_score.export_compared_data">
+<span class="sig-prename descclassname"><span class="pre">openness_score.</span></span><span class="sig-name descname"><span class="pre">export_compared_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dasharo_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proprietary_image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/openness_score.html#export_compared_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openness_score.export_compared_data" title="Permalink to this definition"></a></dt>
+<dd><p>Calls <cite>openness_score.compare_scores</cite> and saves the output to a Markdown file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>argparse.Namespace</em>) – Program arguments</p></li>
+<li><p><strong>dasharo_image</strong> (<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage" title="coreboot.DasharoCorebootImage"><em>DasharoCorebootImage</em></a>) – Dasharo image</p></li>
+<li><p><strong>proprietary_image</strong> (<a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage" title="coreboot.DasharoCorebootImage"><em>DasharoCorebootImage</em></a>) – Proprietary firmware image</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
@@ -5,19 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>coreboot module &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,16 +53,22 @@
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.region_patterns"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.region_patterns</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.region_regexp"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.region_regexp</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.DATA_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.DATA_REGIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.IFD_DATA_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_DATA_REGIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.CODE_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.CODE_REGIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.BLOB_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.BLOB_REGIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_BLOB_REGIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.SKIP_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.SKIP_REGIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.IFD_SKIP_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_SKIP_REGIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.EMPTY_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.EMPTY_REGIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.__init__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.image_path"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.image_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.microarch"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.microarch</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.image_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.image_size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.fmap_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.fmap_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.ifdtool_regions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.cbfs_images"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.cbfs_images</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.num_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.num_ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_ifdtool_regions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.num_cbfses"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_cbfses</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.open_code_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.open_code_size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.closed_code_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_size</span></code></a></li>
@@ -74,19 +78,28 @@
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.closed_code_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_regions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.data_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.data_regions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.empty_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.empty_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.closed_code_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_regions_ifdtool</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.data_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.data_regions_ifdtool</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.empty_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.empty_regions_ifdtool</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.uncategorized_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.uncategorized_regions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.uncategorized_regions_ifdtool</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.debug"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.ifd_found"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.ifd_found</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.__len__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__len__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.__repr__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__repr__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.__str__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__str__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._region_is_cbfs"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._region_is_cbfs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._parse_cb_fmap_layout"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._parse_cb_fmap_layout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._parse_ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._parse_ifdtool_regions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._classify_ifdtool_region"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._classify_ifdtool_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._is_empty"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._is_empty()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._classify_region"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._classify_region()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._calculate_metrics"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._calculate_metrics()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._sum_sizes"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._sum_sizes()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._normalize_sizes"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._normalize_sizes()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._get_percentage"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._get_percentage()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._export_regions_md"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._export_regions_md()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage._export_ifdtool_regions_md"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._export_ifdtool_regions_md()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.export_markdown"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.export_markdown()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coreboot.DasharoCorebootImage.export_charts"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.export_charts()</span></code></a></li>
 </ul>
@@ -178,7 +191,7 @@
 <span id="coreboot-module"></span><h1>coreboot module<a class="headerlink" href="#module-coreboot" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">coreboot.</span></span><span class="sig-name descname"><span class="pre">DasharoCorebootImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">coreboot.</span></span><span class="sig-name descname"><span class="pre">DasharoCorebootImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">microarch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>DasharoCorebootImage class</p>
 <p>The main class representing a coreboot-based firmware image</p>
@@ -201,6 +214,12 @@
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.IFD_DATA_REGIONS">
+<span class="sig-name descname"><span class="pre">IFD_DATA_REGIONS</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.IFD_DATA_REGIONS" title="Permalink to this definition"></a></dt>
+<dd><p>A list of IFD regions known to contain data</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.CODE_REGIONS">
 <span class="sig-name descname"><span class="pre">CODE_REGIONS</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.CODE_REGIONS" title="Permalink to this definition"></a></dt>
 <dd><p>A list of region names known to contain open-source code</p>
@@ -213,10 +232,23 @@
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS">
+<span class="sig-name descname"><span class="pre">IFD_BLOB_REGIONS</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS" title="Permalink to this definition"></a></dt>
+<dd><p>A list of closed-source code IFD regions</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.SKIP_REGIONS">
 <span class="sig-name descname"><span class="pre">SKIP_REGIONS</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.SKIP_REGIONS" title="Permalink to this definition"></a></dt>
 <dd><p>A list of region names known to be containers or aliases of other
 regions. These regions are skipped from classification.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.IFD_SKIP_REGIONS">
+<span class="sig-name descname"><span class="pre">IFD_SKIP_REGIONS</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.IFD_SKIP_REGIONS" title="Permalink to this definition"></a></dt>
+<dd><p>A list of region names to be skipped when ifdtool is used.
+These regions willbe classified by IFD region purpose.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -228,7 +260,7 @@ regions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">microarch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>DasharoCorebootImage class init method</p>
 <p>Initializes the class fields for storing the firmware image components
 classified to specific groups. Also calls
@@ -253,6 +285,13 @@ the image parsing, defaults to False</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.microarch">
+<span class="sig-name descname"><span class="pre">microarch</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.microarch" title="Permalink to this definition"></a></dt>
+<dd><p>CPU michroarchitecture supported by the firmware binary to be passed to ifdtool.
+For a complete list of supported microarchitectures, use ‘ifdtool -h’.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.image_size">
 <span class="sig-name descname"><span class="pre">image_size</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.image_size" title="Permalink to this definition"></a></dt>
 <dd><p>Image size in bytes</p>
@@ -265,6 +304,12 @@ the image parsing, defaults to False</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.ifdtool_regions">
+<span class="sig-name descname"><span class="pre">ifdtool_regions</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.ifdtool_regions" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary holding regions found by ifdtool</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.cbfs_images">
 <span class="sig-name descname"><span class="pre">cbfs_images</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.cbfs_images" title="Permalink to this definition"></a></dt>
 <dd><p>A list holding the regions with CBFS</p>
@@ -274,6 +319,12 @@ the image parsing, defaults to False</p></li>
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.num_regions">
 <span class="sig-name descname"><span class="pre">num_regions</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.num_regions" title="Permalink to this definition"></a></dt>
 <dd><p>Total number of flashmap regions</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.num_ifdtool_regions">
+<span class="sig-name descname"><span class="pre">num_ifdtool_regions</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.num_ifdtool_regions" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of regions found by ifdtool</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -331,6 +382,24 @@ the image parsing, defaults to False</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.closed_code_regions_ifdtool">
+<span class="sig-name descname"><span class="pre">closed_code_regions_ifdtool</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.closed_code_regions_ifdtool" title="Permalink to this definition"></a></dt>
+<dd><p>A list holding ifdtool regions filled with closed-source code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.data_regions_ifdtool">
+<span class="sig-name descname"><span class="pre">data_regions_ifdtool</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.data_regions_ifdtool" title="Permalink to this definition"></a></dt>
+<dd><p>A list holding ifdtool regions filled with data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.empty_regions_ifdtool">
+<span class="sig-name descname"><span class="pre">empty_regions_ifdtool</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.empty_regions_ifdtool" title="Permalink to this definition"></a></dt>
+<dd><p>A list holding empty ifdtool regions</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.uncategorized_regions">
 <span class="sig-name descname"><span class="pre">uncategorized_regions</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.uncategorized_regions" title="Permalink to this definition"></a></dt>
 <dd><p>A list holding flashmap regions that could not be classified.
@@ -338,9 +407,23 @@ Counted as closed-source code at the end of calculation process.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool">
+<span class="sig-name descname"><span class="pre">uncategorized_regions_ifdtool</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool" title="Permalink to this definition"></a></dt>
+<dd><p>A list holding ifdtool regions that could not be classified.
+Counted as closed-source code at the end of calculation process.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.debug">
 <span class="sig-name descname"><span class="pre">debug</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.debug" title="Permalink to this definition"></a></dt>
 <dd><p>Used to enable verbose debug output from the parsing process</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage.ifd_found">
+<span class="sig-name descname"><span class="pre">ifd_found</span></span><a class="headerlink" href="#coreboot.DasharoCorebootImage.ifd_found" title="Permalink to this definition"></a></dt>
+<dd><p>Boolean vlaue if Intel Flash Descriptor has been detected in
+the image by ifdtool</p>
 </dd></dl>
 
 <dl class="py method">
@@ -415,6 +498,57 @@ expression.</p>
 is appended with a new instance of <a class="reference internal" href="#coreboot.CBFSImage" title="coreboot.CBFSImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">coreboot.CBFSImage</span></code></a>.</p>
 <p>If <a class="reference internal" href="#coreboot.DasharoCorebootImage.debug" title="coreboot.DasharoCorebootImage.debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">coreboot.DasharoCorebootImage.debug</span></code></a> is True, all flashmap
 regions with their attributes are printed on the console at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage._parse_ifdtool_regions">
+<span class="sig-name descname"><span class="pre">_parse_ifdtool_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">microarch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage._parse_ifdtool_regions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage._parse_ifdtool_regions" title="Permalink to this definition"></a></dt>
+<dd><p>Parses <cite>ifdtool –dump</cite> output
+Extracts IFD regions to the <cite>self.ifdtool_regions</cite> dictionary
+using the <cite>coreboot.DasharoCorebootImage.ifdtool_regexp</cite> regular expression.
+If <cite>coreboot.DasharoCorebootImage.debug</cite> is True, all IFD regions with their
+attributes are printed on the console at the end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage._classify_ifdtool_region">
+<span class="sig-name descname"><span class="pre">_classify_ifdtool_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage._classify_ifdtool_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage._classify_ifdtool_region" title="Permalink to this definition"></a></dt>
+<dd><p>Classifies the IFD regions into basic categories</p>
+<p>Each region is being classified into 3 basic categories and appended
+to respective lists.</p>
+<p><cite>coreboot.DasharoCorebootImage.closed_code_regions_ifdtool</cite> are appended
+with regions found in <cite>coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS</cite></p>
+<p><cite>coreboot.DasharoCorebootImage.data_regions_ifdtool</cite> are appended
+with regions found in <cite>coreboot.DasharoCorebootImage.IFD_DATA_REGIONS</cite></p>
+<p><cite>coreboot.DasharoCorebootImage.empty_regions_ifdtool</cite> are appended
+with regions that are detected to be empty using
+<cite>coreboot.DasharoCorebootImage._is_empty</cite></p>
+<p>Any other unrecognized region falls into
+<cite>coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool</cite> list which
+will be counted as closed-source code region because we were unable to
+identify what can be inside.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region</strong> (<em>dict</em>) – IFD region entry from dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage._is_empty">
+<span class="sig-name descname"><span class="pre">_is_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage._is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage._is_empty" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a flash region is empty, where empty is defined as filled with 0x00 or 0xFF bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>start: Start address of the region</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>end</strong> (<em>int</em>) – End address of the region</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -534,7 +668,25 @@ open-source and closed-source code size.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="coreboot.DasharoCorebootImage._export_regions_md">
 <span class="sig-name descname"><span class="pre">_export_regions_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage._export_regions_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage._export_regions_md" title="Permalink to this definition"></a></dt>
-<dd><p>Write the regions for given category to the markdown file</p>
+<dd><p>Write flashmap regions for given category to the markdown file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>file</em>) – Markdown file handle to write the regions’s info to</p></li>
+<li><p><strong>regions</strong> (<em>dict</em>) – Dictionary containing regions to be written to the
+markdown file.</p></li>
+<li><p><strong>category</strong> (<em>str</em>) – Category of the regions to be written to the markdown
+file. Should be one of: open-source, closed-source,
+data, empty.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="coreboot.DasharoCorebootImage._export_ifdtool_regions_md">
+<span class="sig-name descname"><span class="pre">_export_ifdtool_regions_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coreboot.html#DasharoCorebootImage._export_ifdtool_regions_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#coreboot.DasharoCorebootImage._export_ifdtool_regions_md" title="Permalink to this definition"></a></dt>
+<dd><p>Write IFD regions for given category to the markdown file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

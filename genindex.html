@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Index &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -158,6 +156,8 @@
       </ul></li>
       <li><a href="coreboot.html#coreboot.CBFSImage._classify_file">_classify_file() (coreboot.CBFSImage method)</a>
 </li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage._classify_ifdtool_region">_classify_ifdtool_region() (coreboot.DasharoCorebootImage method)</a>
+</li>
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage._classify_region">_classify_region() (coreboot.DasharoCorebootImage method)</a>
 </li>
       <li><a href="uefi.html#uefi.UEFIVolume._entry_is_inside_volume">_entry_is_inside_volume() (uefi.UEFIVolume method)</a>
@@ -172,16 +172,18 @@
       </ul></li>
       <li><a href="uefi.html#uefi.UEFIVolume._entry_is_self_volume">_entry_is_self_volume() (uefi.UEFIVolume method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="uefi.html#uefi.UEFIImage._entry_is_volume">_entry_is_volume() (uefi.UEFIImage method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="coreboot.html#coreboot.CBFSImage._export_files_md">_export_files_md() (coreboot.CBFSImage method)</a>
 
       <ul>
         <li><a href="uefi.html#uefi.UEFIVolume._export_files_md">(uefi.UEFIVolume method)</a>
 </li>
       </ul></li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage._export_ifdtool_regions_md">_export_ifdtool_regions_md() (coreboot.DasharoCorebootImage method)</a>
+</li>
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage._export_regions_md">_export_regions_md() (coreboot.DasharoCorebootImage method)</a>
 
       <ul>
@@ -196,6 +198,8 @@
         <li><a href="uefi.html#uefi.UEFIImage._get_percentage">(uefi.UEFIImage method)</a>
 </li>
       </ul></li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage._is_empty">_is_empty() (coreboot.DasharoCorebootImage method)</a>
+</li>
       <li><a href="uefi.html#uefi.UEFIVolume._is_end_of_volume">_is_end_of_volume() (uefi.UEFIVolume method)</a>
 </li>
       <li><a href="uefi.html#uefi.UEFIVolume._is_entry_empty_pad_file">_is_entry_empty_pad_file() (uefi.UEFIVolume method)</a>
@@ -229,6 +233,8 @@
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage._parse_cb_fmap_layout">_parse_cb_fmap_layout() (coreboot.DasharoCorebootImage method)</a>
 </li>
       <li><a href="coreboot.html#coreboot.CBFSImage._parse_cbfs_files">_parse_cbfs_files() (coreboot.CBFSImage method)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage._parse_ifdtool_regions">_parse_ifdtool_regions() (coreboot.DasharoCorebootImage method)</a>
 </li>
       <li><a href="uefi.html#uefi.UEFIImage._parse_uefi_image">_parse_uefi_image() (uefi.UEFIImage method)</a>
 </li>
@@ -288,6 +294,8 @@
         <li><a href="uefi.html#uefi.UEFIImage.closed_code_regions">(uefi.UEFIImage attribute)</a>
 </li>
       </ul></li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.closed_code_regions_ifdtool">closed_code_regions_ifdtool (coreboot.DasharoCorebootImage attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="coreboot.html#coreboot.CBFSImage.closed_code_size">closed_code_size (coreboot.CBFSImage attribute)</a>
@@ -307,6 +315,8 @@
       <li><a href="uefi.html#uefi.UEFIImage.CLOSED_SOURCE_REGIONS">CLOSED_SOURCE_REGIONS (uefi.UEFIImage attribute)</a>
 </li>
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage.CODE_REGIONS">CODE_REGIONS (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="openness_score.html#openness_score.compare_scores">compare_scores() (in module openness_score)</a>
 </li>
       <li>
     coreboot
@@ -339,9 +349,11 @@
 </li>
       <li><a href="uefi.html#uefi.UEFIImage.DATA_REGIONS">DATA_REGIONS (uefi.UEFIImage attribute)</a>
 </li>
+      <li><a href="uefi.html#uefi.UEFIImage.data_regions">data_regions (uefi.UEFIImage attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="uefi.html#uefi.UEFIImage.data_regions">data_regions (uefi.UEFIImage attribute)</a>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.data_regions_ifdtool">data_regions_ifdtool (coreboot.DasharoCorebootImage attribute)</a>
 </li>
       <li><a href="coreboot.html#coreboot.CBFSImage.data_size">data_size (coreboot.CBFSImage attribute)</a>
 
@@ -385,6 +397,8 @@
 </li>
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage.empty_regions">empty_regions (coreboot.DasharoCorebootImage attribute)</a>
 </li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.empty_regions_ifdtool">empty_regions_ifdtool (coreboot.DasharoCorebootImage attribute)</a>
+</li>
       <li><a href="coreboot.html#coreboot.CBFSImage.empty_size">empty_size (coreboot.CBFSImage attribute)</a>
 
       <ul>
@@ -407,6 +421,8 @@
         <li><a href="uefi.html#uefi.UEFIImage.export_charts">(uefi.UEFIImage method)</a>
 </li>
       </ul></li>
+      <li><a href="openness_score.html#openness_score.export_compared_data">export_compared_data() (in module openness_score)</a>
+</li>
       <li><a href="openness_score.html#openness_score.export_data">export_data() (in module openness_score)</a>
 </li>
       <li><a href="coreboot.html#coreboot.CBFSImage.export_markdown">export_markdown() (coreboot.CBFSImage method)</a>
@@ -439,6 +455,16 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS">IFD_BLOB_REGIONS (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.IFD_DATA_REGIONS">IFD_DATA_REGIONS (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.ifd_found">ifd_found (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.IFD_SKIP_REGIONS">IFD_SKIP_REGIONS (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.ifdtool_regions">ifdtool_regions (coreboot.DasharoCorebootImage attribute)</a>
+</li>
       <li><a href="coreboot.html#coreboot.CBFSImage.image_path">image_path (coreboot.CBFSImage attribute)</a>
 
       <ul>
@@ -481,6 +507,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.microarch">microarch (coreboot.DasharoCorebootImage attribute)</a>
+</li>
       <li>
     module
 
@@ -508,9 +536,11 @@
 </li>
       <li><a href="uefi.html#uefi.UEFIImage.num_entries">num_entries (uefi.UEFIImage attribute)</a>
 </li>
+      <li><a href="coreboot.html#coreboot.CBFSImage.num_files">num_files (coreboot.CBFSImage attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="coreboot.html#coreboot.CBFSImage.num_files">num_files (coreboot.CBFSImage attribute)</a>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.num_ifdtool_regions">num_ifdtool_regions (coreboot.DasharoCorebootImage attribute)</a>
 </li>
       <li><a href="coreboot.html#coreboot.CBFSImage.num_opts">num_opts (coreboot.CBFSImage attribute)</a>
 </li>
@@ -623,6 +653,8 @@
       <li><a href="coreboot.html#coreboot.CBFSImage.uncategorized_files">uncategorized_files (coreboot.CBFSImage attribute)</a>
 </li>
       <li><a href="coreboot.html#coreboot.DasharoCorebootImage.uncategorized_regions">uncategorized_regions (coreboot.DasharoCorebootImage attribute)</a>
+</li>
+      <li><a href="coreboot.html#coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool">uncategorized_regions_ifdtool (coreboot.DasharoCorebootImage attribute)</a>
 </li>
   </ul></td>
 </tr></table>

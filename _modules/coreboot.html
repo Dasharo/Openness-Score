@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>coreboot &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -77,17 +75,17 @@
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="sd">&quot;&quot;&quot;This module is responsible for parsing coreboot images&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="DasharoCorebootImage"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage">[docs]</a><span class="k">class</span> <span class="nc">DasharoCorebootImage</span><span class="p">:</span>
+<div class="viewcode-block" id="DasharoCorebootImage"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DasharoCorebootImage</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;DasharoCorebootImage class</span>
 
 <span class="sd">    The main class representing a coreboot-based firmware image</span>
@@ -105,6 +103,9 @@
     <span class="n">region_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">region_patterns</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Regular expression variable used to extract the flashmap regions&quot;&quot;&quot;</span>
 
+    <span class="n">ifdtool_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^FLREG(?P&lt;id&gt;\d+):\s+(?P&lt;reg_val&gt;0x[0-9a-fA-F]+)\s*?\n\s+Flash Region \d+ \((?P&lt;name&gt;.+?)\): (?P&lt;start&gt;[0-9a-fA-F]+) - (?P&lt;end&gt;[0-9a-fA-F]+)(?: \((?P&lt;status&gt;unused)\))?&#39;</span>
+    <span class="n">ifdtool_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">ifdtool_pattern</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+
     <span class="c1"># Regions to consider as data, they should not contain any code ever.</span>
     <span class="c1"># Some of the regions are used only by certain platforms and may not be met</span>
     <span class="c1"># on Dasharo builds.</span>
@@ -113,8 +114,12 @@
                     <span class="s1">&#39;CONSOLE&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_FWID_A&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_FWID_B&#39;</span><span class="p">,</span> <span class="s1">&#39;VBLOCK_A&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_VPD&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;VBLOCK_B&#39;</span><span class="p">,</span> <span class="s1">&#39;HSPHY_FW&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_ELOG&#39;</span><span class="p">,</span> <span class="s1">&#39;FMAP&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_FRID&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;RO_FRID_PAD&#39;</span><span class="p">,</span> <span class="s1">&#39;SPD_CACHE&#39;</span><span class="p">,</span> <span class="s1">&#39;FPF_STATUS&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_LIMITS_CFG&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;RW_DDR_TRAINING&#39;</span><span class="p">,</span> <span class="s1">&#39;GBB&#39;</span><span class="p">,</span> <span class="s1">&#39;BOOTORDER&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;RW_DDR_TRAINING&#39;</span><span class="p">,</span> <span class="s1">&#39;GBB&#39;</span><span class="p">,</span> <span class="s1">&#39;BOOTORDER&#39;</span><span class="p">,</span> <span class="s1">&#39;RESERVED&#39;</span><span class="p">,</span> <span class="s1">&#39;BPA&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;ROMHOLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_GBE&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_GSCVD&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_VAR_MRC_CACHE&#39;</span> <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to contain data&quot;&quot;&quot;</span>
+
+    <span class="n">IFD_DATA_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Flash Descriptor&#39;</span><span class="p">,</span> <span class="s1">&#39;Platform Data&#39;</span><span class="p">,</span> <span class="s1">&#39;GbE&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of IFD regions known to contain data&quot;&quot;&quot;</span>
 
     <span class="c1"># Regions that are not CBFSes and may contain open-source code</span>
     <span class="c1"># Their whole size is counted as code.</span>
@@ -128,6 +133,9 @@
                     <span class="s1">&#39;SIGN_CSE&#39;</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to contain closed-source code&quot;&quot;&quot;</span>
 
+    <span class="n">IFD_BLOB_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Intel ME&#39;</span><span class="p">,</span> <span class="s1">&#39;IE&#39;</span><span class="p">,</span> <span class="s1">&#39;PTT&#39;</span><span class="p">,</span> <span class="s1">&#39;10GbE_0&#39;</span><span class="p">,</span> <span class="s1">&#39;10GbE_1&#39;</span><span class="p">,</span> <span class="s1">&#39;EC&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of closed-source code IFD regions&quot;&quot;&quot;</span>
+
     <span class="c1"># Regions to not account for in calculations.</span>
     <span class="c1"># These are containers aggregating smaller regions.</span>
     <span class="n">SKIP_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RW_MISC&#39;</span><span class="p">,</span> <span class="s1">&#39;UNIFIED_MRC_CACHE&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_SHARED&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_ALL&#39;</span><span class="p">,</span>
@@ -136,12 +144,21 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to be containers or aliases of other</span>
 <span class="sd">    regions. These regions are skipped from classification.&quot;&quot;&quot;</span>
 
+    <span class="c1"># Regions to not account for in calculations when ifdtool is used.</span>
+    <span class="c1"># These regions will be classified based on their presence in IFD.</span>
+    <span class="n">IFD_SKIP_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SI_DESC&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_ME&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_GBE&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_PDR&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_EC&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;SI_DEVICEEXT&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_BIOS2&#39;</span><span class="p">,</span>  <span class="s1">&#39;SI_DEVICEEXT2&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;SI_IE&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_10GBE0&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_10GBE1&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_PTT&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names to be skipped when ifdtool is used.</span>
+<span class="sd">    These regions willbe classified by IFD region purpose.&quot;&quot;&quot;</span>
+
     <span class="c1"># Regions to count as empty/unused</span>
-    <span class="n">EMPTY_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UNUSED&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_UNUSED&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_DEVICEEXT2&#39;</span><span class="p">]</span>
+    <span class="n">EMPTY_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UNUSED&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_UNUSED&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_DEVICEEXT2&#39;</span><span class="p">,</span> <span class="s1">&#39;UNUSED_HOLE&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;BIOS_UNUSABLE&#39;</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to be empty spaces, e.g. between IFD</span>
 <span class="sd">    regions.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DasharoCorebootImage.__init__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage.__init__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">microarch</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;DasharoCorebootImage class init method</span>
 
 <span class="sd">        Initializes the class fields for storing the firmware image components</span>
@@ -158,14 +175,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_path</span> <span class="o">=</span> <span class="n">image_path</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the image represented by DasharoCorebootImage class&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">microarch</span> <span class="o">=</span> <span class="n">microarch</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CPU michroarchitecture supported by the firmware binary to be passed to ifdtool.</span>
+<span class="sd">        For a complete list of supported microarchitectures, use &#39;ifdtool -h&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Image size in bytes&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A dictionary holding the coreboot image flashmap regions&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A dictionary holding regions found by ifdtool&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbfs_images</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding the regions with CBFS&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Total number of flashmap regions&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total number of regions found by ifdtool&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cbfses</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Total number of flashmap regions containing CBFSes&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">open_code_size</span> <span class="o">=</span> <span class="mi">0</span>
@@ -184,6 +209,12 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding flashmap regions filled with data&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding empty flashmap regions&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions_ifdtool</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding ifdtool regions filled with closed-source code&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_regions_ifdtool</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding ifdtool regions filled with data&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions_ifdtool</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding empty ifdtool regions&quot;&quot;&quot;</span>
         <span class="c1"># This type of regions will be counted as closed-source at the end of</span>
         <span class="c1"># metrics calculation. Keep them in separate array to export them into</span>
         <span class="c1"># CSV later for review.</span>
@@ -191,14 +222,22 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding flashmap regions that could not be classified.</span>
 <span class="sd">        Counted as closed-source code at the end of calculation process.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions_ifdtool</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list holding ifdtool regions that could not be classified.</span>
+<span class="sd">        Counted as closed-source code at the end of calculation process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">verbose</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Used to enable verbose debug output from the parsing process&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Boolean vlaue if Intel Flash Descriptor has been detected in</span>
+<span class="sd">        the image by ifdtool&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cb_fmap_layout</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">microarch</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ifdtool_regions</span><span class="p">(</span><span class="n">microarch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage.__len__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage.__len__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__len__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the length of the coreboot firmware image</span>
 
 <span class="sd">        :return: Length of the firmware binary file</span>
@@ -206,7 +245,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage.__repr__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage.__repr__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__repr__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;DasharoCorebootImage class representation</span>
 
 <span class="sd">        :return: class representation</span>
@@ -214,7 +253,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s1">&#39;DasharoCorebootImage()&#39;</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage.__str__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage.__str__"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.__str__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns string representation of the firmware image</span>
 
 <span class="sd">        Prints the firmware image statistics.</span>
@@ -239,7 +278,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._region_is_cbfs"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._region_is_cbfs">[docs]</a>    <span class="k">def</span> <span class="nf">_region_is_cbfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._region_is_cbfs"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._region_is_cbfs">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_region_is_cbfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if given region has a CBFS attribute</span>
 
 <span class="sd">        :param region: Flashmap region entry from dictionary</span>
@@ -252,7 +291,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._parse_cb_fmap_layout"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._parse_cb_fmap_layout">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_cb_fmap_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._parse_cb_fmap_layout"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._parse_cb_fmap_layout">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_cb_fmap_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the cbfstool flashmap layout output</span>
 
 <span class="sd">        Parses the output of &#39;cbfstool self.image_path layout -w&#39; and extract</span>
@@ -291,10 +330,16 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dasharo image regions:&#39;</span><span class="p">)</span>
             <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span><span class="p">)]</span></div>
 
-    <span class="k">def</span> <span class="nf">_validate_fmap_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_fmap_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">hole_size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># If the first region does not start at address zero and we use</span>
+            <span class="c1"># ifdtool it is likely that FMAP starts with BIOS region and</span>
+            <span class="c1"># ifdtool will handle it. However, if there is no descriptor</span>
+            <span class="c1"># found, this space will be added as closed-source later.</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span>
 
             <span class="c1"># Skip containers as they may have bigger size than offset of the</span>
             <span class="c1"># next region. Exception: FMAP is always read-only but is not a</span>
@@ -331,7 +376,103 @@
 
         <span class="k">return</span> <span class="n">hole_size</span>
 
-<div class="viewcode-block" id="DasharoCorebootImage._classify_region"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._classify_region">[docs]</a>    <span class="k">def</span> <span class="nf">_classify_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._parse_ifdtool_regions"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._parse_ifdtool_regions">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_ifdtool_regions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">microarch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses `ifdtool --dump` output</span>
+<span class="sd">        Extracts IFD regions to the `self.ifdtool_regions` dictionary</span>
+<span class="sd">        using the `coreboot.DasharoCorebootImage.ifdtool_regexp` regular expression.</span>
+<span class="sd">        If `coreboot.DasharoCorebootImage.debug` is True, all IFD regions with their</span>
+<span class="sd">        attributes are printed on the console at the end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using ifdtool to detect Intel flash regions&#39;</span><span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ifdtool&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">microarch</span><span class="p">,</span> <span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;ERROR: ifdtool returned an error, assuming no flash descriptor in the image&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="s1">&#39;No Flash Descriptor found in this image&#39;</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;No Flash Descriptor found in this image or ifdtool&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regexp</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+            <span class="c1"># Do not add regions marked as unused or if region value is invalid (0xffffffff)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;reg_val&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">!=</span> <span class="mh">0xffffffff</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)),</span>
+                    <span class="s1">&#39;reg_val&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;reg_val&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">),</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">start_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">][</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+                <span class="n">end_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">][</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_int</span> <span class="o">-</span> <span class="n">start_int</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;IFD regions:&#39;</span><span class="p">)</span>
+            <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="DasharoCorebootImage._classify_ifdtool_region"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._classify_ifdtool_region">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_ifdtool_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Classifies the IFD regions into basic categories</span>
+
+<span class="sd">        Each region is being classified into 3 basic categories and appended</span>
+<span class="sd">        to respective lists.</span>
+
+<span class="sd">        `coreboot.DasharoCorebootImage.closed_code_regions_ifdtool` are appended</span>
+<span class="sd">        with regions found in `coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS`</span>
+
+<span class="sd">        `coreboot.DasharoCorebootImage.data_regions_ifdtool` are appended</span>
+<span class="sd">        with regions found in `coreboot.DasharoCorebootImage.IFD_DATA_REGIONS`</span>
+
+<span class="sd">        `coreboot.DasharoCorebootImage.empty_regions_ifdtool` are appended</span>
+<span class="sd">        with regions that are detected to be empty using</span>
+<span class="sd">        `coreboot.DasharoCorebootImage._is_empty`</span>
+
+<span class="sd">        Any other unrecognized region falls into</span>
+<span class="sd">        `coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool` list which</span>
+<span class="sd">        will be counted as closed-source code region because we were unable to</span>
+<span class="sd">        identify what can be inside.</span>
+
+<span class="sd">        :param region: IFD region entry from dictionary</span>
+<span class="sd">        :type region: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_empty</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">],</span><span class="mi">16</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions_ifdtool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">region</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IFD_BLOB_REGIONS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions_ifdtool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">region</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IFD_DATA_REGIONS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_regions_ifdtool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">region</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;BIOS&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions_ifdtool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="DasharoCorebootImage._is_empty"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._is_empty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if a flash region is empty, where empty is defined as filled with 0x00 or 0xFF bytes.</span>
+<span class="sd">        </span>
+<span class="sd">        :param: start: Start address of the region</span>
+<span class="sd">        :type start: int</span>
+<span class="sd">        :param end: End address of the region</span>
+<span class="sd">        :type end: int</span>
+
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">region_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">b</span> <span class="ow">in</span> <span class="p">(</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">region_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DasharoCorebootImage._classify_region"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._classify_region">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Classifies the flashmap regions into basic categories</span>
 
 <span class="sd">        Each detected flashmap region is being classified into 4 basic</span>
@@ -371,6 +512,8 @@
             <span class="c1"># Skip CBFSes because they have separate class and methods to</span>
             <span class="c1"># calculate metrics</span>
             <span class="k">return</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span> <span class="ow">and</span> <span class="n">region</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IFD_SKIP_REGIONS</span><span class="p">:</span>
+            <span class="k">return</span>
         <span class="k">elif</span> <span class="n">region</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SKIP_REGIONS</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">elif</span> <span class="n">region</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">CODE_REGIONS</span><span class="p">:</span>
@@ -391,7 +534,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._calculate_metrics"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._calculate_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._calculate_metrics"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._calculate_metrics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the sizes of the four basic firmware components</span>
 <span class="sd">        categories</span>
 
@@ -438,11 +581,15 @@
         <span class="k">if</span> <span class="n">fmap_hole</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="n">fmap_hole</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ifdtool_regions</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_classify_ifdtool_region</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ifdtool_regions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">open_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_code_regions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_regions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions_ifdtool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_regions_ifdtool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_regions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_regions_ifdtool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions_ifdtool</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;INFO: Found </span><span class="si">%d</span><span class="s1"> uncategorized regions of total size </span><span class="si">%d</span><span class="s1"> bytes&#39;</span>
                   <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_regions</span><span class="p">),</span>
@@ -457,7 +604,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_sizes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._sum_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._sum_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regions</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._sum_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._sum_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sums the size of the regions</span>
 
 <span class="sd">        :param regions: Dictionary of regions to sum</span>
@@ -467,7 +614,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._normalize_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._normalize_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._normalize_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._normalize_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if all firmware image components sizes sum up to whole image</span>
 <span class="sd">        size</span>
 
@@ -482,8 +629,10 @@
         <span class="c1"># It may happen that the FMAP does not cover whole flash size and the</span>
         <span class="c1"># first region will start with non-zero offset. Check if first region</span>
         <span class="c1"># offset is zero, if not count all bytes from the start of flash to the</span>
-        <span class="c1"># start of first region as closed source.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># start of first region as closed source. This is only done if ifdtool</span>
+        <span class="c1"># is not used or IFD was not found, because ifdtool will always parse</span>
+        <span class="c1"># those regions correctly.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span>
 
         <span class="c1"># Final check if all sizes are summing up to whole image size</span>
@@ -494,7 +643,7 @@
                   <span class="s1">&#39;The component sizes do not sum up to the image size. &#39;</span>
                   <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">full_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._get_percentage"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._get_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._get_percentage"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._get_percentage">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to generate code share percentage</span>
 
 <span class="sd">        :param metric: The size of open-source or closed-source code</span>
@@ -505,8 +654,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">metric</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_code_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage._export_regions_md"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._export_regions_md">[docs]</a>    <span class="k">def</span> <span class="nf">_export_regions_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the regions for given category to the markdown file</span>
+<div class="viewcode-block" id="DasharoCorebootImage._export_regions_md"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._export_regions_md">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_export_regions_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write flashmap regions for given category to the markdown file</span>
 
 <span class="sd">        :param file: Markdown file handle to write the regions&#39;s info to</span>
 <span class="sd">        :type file: file</span>
@@ -523,7 +672,25 @@
                         <span class="n">region</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]),</span>
                         <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span> <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage.export_markdown"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage._export_ifdtool_regions_md"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage._export_ifdtool_regions_md">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_export_ifdtool_regions_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write IFD regions for given category to the markdown file</span>
+
+<span class="sd">        :param file: Markdown file handle to write the regions&#39;s info to</span>
+<span class="sd">        :type file: file</span>
+<span class="sd">        :param regions: Dictionary containing regions to be written to the</span>
+<span class="sd">                        markdown file.</span>
+<span class="sd">        :type regions: dict</span>
+<span class="sd">        :param category: Category of the regions to be written to the markdown</span>
+<span class="sd">                         file. Should be one of: open-source, closed-source,</span>
+<span class="sd">                         data, empty.</span>
+<span class="sd">        :type category: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| </span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1"> |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">region</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">region</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">region</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
+                <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span> <span class="n">category</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DasharoCorebootImage.export_markdown"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.export_markdown">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens a file and saves the openness report in markdown format</span>
 
 <span class="sd">        Saves the parsed information and classified image components into a</span>
@@ -584,11 +751,24 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_export_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_export_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions</span><span class="p">,</span> <span class="s1">&#39;empty&#39;</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifd_found</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mkdocs</span><span class="p">:</span>
+                    <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">## IFD regions</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">### IFD regions</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| IFD region | Start | End | Size | Category |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| -------------- | ----- | --- | ---- | -------- |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_export_ifdtool_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions_ifdtool</span><span class="p">,</span>
+                                                <span class="s1">&#39;closed-source&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_export_ifdtool_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_regions_ifdtool</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_export_ifdtool_regions_md</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions_ifdtool</span><span class="p">,</span> <span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+
             <span class="k">for</span> <span class="n">cbfs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbfs_images</span><span class="p">:</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">cbfs</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DasharoCorebootImage.export_charts"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.export_charts">[docs]</a>    <span class="k">def</span> <span class="nf">export_charts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+<div class="viewcode-block" id="DasharoCorebootImage.export_charts"><a class="viewcode-back" href="../coreboot.html#coreboot.DasharoCorebootImage.export_charts">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_charts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots the pie charts with firmware image statistics</span>
 
 <span class="sd">        Method plots two pie charts. One containing only the closed-source to</span>
@@ -623,7 +803,7 @@
                     <span class="nb">dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span></div></div>
 
 
-<div class="viewcode-block" id="CBFSImage"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage">[docs]</a><span class="k">class</span> <span class="nc">CBFSImage</span><span class="p">:</span>
+<div class="viewcode-block" id="CBFSImage"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CBFSImage</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; CBFSImage class</span>
 
 <span class="sd">    The main class representing a coreboot&#39;s CBFS</span>
@@ -702,7 +882,7 @@
     <span class="n">RAW_OPEN_SOURCE_FILES</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;fallback/dsdt.aml&#39;</span><span class="p">,</span> <span class="s1">&#39;vgaroms/seavgabios.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;pagetables&#39;</span><span class="p">,</span> <span class="s1">&#39;pdpt&#39;</span><span class="p">,</span>
         <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="s1">&#39;ecrw&#39;</span><span class="p">,</span> <span class="s1">&#39;pdrw&#39;</span><span class="p">,</span> <span class="s1">&#39;sff8104-linux.dtb&#39;</span><span class="p">,</span> <span class="s1">&#39;stm.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;fallback/DTB&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;oemmanifest.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;smcbiosinfo.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;genroms/pxe.rom&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;oemmanifest.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;smcbiosinfo.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;genroms/pxe.rom&#39;</span><span class="p">,</span> <span class="s1">&#39;ec.rom&#39;</span>
     <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of CBFS filenames known to be created from open-source code&quot;&quot;&quot;</span>
 
@@ -750,7 +930,7 @@
     <span class="n">file_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_patterns</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Regular expression variable used to parse the cbfstool output&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CBFSImage.__init__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage.__init__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;CBFSImage class init method</span>
 
 <span class="sd">        Initializes the class fields for storing the CBFS region components</span>
@@ -827,7 +1007,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cb_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CBFSImage.__len__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage.__len__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__len__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the length of the CBFS region</span>
 
 <span class="sd">        :return: Length of the CBFS</span>
@@ -835,7 +1015,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbfs_size</span></div>
 
-<div class="viewcode-block" id="CBFSImage.__repr__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage.__repr__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__repr__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;CBFSImage class representation</span>
 
 <span class="sd">        :return: class representation</span>
@@ -843,7 +1023,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s1">&#39;CBFSImage()&#39;</span></div>
 
-<div class="viewcode-block" id="CBFSImage.__str__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage.__str__"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.__str__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns string representation of the CBFS</span>
 
 <span class="sd">        Prints the firmware image statistics.</span>
@@ -866,7 +1046,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CBFSImage._parse_cbfs_files"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._parse_cbfs_files">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_cbfs_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._parse_cbfs_files"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._parse_cbfs_files">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_cbfs_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the CBFS contents from cbfstool output</span>
 
 <span class="sd">        Parses the output of &#39;cbfstool :attr:`coreboot.CBFSImage.image_path`</span>
@@ -896,7 +1076,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Region </span><span class="si">%s</span><span class="s1"> CBFS contents:&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span>
             <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbfs_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_files</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="CBFSImage._calculate_metrics"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._calculate_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._calculate_metrics"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._calculate_metrics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the sizes of the four basic firmware components</span>
 <span class="sd">        categories</span>
 
@@ -951,7 +1131,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_sizes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CBFSImage._classify_file"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._classify_file">[docs]</a>    <span class="k">def</span> <span class="nf">_classify_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._classify_file"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._classify_file">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Classifies the CBFS file into basic categories.</span>
 
 <span class="sd">        Each detected CBFS file is being classified into 4 basic categories</span>
@@ -1020,7 +1200,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">uncategorized_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CBFSImage._normalize_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._normalize_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._normalize_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._normalize_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensures that all CBFS components sizes sum up to whole image size</span>
 
 <span class="sd">        This function takes into account a situation when the CBFS is</span>
@@ -1065,7 +1245,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Size of metadata in </span><span class="si">%s</span><span class="s1"> CBFS: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span>
                   <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">,</span> <span class="n">metadata_size</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="CBFSImage._sum_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._sum_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._sum_sizes"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._sum_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sums the size of the CBFS files</span>
 
 <span class="sd">        :param files: Dictionary of files to sum</span>
@@ -1075,7 +1255,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="CBFSImage._get_kconfig_value"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._get_kconfig_value">[docs]</a>    <span class="k">def</span> <span class="nf">_get_kconfig_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._get_kconfig_value"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._get_kconfig_value">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_kconfig_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a value of given coreboot&#39;s Kconfig option</span>
 
 <span class="sd">        :param option: Name of the Kconfig option without &#39;CONFIG_&#39; prefix.</span>
@@ -1089,7 +1269,7 @@
 
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="CBFSImage._parse_cb_config"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._parse_cb_config">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_cb_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._parse_cb_config"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._parse_cb_config">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_cb_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts and parses the CBFS config file</span>
 
 <span class="sd">        The function uses the cbfstool to extract the coreboot&#39;s config and a</span>
@@ -1135,7 +1315,7 @@
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rm&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp/cb_config_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">]</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CBFSImage._check_for_ipxe"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._check_for_ipxe">[docs]</a>    <span class="k">def</span> <span class="nf">_check_for_ipxe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._check_for_ipxe"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._check_for_ipxe">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_for_ipxe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether iPXE was built int othe CBFS image and in what form</span>
 
 <span class="sd">        The function checks for iPXE specific Kconfig options and sets the</span>
@@ -1165,7 +1345,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ipxe_rom_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ipxe_rom_id</span> <span class="o">=</span> <span class="s1">&#39;10ec,8168&#39;</span></div>
 
-<div class="viewcode-block" id="CBFSImage._check_for_lanrom"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._check_for_lanrom">[docs]</a>    <span class="k">def</span> <span class="nf">_check_for_lanrom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._check_for_lanrom"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._check_for_lanrom">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_for_lanrom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether external LAN EFI driver has been included in UEFI</span>
 <span class="sd">        Payload and calculates its estimated compressed size</span>
 
@@ -1221,7 +1401,7 @@
                <span class="s1">&#39;/tmp/lan_rom_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">]</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CBFSImage._export_files_md"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._export_files_md">[docs]</a>    <span class="k">def</span> <span class="nf">_export_files_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">cbfs_files</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage._export_files_md"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage._export_files_md">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_export_files_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">cbfs_files</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the CBFS files for given category to the markdown file</span>
 
 <span class="sd">        :param file: Markdown file handle to write the CBFS files&#39; info to</span>
@@ -1239,7 +1419,7 @@
                         <span class="n">f</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;filetype&#39;</span><span class="p">],</span>
                         <span class="n">f</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;compression&#39;</span><span class="p">],</span> <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="CBFSImage.export_markdown"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
+<div class="viewcode-block" id="CBFSImage.export_markdown"><a class="viewcode-back" href="../coreboot.html#coreboot.CBFSImage.export_markdown">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the openness report in markdown format for given CBFS region</span>
 
 <span class="sd">        Saves the parsed information and classified CBFS components into a</span>

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>openness_score &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -79,12 +77,12 @@
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">coreboot</span> <span class="kn">import</span> <span class="n">DasharoCorebootImage</span>
-<span class="kn">from</span> <span class="nn">uefi</span> <span class="kn">import</span> <span class="n">UEFIImage</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span><span class="p">,</span> <span class="n">SUPPRESS</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">coreboot</span><span class="w"> </span><span class="kn">import</span> <span class="n">DasharoCorebootImage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uefi</span><span class="w"> </span><span class="kn">import</span> <span class="n">UEFIImage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span><span class="p">,</span> <span class="n">SUPPRESS</span>
 
 <span class="sd">&quot;&quot;&quot;The Dasharo Openness Score utility&#39;s entrypoint&quot;&quot;&quot;</span>
 
@@ -92,13 +90,13 @@
 <span class="sd">&quot;&quot;&quot;The utility&#39;s version&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="ObligingArgumentParser"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser">[docs]</a><span class="k">class</span> <span class="nc">ObligingArgumentParser</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<div class="viewcode-block" id="ObligingArgumentParser"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ObligingArgumentParser</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An extension to ArgumentParser class providing better error handling</span>
 
 <span class="sd">    :param ArgumentParser: The class to be inherited from.</span>
 <span class="sd">    :type ArgumentParser: ArgumentParser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ObligingArgumentParser.error"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<div class="viewcode-block" id="ObligingArgumentParser.error"><a class="viewcode-back" href="../openness_score.html#openness_score.ObligingArgumentParser.error">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;error Prints an error message if there was an error parsing the</span>
 <span class="sd">        arguments.</span>
 
@@ -112,7 +110,7 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="check_file"><a class="viewcode-back" href="../openness_score.html#openness_score.check_file">[docs]</a><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="check_file"><a class="viewcode-back" href="../openness_score.html#openness_score.check_file">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The function performs all safety checks and detects the input file</span>
 <span class="sd">    format</span>
 
@@ -169,7 +167,7 @@
     <span class="k">return</span> <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span></div>
 
 
-<div class="viewcode-block" id="export_data"><a class="viewcode-back" href="../openness_score.html#openness_score.export_data">[docs]</a><span class="k">def</span> <span class="nf">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<div class="viewcode-block" id="export_data"><a class="viewcode-back" href="../openness_score.html#openness_score.export_data">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls the image&#39;s class methods to export data to the markdown and pie</span>
 <span class="sd">    charts</span>
 
@@ -197,7 +195,58 @@
     <span class="n">image</span><span class="o">.</span><span class="n">export_charts</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="OpennessScore"><a class="viewcode-back" href="../openness_score.html#openness_score.OpennessScore">[docs]</a><span class="k">def</span> <span class="nf">OpennessScore</span><span class="p">():</span>
+<div class="viewcode-block" id="compare_scores"><a class="viewcode-back" href="../openness_score.html#openness_score.compare_scores">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">compare_scores</span><span class="p">(</span><span class="n">dasharo_image</span><span class="p">,</span> <span class="n">proprietary_image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compares metrics between Dasharo and proprietary firmware.</span>
+
+<span class="sd">    :param dasharo_image: Dasharo image</span>
+<span class="sd">    :type dasharo_image: DasharoCorebootImage</span>
+<span class="sd">    :param proprietary_image: Proprietary firmware image</span>
+<span class="sd">    :type proprietary_image: DasharoCorebootImage</span>
+
+<span class="sd">    :return: Three metrics as percentages rounded to 1 decimal: Closed source difference, Data size difference, Empty space size difference</span>
+<span class="sd">    :rtype: float, float, float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">closed_source_diff</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">dasharo_image</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">-</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">closed_code_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">closed_code_size</span>
+    <span class="n">data_size_diff</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">dasharo_image</span><span class="o">.</span><span class="n">data_size</span> <span class="o">-</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">data_size</span>
+    <span class="n">empty_diff</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">dasharo_image</span><span class="o">.</span><span class="n">empty_size</span> <span class="o">-</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">empty_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">proprietary_image</span><span class="o">.</span><span class="n">empty_size</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">closed_source_diff</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">data_size_diff</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">empty_diff</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="export_compared_data"><a class="viewcode-back" href="../openness_score.html#openness_score.export_compared_data">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">export_compared_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">dasharo_image</span><span class="p">,</span> <span class="n">proprietary_image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls `openness_score.compare_scores` and saves the output to a Markdown file.</span>
+
+<span class="sd">    :param args: Program arguments</span>
+<span class="sd">    :type args: argparse.Namespace</span>
+<span class="sd">    :param dasharo_image: Dasharo image</span>
+<span class="sd">    :type dasharo_image: DasharoCorebootImage</span>
+<span class="sd">    :param proprietary_image: Proprietary firmware image</span>
+<span class="sd">    :type proprietary_image: DasharoCorebootImage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;You do not have permission to write to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="n">closed_source_diff</span><span class="p">,</span> <span class="n">data_size_diff</span><span class="p">,</span> <span class="n">empty_diff</span> <span class="o">=</span> <span class="n">compare_scores</span><span class="p">(</span><span class="n">dasharo_image</span><span class="p">,</span> <span class="n">proprietary_image</span><span class="p">)</span>
+    <span class="n">dasharo_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">proprietary_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">compare</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;compare.md&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;| </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> |</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">platform</span><span class="p">,</span> <span class="n">dasharo_name</span><span class="p">,</span> <span class="n">proprietary_name</span><span class="p">,</span> <span class="n">closed_source_diff</span><span class="p">,</span> <span class="n">data_size_diff</span><span class="p">,</span> <span class="n">empty_diff</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Openness score comparison table</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;|Platform | Dasharo Firmware file | Proprietary Firmware file | closed-source diff [%] | data size diff [%] | empty space diff [%] |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;| --- | --- | --- | --- | --- | --- |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;| </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2"> |</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">platform</span><span class="p">,</span> <span class="n">dasharo_name</span><span class="p">,</span> <span class="n">proprietary_name</span><span class="p">,</span> <span class="n">closed_source_diff</span><span class="p">,</span> <span class="n">data_size_diff</span><span class="p">,</span> <span class="n">empty_diff</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="OpennessScore"><a class="viewcode-back" href="../openness_score.html#openness_score.OpennessScore">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">OpennessScore</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility&#39;s entry point responsible for argument parsing and</span>
 <span class="sd">    creating firmware image class instances based on detected image format.</span>
 <span class="sd">    Calls functions to create the reports and pie charts.</span>
@@ -208,9 +257,15 @@
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Firmware binary file to be parsed&#39;</span><span class="p">,</span>
                         <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--compare&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;proprietary_file&#39;</span><span class="p">,</span>
+                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Compare Dasharo and proprietary firmware scores and store result in a Markdown table.&#39;</span> \
+                        <span class="s1">&#39; file should be the Dasharo binary and proprietary_file should  be the proprietary firmware binary.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--platform&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Platform model to provide to the table when --compare is set.&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;help&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">SUPPRESS</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;out/&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                         <span class="s1">&#39;Specifies the directory where to store the results&#39;</span><span class="p">]))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--microarch&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="s1">&#39;CPU michroarchitecture supported by the firmware binary to be passed to ifdtool&#39;</span><span class="p">]))</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--verbose&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                         <span class="s1">&#39;Print verbose information during the image parsing&#39;</span><span class="p">]),</span>
                         <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
@@ -229,20 +284,33 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span> <span class="o">=</span> <span class="n">check_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">compare</span><span class="p">:</span>
+        <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">check_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File must be Dasharo!&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">DasharoImage</span> <span class="o">=</span> <span class="n">DasharoCorebootImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span> <span class="o">=</span> <span class="n">check_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">compare</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
+            <span class="n">ProprietaryImage</span> <span class="o">=</span> <span class="n">DasharoCorebootImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">compare</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fw_is_uefi</span><span class="p">:</span>
+            <span class="n">ProprietaryImage</span> <span class="o">=</span> <span class="n">UEFIImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">compare</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">export_compared_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">DasharoImage</span><span class="p">,</span> <span class="n">ProprietaryImage</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fw_is_cbfs</span><span class="p">,</span> <span class="n">fw_is_uefi</span> <span class="o">=</span> <span class="n">check_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as Dasharo image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> Dasharo image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
-        <span class="n">DasharoCbImg</span> <span class="o">=</span> <span class="n">DasharoCorebootImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">DasharoCbImg</span><span class="p">)</span>
-        <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">DasharoCbImg</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">fw_is_uefi</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as vendor image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> vendor image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
-        <span class="n">VendorImg</span> <span class="o">=</span> <span class="n">UEFIImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">VendorImg</span><span class="p">)</span>
-        <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">VendorImg</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">fw_is_cbfs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as Dasharo image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> Dasharo image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">DasharoCbImg</span> <span class="o">=</span> <span class="n">DasharoCorebootImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">microarch</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">DasharoCbImg</span><span class="p">)</span>
+            <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">DasharoCbImg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fw_is_uefi</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> detected as vendor image&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1"> vendor image statistics:&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">VendorImg</span> <span class="o">=</span> <span class="n">UEFIImage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">VendorImg</span><span class="p">)</span>
+            <span class="n">export_data</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">VendorImg</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>

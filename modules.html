@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
@@ -5,19 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dasharo Openness Score modules documentation &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=82621e7c"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -91,6 +89,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.OpennessScore"><code class="docutils literal notranslate"><span class="pre">OpennessScore()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.check_file"><code class="docutils literal notranslate"><span class="pre">check_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.compare_scores"><code class="docutils literal notranslate"><span class="pre">compare_scores()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.export_compared_data"><code class="docutils literal notranslate"><span class="pre">export_compared_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.export_data"><code class="docutils literal notranslate"><span class="pre">export_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="openness_score.html#openness_score.version"><code class="docutils literal notranslate"><span class="pre">version</span></code></a></li>
 </ul>
@@ -100,16 +100,22 @@
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.region_patterns"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.region_patterns</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.region_regexp"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.region_regexp</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.DATA_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.DATA_REGIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.IFD_DATA_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_DATA_REGIONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.CODE_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.CODE_REGIONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.BLOB_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.BLOB_REGIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.IFD_BLOB_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_BLOB_REGIONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.SKIP_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.SKIP_REGIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.IFD_SKIP_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.IFD_SKIP_REGIONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.EMPTY_REGIONS"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.EMPTY_REGIONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.__init__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__init__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.image_path"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.image_path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.microarch"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.microarch</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.image_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.image_size</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.fmap_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.fmap_regions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.ifdtool_regions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.cbfs_images"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.cbfs_images</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.num_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_regions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.num_ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_ifdtool_regions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.num_cbfses"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.num_cbfses</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.open_code_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.open_code_size</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.closed_code_size"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_size</span></code></a></li>
@@ -119,19 +125,28 @@
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.closed_code_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_regions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.data_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.data_regions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.empty_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.empty_regions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.closed_code_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.closed_code_regions_ifdtool</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.data_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.data_regions_ifdtool</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.empty_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.empty_regions_ifdtool</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.uncategorized_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.uncategorized_regions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.uncategorized_regions_ifdtool"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.uncategorized_regions_ifdtool</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.debug"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.debug</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.ifd_found"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.ifd_found</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.__len__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__len__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.__repr__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__repr__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.__str__"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.__str__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._region_is_cbfs"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._region_is_cbfs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._parse_cb_fmap_layout"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._parse_cb_fmap_layout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._parse_ifdtool_regions"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._parse_ifdtool_regions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._classify_ifdtool_region"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._classify_ifdtool_region()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._is_empty"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._is_empty()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._classify_region"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._classify_region()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._calculate_metrics"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._calculate_metrics()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._sum_sizes"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._sum_sizes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._normalize_sizes"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._normalize_sizes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._get_percentage"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._get_percentage()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._export_regions_md"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._export_regions_md()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage._export_ifdtool_regions_md"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage._export_ifdtool_regions_md()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.export_markdown"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.export_markdown()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="coreboot.html#coreboot.DasharoCorebootImage.export_charts"><code class="docutils literal notranslate"><span class="pre">DasharoCorebootImage.export_charts()</span></code></a></li>
 </ul>

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>uefi &mdash; Dasharo Openness Score v0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=82621e7c"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -77,18 +75,18 @@
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="sd">&quot;&quot;&quot;This module is responsible for parsing UEFI images&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="UEFIImage"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage">[docs]</a><span class="k">class</span> <span class="nc">UEFIImage</span><span class="p">:</span>
+<div class="viewcode-block" id="UEFIImage"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UEFIImage</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;UEFIImage class</span>
 
 <span class="sd">    The main class representing an UEFI firmware image</span>
@@ -146,7 +144,7 @@
     <span class="n">report_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item_patterns</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
     <span class="n">bios_region_started</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="UEFIImage.__init__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.__init__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;UEFIImage class init method</span>
 
 <span class="sd">        Initializes the class fields for storing the firmware image components</span>
@@ -200,7 +198,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_uefi_image</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="UEFIImage.__len__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.__len__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__len__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the length of the UEFI firmware image</span>
 
 <span class="sd">        :return: Length of the firmware binary file</span>
@@ -208,7 +206,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span></div>
 
-<div class="viewcode-block" id="UEFIImage.__repr__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.__repr__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__repr__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;UEFIImage class representation</span>
 
 <span class="sd">        :return: class representation</span>
@@ -216,7 +214,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;UEFIImage()&quot;</span></div>
 
-<div class="viewcode-block" id="UEFIImage.__str__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.__str__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.__str__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns string representation of the firmware image</span>
 
 <span class="sd">        Prints the firmware image statistics.</span>
@@ -243,7 +241,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UEFIImage._parse_uefi_image"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._parse_uefi_image">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_uefi_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._parse_uefi_image"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._parse_uefi_image">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_uefi_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the UEFI image with UEFIExtract and extracts information</span>
 <span class="sd">        about its components</span>
 
@@ -307,7 +305,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UEFI image regions:&quot;</span><span class="p">)</span>
             <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="n">region</span><span class="p">)</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="UEFIImage._entry_is_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._entry_is_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._entry_is_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._entry_is_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is an UEFI Firmware Volume</span>
 
 <span class="sd">        :param entry: UEFI image entry from the entries dictionary</span>
@@ -322,7 +320,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIImage._is_entry_nested_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._is_entry_nested_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_nested_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._is_entry_nested_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._is_entry_nested_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_nested_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is an UEFI Firmware Volume</span>
 <span class="sd">        nested in another already detected UEFI Firmware Volume</span>
 
@@ -345,7 +343,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIImage._entry_is_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._entry_is_region">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._entry_is_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._entry_is_region">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is a region</span>
 
 <span class="sd">        :param entry: UEFI image entry from the entries dictionary</span>
@@ -358,7 +356,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIImage._is_entry_inside_bios_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._is_entry_inside_bios_region">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_inside_bios_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._is_entry_inside_bios_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._is_entry_inside_bios_region">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_inside_bios_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry resides inside the BIOS</span>
 <span class="sd">        region</span>
 
@@ -386,7 +384,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIImage._classify_entries"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._classify_entries">[docs]</a>    <span class="k">def</span> <span class="nf">_classify_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._classify_entries"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._classify_entries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Classifies the UEFI entries and regions into basic categories</span>
 
 <span class="sd">        Each detected UEFI region is being classified into 2 basic categories</span>
@@ -476,7 +474,7 @@
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="p">)):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="UEFIImage._sum_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._sum_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regions</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._sum_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._sum_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sums the size of the regions</span>
 
 <span class="sd">        :param regions: Dictionary of regions to sum</span>
@@ -486,7 +484,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIImage._calculate_metrics"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._calculate_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._calculate_metrics"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._calculate_metrics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the sizes of the four basic firmware components</span>
 <span class="sd">        categories</span>
 
@@ -535,7 +533,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_sizes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="UEFIImage._normalize_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._normalize_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._normalize_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._normalize_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if all firmware image components sizes sum up to whole image</span>
 <span class="sd">        size</span>
 
@@ -557,7 +555,7 @@
                   <span class="s1">&#39;The component sizes do not sum up to the image size. &#39;</span>
                   <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">full_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIImage._get_percentage"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._get_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._get_percentage"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._get_percentage">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to generate code share percentage</span>
 
 <span class="sd">        :param metric: The size of open-source or closed-source code</span>
@@ -568,7 +566,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">metric</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_code_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UEFIImage._export_regions_md"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._export_regions_md">[docs]</a>    <span class="k">def</span> <span class="nf">_export_regions_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage._export_regions_md"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage._export_regions_md">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_export_regions_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the regions for given category to the markdown file</span>
 
 <span class="sd">        :param file: Markdown file handle to write the regions&#39;s info to</span>
@@ -586,7 +584,7 @@
                         <span class="n">region</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]),</span>
                         <span class="nb">hex</span><span class="p">(</span><span class="n">region</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span> <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIImage.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_markdown">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens a file and saves the openness report in markdown format</span>
 
 <span class="sd">        Saves the parsed information and classified image components into a</span>
@@ -657,7 +655,7 @@
                 <span class="n">md</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">uefi_fv</span><span class="o">.</span><span class="n">export_markdown</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UEFIImage.export_charts"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_charts">[docs]</a>    <span class="k">def</span> <span class="nf">export_charts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIImage.export_charts"><a class="viewcode-back" href="../uefi.html#uefi.UEFIImage.export_charts">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_charts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots the pie charts with firmware image statistics</span>
 
 <span class="sd">        Method plots two pie charts. One containing only the closed-source to</span>
@@ -692,7 +690,7 @@
                     <span class="nb">dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span></div></div>
 
 
-<div class="viewcode-block" id="UEFIVolume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume">[docs]</a><span class="k">class</span> <span class="nc">UEFIVolume</span><span class="p">:</span>
+<div class="viewcode-block" id="UEFIVolume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UEFIVolume</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;UEFIVolume class</span>
 
 <span class="sd">    The main class representing an UEFI Firmware Volume.</span>
@@ -709,7 +707,7 @@
 <span class="sd">    percentage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="UEFIVolume.__init__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uefi_entries</span><span class="p">,</span> <span class="n">entry_idx</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.__init__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uefi_entries</span><span class="p">,</span> <span class="n">entry_idx</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;UEFIVolume class init method</span>
 
 <span class="sd">        Initializes the class fields for storing the UEFI Firmware Volume</span>
@@ -772,7 +770,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_volume_files</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="UEFIVolume.__len__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.__len__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__len__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the length of the UEFI Firmware Volume</span>
 
 <span class="sd">        :return: Length of the UEFI Firmware Volume</span>
@@ -780,7 +778,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_size</span></div>
 
-<div class="viewcode-block" id="UEFIVolume.__repr__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.__repr__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__repr__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;UEFIVolume class representation</span>
 
 <span class="sd">        :return: class representation</span>
@@ -788,7 +786,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;UEFIVolume()&quot;</span></div>
 
-<div class="viewcode-block" id="UEFIVolume.__str__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.__str__"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.__str__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns string representation of the UEFI Firmware Volume</span>
 
 <span class="sd">        Prints the firmware image statistics.</span>
@@ -812,7 +810,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._entry_is_inside_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_inside_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_inside_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._entry_is_inside_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_inside_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_inside_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry resides inside this UEFI</span>
 <span class="sd">        Firmware Volume</span>
 
@@ -852,7 +850,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_end_of_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_end_of_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_is_end_of_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_end_of_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_end_of_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_end_of_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is the last entry in this</span>
 <span class="sd">        UEFI Firmware Volume</span>
 
@@ -872,7 +870,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._entry_is_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_region">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._entry_is_region"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_region">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is a region</span>
 
 <span class="sd">        :param entry: UEFI image entry from the entries dictionary</span>
@@ -885,7 +883,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._entry_is_self_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_self_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_self_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._entry_is_self_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_self_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_self_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if UEFI entry is the current UEFI Firmware</span>
 <span class="sd">        Volume</span>
 
@@ -902,7 +900,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._entry_is_nested_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_nested_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_entry_is_nested_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._entry_is_nested_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._entry_is_nested_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_entry_is_nested_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to check if given UEFI entry is an UEFI Firmware</span>
 <span class="sd">        Volume nested in the current UEFI Firmware Volume</span>
 
@@ -927,7 +925,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._parse_volume_files"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._parse_volume_files">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_volume_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._parse_volume_files"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._parse_volume_files">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_volume_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts the UEFI entries that belong to the given Firmware Volumes</span>
 <span class="sd">        and append them to :attr:`uefi.UEFIVolume.volume_entries`</span>
 
@@ -963,7 +961,7 @@
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">)):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._classify_entries"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._classify_entries">[docs]</a>    <span class="k">def</span> <span class="nf">_classify_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._classify_entries"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._classify_entries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_classify_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks all entries belonging to the UEFI Firmware Volume and</span>
 <span class="sd">        classifies them</span>
 
@@ -996,7 +994,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UEFI volume data entries:&quot;</span><span class="p">)</span>
             <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">))]</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_entry_empty_padding"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_empty_padding">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_empty_padding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_entry_empty_padding"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_empty_padding">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_empty_padding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if an entry is an empty padding</span>
 
 <span class="sd">        :param entry: A dictionary entry from the UEFI Firmware Volume entries</span>
@@ -1014,7 +1012,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_entry_non_empty_padding"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_non_empty_padding">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_non_empty_padding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_entry_non_empty_padding"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_non_empty_padding">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_non_empty_padding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if an entry is a non-empty padding</span>
 
 <span class="sd">        :param entry: A dictionary entry from the UEFI Firmware Volume entries</span>
@@ -1031,7 +1029,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_entry_free_space"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_free_space">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_free_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_entry_free_space"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_free_space">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_free_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if an entry is a free space</span>
 
 <span class="sd">        :param entry: A dictionary entry from the UEFI Firmware Volume entries</span>
@@ -1047,7 +1045,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_entry_empty_pad_file"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_empty_pad_file">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_empty_pad_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_entry_empty_pad_file"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_empty_pad_file">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_empty_pad_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if an entry is an empty pad file</span>
 
 <span class="sd">        :param entry: A dictionary entry from the UEFI Firmware Volume entries</span>
@@ -1065,7 +1063,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_entry_non_empty_pad_file"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_non_empty_pad_file">[docs]</a>    <span class="k">def</span> <span class="nf">_is_entry_non_empty_pad_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_entry_non_empty_pad_file"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_entry_non_empty_pad_file">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_entry_non_empty_pad_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if an entry is a non-empty pad file</span>
 
 <span class="sd">        :param entry: A dictionary entry from the UEFI Firmware Volume entries</span>
@@ -1083,7 +1081,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._sum_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._sum_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._sum_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._sum_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sums the size of the UEFI Firmware Volume files</span>
 
 <span class="sd">        :param files: Dictionary of files to sum</span>
@@ -1093,7 +1091,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._is_nvar_store_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_nvar_store_volume">[docs]</a>    <span class="k">def</span> <span class="nf">_is_nvar_store_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._is_nvar_store_volume"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._is_nvar_store_volume">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_is_nvar_store_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determines if given UEFI Firmware Volume is a variable store</span>
 
 <span class="sd">        :return: True if the Firmware Volume consists of NVAR entries</span>
@@ -1104,7 +1102,7 @@
         <span class="n">nvar_count</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NVAR entry&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;NVAR entry&#39;</span><span class="p">,</span> <span class="s1">&#39;VSS entry&#39;</span><span class="p">]:</span>
                 <span class="n">nvar_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">nvar_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">nvar_count</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_entries</span><span class="p">)</span>
@@ -1114,7 +1112,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._calculate_metrics"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._calculate_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._calculate_metrics"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._calculate_metrics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the sizes of the four basic firmware components</span>
 <span class="sd">        categories</span>
 
@@ -1140,7 +1138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">empty_size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_files</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_sizes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._normalize_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._normalize_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._normalize_sizes"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._normalize_sizes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if all Firmware Volume components sizes sum up to whole</span>
 <span class="sd">        Firmware Volume size.</span>
 
@@ -1178,7 +1176,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_size</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_size</span> <span class="o">-</span> <span class="n">classified_files_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UEFIVolume._export_files_md"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._export_files_md">[docs]</a>    <span class="k">def</span> <span class="nf">_export_files_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">volume_files</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume._export_files_md"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume._export_files_md">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_export_files_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">volume_files</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the Firmware Volume entries for given category to the</span>
 <span class="sd">        markdown file</span>
 
@@ -1198,7 +1196,7 @@
                         <span class="n">f</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">],</span> <span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]),</span> <span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]),</span>
                         <span class="n">category</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UEFIVolume.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.export_markdown">[docs]</a>    <span class="k">def</span> <span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
+<div class="viewcode-block" id="UEFIVolume.export_markdown"><a class="viewcode-back" href="../uefi.html#uefi.UEFIVolume.export_markdown">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mkdocs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the openness report in markdown format for given UEFI</span>
 <span class="sd">        Firmware Volume</span>
 
