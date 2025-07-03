@@ -809,7 +809,7 @@ class CBFSImage:
     RAW_OPEN_SOURCE_FILES = [
         'fallback/dsdt.aml', 'vgaroms/seavgabios.bin', 'pagetables', 'pdpt',
         'pt', 'ecrw', 'pdrw', 'sff8104-linux.dtb', 'stm.bin', 'fallback/DTB',
-        'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom',
+        'oemmanifest.bin', 'smcbiosinfo.bin', 'genroms/pxe.rom', 'ec.rom'
     ]
     """A list of CBFS filenames known to be created from open-source code"""
 
