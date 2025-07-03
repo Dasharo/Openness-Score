@@ -42,7 +42,7 @@ class DasharoCorebootImage:
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
                     'RW_DDR_TRAINING', 'GBB', 'BOOTORDER', 'RESERVED', 'BPA',
-                    'ROMHOLE']
+                    'ROMHOLE', 'SI_GBE', 'RO_GSCVD', 'RW_VAR_MRC_CACHE' ]
     """A list of region names known to contain data"""
 
     IFD_DATA_REGIONS = ['Flash Descriptor', 'Platform Data', 'GbE']
@@ -80,7 +80,8 @@ class DasharoCorebootImage:
     These regions willbe classified by IFD region purpose."""
 
     # Regions to count as empty/unused
-    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED', 'SI_DEVICEEXT2']
+    EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED', 'SI_DEVICEEXT2', 'UNUSED_HOLE',
+                     'BIOS_UNUSABLE']
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
