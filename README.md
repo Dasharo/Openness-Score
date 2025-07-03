@@ -34,6 +34,8 @@ positional arguments:
 options:
   -o OUTPUT, --output OUTPUT
                         Specifies the directory where to store the results
+  -a MICROARCH, --microarch MICROARCH
+                        CPU michroarchitecture supported by the firmware binary to be passed to ifdtool
   -v, --verbose         Print verbose information during the image parsing
   -m, --mkdocs          Export the report for Dasharo mkdocs
   -V, --version         show program's version number and exit
@@ -42,8 +44,24 @@ options:
 For example:
 
 ```bash
-./openness_score.py ~/msi_ms7d25_v1.1.1_ddr4.rom
+./openness_score.py ~/msi_ms7d25_v1.1.1_ddr4.rom --microarch adl
 ```
+
+Microarchitecture for common Dasharo platforms are listed below:
+
+- `Protectli FW6` - `sklkbl`
+- `Protectli V1210/V1211/V1410/V1610` - `jsl`
+- `Protectli VP2410` - `glk`
+- `Protectli VP2420` - `ehl`
+- `Protectli VP2430/VP2440` - `adl`
+- `Protectli VP46xx` - `cnl`
+- `Protectli VP32xx` - `adl`
+- `Protectli VP66xx` - `adl`
+- `MSI` (any) - `adl`
+- `Novacustom NV4x / NS5x TGL` - `tgl`
+- `Novacustom NV4x / NS5x ADL` - `adl`
+- `Novacustom V54x/V56x` - `mtl`
+- `ODROID` - `adl`
 
 The utility will produce 3 files:
 
