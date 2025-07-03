@@ -90,8 +90,8 @@ class DasharoCorebootImage:
 
         Initializes the class fields for storing the firmware image components
         classified to specific groups. Also calls
-        :meth:`~coreboot.DasharoCorebootImage._parse_cb_fmap_layout` and
-        :meth:`~coreboot.DasharoCorebootImage._calculate_metrics` methods to
+        `coreboot.DasharoCorebootImage._parse_cb_fmap_layout` and
+        `coreboot.DasharoCorebootImage._calculate_metrics` methods to
         parse the image and calculate the metrics.
 
         :param image_path: Path the the firmware image file being parsed.
@@ -223,13 +223,13 @@ class DasharoCorebootImage:
 
         Parses the output of 'cbfstool self.image_path layout -w' and extract
         the flashmap regions to a self.fmap_regions dictionary using the
-        :const:`coreboot.DasharoCorebootImage.region_regexp` regular
+        `coreboot.DasharoCorebootImage.region_regexp` regular
         expression.
 
         If a flashmap region has a CBFS attribute, the self.cbfs_images list
         is appended with a new instance of :class:`coreboot.CBFSImage`.
 
-        If :attr:`coreboot.DasharoCorebootImage.debug` is True, all flashmap
+        If `coreboot.DasharoCorebootImage.debug` is True, all flashmap
         regions with their attributes are printed on the console at the end.
         """
         cmd = ['cbfstool', self.image_path, 'layout', '-w']
@@ -406,29 +406,29 @@ class DasharoCorebootImage:
         categories and appended to respective lists. CBFS regions are
         processed separately and not included here.
 
-        :attr:`coreboot.DasharoCorebootImage.open_code_regions` are appended
+        `coreboot.DasharoCorebootImage.open_code_regions` are appended
         with flashmap regions which name is found in
-        :const:`coreboot.DasharoCorebootImage.CODE_REGIONS`
+        `coreboot.DasharoCorebootImage.CODE_REGIONS`
 
-        :attr:`coreboot.DasharoCorebootImage.closed_code_regions` are appended
+        `coreboot.DasharoCorebootImage.closed_code_regions` are appended
         with flashmap regions which name is found in
-        :const:`coreboot.DasharoCorebootImage.BLOB_REGIONS`
+        `coreboot.DasharoCorebootImage.BLOB_REGIONS`
 
-        :attr:`coreboot.DasharoCorebootImage.empty_regions` are appended with
+        `coreboot.DasharoCorebootImage.empty_regions` are appended with
         flashmap regions which name is found in
-        :const:`coreboot.DasharoCorebootImage.EMPTY_REGIONS`
+        `coreboot.DasharoCorebootImage.EMPTY_REGIONS`
 
-        :attr:`coreboot.DasharoCorebootImage.data_regions` are appended with
+        `coreboot.DasharoCorebootImage.data_regions` are appended with
         flashmap regions which name is found in
-        :const:`coreboot.DasharoCorebootImage.DATA_REGIONS`
+        `coreboot.DasharoCorebootImage.DATA_REGIONS`
 
         Flashmap regions which names is found in
-        :const:`coreboot.DasharoCorebootImage.SKIP_REGIONS` are not classified
+        `coreboot.DasharoCorebootImage.SKIP_REGIONS` are not classified
         due to being cotnainers or aliases to other regions. Counting them
         would result in duplication of the sizes when calculating metrics.
 
         Any other unrecognized flashmap region falls into
-        :attr:`coreboot.DasharoCorebootImage.data_regions` list which will be
+        `coreboot.DasharoCorebootImage.data_regions` list which will be
         counted as closed-source code region because we were unable to
         identify what can be inside.
 
@@ -465,41 +465,41 @@ class DasharoCorebootImage:
         """Calculates the sizes of the four basic firmware components
         categories
 
-        Calls :meth:`~coreboot.DasharoCorebootImage._classify_region` for each
+        Calls `coreboot.DasharoCorebootImage._classify_region` for each
         detected region. The sums the regions sizes from all 5 lists
 
-        :attr:`coreboot.DasharoCorebootImage.open_code_regions` sizes sum is
-        added to :attr:`coreboot.DasharoCorebootImage.open_code_size`
+        `coreboot.DasharoCorebootImage.open_code_regions` sizes sum is
+        added to `coreboot.DasharoCorebootImage.open_code_size`
 
-        :attr:`coreboot.DasharoCorebootImage.closed_code_regions` sizes sum is
-        added to :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+        `coreboot.DasharoCorebootImage.closed_code_regions` sizes sum is
+        added to `coreboot.DasharoCorebootImage.closed_code_size`
 
-        :attr:`coreboot.DasharoCorebootImage.data_regions` sizes sum is added
-        to :attr:`coreboot.DasharoCorebootImage.data_size`
+        `coreboot.DasharoCorebootImage.data_regions` sizes sum is added
+        to `coreboot.DasharoCorebootImage.data_size`
 
-        :attr:`coreboot.DasharoCorebootImage.empty_regions` sizes sum is added
-        to :attr:`coreboot.DasharoCorebootImage.empty_size`
+        `coreboot.DasharoCorebootImage.empty_regions` sizes sum is added
+        to `coreboot.DasharoCorebootImage.empty_size`
 
-        :attr:`coreboot.DasharoCorebootImage.uncategorized_regions` sizes sum
-        is added to :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+        `coreboot.DasharoCorebootImage.uncategorized_regions` sizes sum
+        is added to `coreboot.DasharoCorebootImage.closed_code_size`
 
         Additionally for each detected CBFS region their four basic
         component's categories are also added to the total metrics.
 
-        :attr:`coreboot.CBFSImage.open_code_size` is added to
-        :attr:`coreboot.DasharoCorebootImage.open_code_size`
+        `coreboot.CBFSImage.open_code_size` is added to
+        `coreboot.DasharoCorebootImage.open_code_size`
 
-        :attr:`coreboot.CBFSImage.closed_code_size` is added to
-        :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+        `coreboot.CBFSImage.closed_code_size` is added to
+        `coreboot.DasharoCorebootImage.closed_code_size`
 
-        :attr:`coreboot.CBFSImage.data_size` is added to
-        :attr:`coreboot.DasharoCorebootImage.data_size`
+        `coreboot.CBFSImage.data_size` is added to
+        `coreboot.DasharoCorebootImage.data_size`
 
-        :attr:`coreboot.CBFSImage.empty_size` is added to
-        :attr:`coreboot.DasharoCorebootImage.empty_size`
+        `coreboot.CBFSImage.empty_size` is added to
+        `coreboot.DasharoCorebootImage.empty_size`
 
         At the end the method calls
-        :meth:`coreboot.DasharoCorebootImage._normalize_sizes`
+        `coreboot.DasharoCorebootImage._normalize_sizes`
         """
         for i in range(self.num_regions):
             self._classify_region(self.fmap_regions[i])
@@ -551,7 +551,7 @@ class DasharoCorebootImage:
         does not start at offset zero, which is possible for Intel board
         coreboot images without IFD and ME regions specified. In such case the
         missing regions are counted as closed-source and added to
-        :attr:`coreboot.DasharoCorebootImage.closed_code_size`
+        `coreboot.DasharoCorebootImage.closed_code_size`
         """
         # It may happen that the FMAP does not cover whole flash size and the
         # first region will start with non-zero offset. Check if first region
@@ -622,8 +622,8 @@ class DasharoCorebootImage:
 
         Saves the parsed information and classified image components into a
         markdown file. Also for each CBFS in
-        :attr:`coreboot.DasharoCorebootImage.cbfs_images` it calls
-        :meth:`coreboot.CBFSImage.export_markdown` to save the CBFS region
+        `coreboot.DasharoCorebootImage.cbfs_images` it calls
+        `coreboot.CBFSImage.export_markdown` to save the CBFS region
         statistics.
 
         :param file: Path to markdown file
@@ -862,9 +862,9 @@ class CBFSImage:
 
         Initializes the class fields for storing the CBFS region components
         classified to specific groups. Also calls
-        :meth:`~coreboot.DasharoCorebootImage._parse_cbfs_files`,
-        :meth:`~coreboot.DasharoCorebootImage._parse_cb_config` and
-        :meth:`~coreboot.DasharoCorebootImage._calculate_metrics` methods to
+        `coreboot.DasharoCorebootImage._parse_cbfs_files`,
+        `coreboot.DasharoCorebootImage._parse_cb_config` and
+        `coreboot.DasharoCorebootImage._calculate_metrics` methods to
         parse the CBFS and calculate the metrics.
 
         :param region: Path the the firmware image file being parsed.
@@ -976,13 +976,13 @@ class CBFSImage:
     def _parse_cbfs_files(self):
         """Parses the CBFS contents from cbfstool output
 
-        Parses the output of 'cbfstool :attr:`coreboot.CBFSImage.image_path`
-        print -r :attr:`coreboot.CBFSImage.region_name`' and extracts the CBFS
-        files information to the :attr:`coreboot.CBFSImage.cbfs_files`
-        dictionary using the :const:`coreboot.CBFSImage.file_regexp` regular
+        Parses the output of 'cbfstool `coreboot.CBFSImage.image_path`
+        print -r `coreboot.CBFSImage.region_name`' and extracts the CBFS
+        files information to the `coreboot.CBFSImage.cbfs_files`
+        dictionary using the `coreboot.CBFSImage.file_regexp` regular
         expression.
 
-        If :attr:`coreboot.CBFSImage.debug` is True, all CBFS contents with
+        If `coreboot.CBFSImage.debug` is True, all CBFS contents with
         their attributes are printed on the console at the end.
         """
         cmd = ['cbfstool', self.image_path, 'print', '-r', self.region_name]
@@ -1007,30 +1007,30 @@ class CBFSImage:
         """Calculates the sizes of the four basic firmware components
         categories
 
-        Calls :meth:`~coreboot.CBFSImage._classify_file` for each detected
+        Calls `coreboot.CBFSImage._classify_file` for each detected
         CBFS file. Then sums the files' sizes from all 5 lists:
 
-        :attr:`coreboot.CBFSImage.open_code_files` sizes sum is added to
-        :attr:`coreboot.CBFSImage.open_code_size`
+        `coreboot.CBFSImage.open_code_files` sizes sum is added to
+        `coreboot.CBFSImage.open_code_size`
 
-        :attr:`coreboot.CBFSImage.closed_code_files` sizes sum is added to
-        :attr:`coreboot.CBFSImage.closed_code_size`
+        `coreboot.CBFSImage.closed_code_files` sizes sum is added to
+        `coreboot.CBFSImage.closed_code_size`
 
-        :attr:`coreboot.CBFSImage.data_files` sizes sum is added to
-        :attr:`coreboot.CBFSImage.data_size`
+        `coreboot.CBFSImage.data_files` sizes sum is added to
+        `coreboot.CBFSImage.data_size`
 
-        :attr:`coreboot.CBFSImage.empty_files` sizes sum is added to
-        :attr:`coreboot.CBFSImage.empty_size`
+        `coreboot.CBFSImage.empty_files` sizes sum is added to
+        `coreboot.CBFSImage.empty_size`
 
-        :attr:`coreboot.CBFSImage.uncategorized_files` sizes sum is added to
-        :attr:`coreboot.CBFSImage.closed_code_size`
+        `coreboot.CBFSImage.uncategorized_files` sizes sum is added to
+        `coreboot.CBFSImage.closed_code_size`
 
         Additionally if a LAN EFI driver has been detected, it is subtracted
         from open-source code size (normally the driver is part ofthe payload
         considered to be open-source) and added to the closed-source size.
 
         At the end the method calls
-        :meth:`coreboot.CBFSImage._normalize_sizes`
+        `coreboot.CBFSImage._normalize_sizes`
         """
         for i in range(self.num_files):
             self._classify_file(self.cbfs_files[i])
@@ -1064,33 +1064,33 @@ class CBFSImage:
         Each detected CBFS file is being classified into 4 basic categories
         and appended to respective lists.
 
-        :attr:`coreboot.CBFSImage.open_code_files` are appended with CBFS
+        `coreboot.CBFSImage.open_code_files` are appended with CBFS
         files which type is found in
-        :const:`coreboot.CBFSImage.OPEN_SOURCE_FILETYPES` and names are not
-        found in :const:`coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS`. CBFS
+        `coreboot.CBFSImage.OPEN_SOURCE_FILETYPES` and names are not
+        found in `coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS`. CBFS
         files of type 'raw' are also classified as open-source code if its
-        name is found in :const:`coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES` or
+        name is found in `coreboot.CBFSImage.RAW_OPEN_SOURCE_FILES` or
         if it is an iPXE legacy ROM (based on the PCI ID detected from
         coreboot's config).
 
-        :attr:`coreboot.CBFSImage.closed_code_files` are appended with CBFS
+        `coreboot.CBFSImage.closed_code_files` are appended with CBFS
         files which name is found in
-        :const:`coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES` or with CBFS
-        file's type found in :const:`coreboot.CBFSImage.OPEN_SOURCE_FILETYPES`
-        and name found in :const:`coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS`
+        `coreboot.CBFSImage.CLOSED_SOURCE_FILETYPES` or with CBFS
+        file's type found in `coreboot.CBFSImage.OPEN_SOURCE_FILETYPES`
+        and name found in `coreboot.CBFSImage.CLOSED_SOURCE_EXCEPTIONS`
         or with CBFS files of type 'raw' which names are found in
-        :const:`coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES`.
+        `coreboot.CBFSImage.RAW_CLOSED_SOURCE_FILES`.
 
-        :attr:`coreboot.CBFSImage.empty_files` are appended with CBFS files
+        `coreboot.CBFSImage.empty_files` are appended with CBFS files
         with type 'null'.
 
-        :attr:`coreboot.CBFSImage.data_files` are appended with CBFS files
-        which type is found in :const:`coreboot.CBFSImage.DATA_FILETYPES` or
+        `coreboot.CBFSImage.data_files` are appended with CBFS files
+        which type is found in `coreboot.CBFSImage.DATA_FILETYPES` or
         with CBFS file of type 'raw' and names found in
-        :const:`coreboot.CBFSImage.RAW_DATA_FILES`.
+        `coreboot.CBFSImage.RAW_DATA_FILES`.
 
         Any other unrecognized CBFS files fall into
-        :attr:`coreboot.CBFSImage.uncategorized_files` list which will be
+        `coreboot.CBFSImage.uncategorized_files` list which will be
         counted as closed-source code because we were unable to identify what
         can be inside.
 
@@ -1135,13 +1135,13 @@ class CBFSImage:
         byte offset of the end of last file in CBFS and calculate the
         truncated size by subtracting the offset from the CBFS region size.
         The truncated size is then added to the
-        :attr:`coreboot.CBFSImage.empty_size`.
+        `coreboot.CBFSImage.empty_size`.
 
         cbfstool prints only the sizes of files and does not account for the
         metadata surrounding the file. It is necessary to calculate the
         metadata size by subtarcting all file's sizes from the whole CBFS
         region size. The metadata size is then added to the
-        :attr:`coreboot.CBFSImage.data_size`.
+        `coreboot.CBFSImage.data_size`.
         """
         # We have to take into account truncated CBFSes like FW_MAIN_A or
         # FW_MAIN_B, where the space after the last file is empty but not
@@ -1201,11 +1201,11 @@ class CBFSImage:
 
         The function uses the cbfstool to extract the coreboot's config and a
         regexp to extract the Kconfig names and values to
-        :attr:`coreboot.CBFSImage.kconfig_opts`.
+        `coreboot.CBFSImage.kconfig_opts`.
 
         Additionally the function calls
-        :meth:`coreboot.CBFSImage._check_for_ipxe` and
-        :meth:`coreboot.CBFSImage._check_for_lanrom`.
+        `coreboot.CBFSImage._check_for_ipxe` and
+        `coreboot.CBFSImage._check_for_lanrom`.
         """
         kconfig_pattern = r'^CONFIG_(?P<option>[A-Z0-9_]+?)=(?P<value>.*?)$'
         kconfig_pregexp = re.compile(kconfig_pattern, re.MULTILINE)
@@ -1246,9 +1246,9 @@ class CBFSImage:
         """Checks whether iPXE was built int othe CBFS image and in what form
 
         The function checks for iPXE specific Kconfig options and sets the
-        :attr:`coreboot.CBFSImage.edk2_ipxe`,
-        :attr:`coreboot.CBFSImage.ipxe_present` and
-        :attr:`coreboot.CBFSImage.ipxe_rom_id` based on the detected Kconfig
+        `coreboot.CBFSImage.edk2_ipxe`,
+        `coreboot.CBFSImage.ipxe_present` and
+        `coreboot.CBFSImage.ipxe_rom_id` based on the detected Kconfig
         values.
         """
         if self._get_kconfig_value('EDK2_ENABLE_IPXE') == 'y':
@@ -1279,10 +1279,10 @@ class CBFSImage:
         The function check for the LAn driver Kcofngi option. If it is
         present, then the cbfstool is called to extract the payload binary.
         Then UEFIExtract tries to extract the LAN EFI driver by the file GUID
-        :attr:`coreboot.CBFSImage.DASHARO_LAN_ROM_GUID` from the payload
+        `coreboot.CBFSImage.DASHARO_LAN_ROM_GUID` from the payload
         binary. At the ned the extracted LAN EFI driver is compressed with
         lzma to estimate the driver's size occupying the UEFI Payload. The
-        result is saved to :attr:`coreboot.CBFSImage.lan_rom_size`.
+        result is saved to `coreboot.CBFSImage.lan_rom_size`.
         """
         lan_rom_path = self._get_kconfig_value('EDK2_LAN_ROM_DRIVER')
         if lan_rom_path is None or lan_rom_path == '""':
