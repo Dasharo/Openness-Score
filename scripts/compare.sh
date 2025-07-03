@@ -65,9 +65,9 @@ compare_protectli() {
   ./openness_score/openness_score.py "$BINDIR/protectli/protectli_vp2430_v0.9.0.rom" \
     -c "$BINDIR/protectli/vp2430_PRALNDZ4L10.bin" -p "Protectli VP2430" -a "adl"
   ./openness_score/openness_score.py "$BINDIR/protectli/protectli_vp4600_v1.2.0.rom" \
-    -c "$BINDIR/protectli/vp4630_v2_YW6L2318.bin" -p "Protectli VP4600" -a "cnl"
+    -c "$BINDIR/protectli/vp4630_v2_YW6L2318.bin" -p "Protectli VP46XX" -a "cnl"
   ./openness_score/openness_score.py "$BINDIR/protectli/protectli_vp6600_v0.9.2.rom" \
-    -c "$BINDIR/protectli/vp6630_ADZ6L314.bin" -p "Protectli VP6600" -a "adl"
+    -c "$BINDIR/protectli/vp6630_ADZ6L314.bin" -p "Protectli VP66XX" -a "adl"
 }
 
 download_msi() {
@@ -103,10 +103,10 @@ download_msi() {
 }
 
 compare_msi() {
-  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7d25_v1.1.4_ddr4.rom" -c "$BINDIR/msi/E7D25IMS.1L0" -p "MS-7D25 DDR4" -a "adl"
-  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7d25_v1.1.4_ddr5.rom" -c "$BINDIR/msi/E7D25IMS.AL0" -p "MS-7D25 DDR5" -a "adl"
-  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7e06_v0.9.2_ddr4.rom" -c "$BINDIR/msi/E7E06IMS.1F0" -p "MS-7E06 DDR4" -a "adl"
-  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7e06_v0.9.2_ddr4.rom" -c "$BINDIR/msi/E7E06IMS.AH0" -p "MS-7E06 DDR5" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7d25_v1.1.4_ddr4.rom" -c "$BINDIR/msi/E7D25IMS.1L0" -p "MSI MS-7D25 DDR4" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7d25_v1.1.4_ddr5.rom" -c "$BINDIR/msi/E7D25IMS.AL0" -p "MSI MS-7D25 DDR5" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7e06_v0.9.2_ddr4.rom" -c "$BINDIR/msi/E7E06IMS.1F0" -p "MSI MS-7E06 DDR4" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/msi/msi_ms7e06_v0.9.2_ddr4.rom" -c "$BINDIR/msi/E7E06IMS.AH0" -p "MSI MS-7E06 DDR5" -a "adl"
 }
 
 download_novacustom() {
@@ -150,12 +150,12 @@ download_novacustom() {
 }
 
 compare_novacustom() {
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_v54x_mtl_v0.9.0.rom" -c "$BINDIR/novacustom/V5xxTU(32M).09" -p "NC V540TU" -a "mtl"
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_v56x_mtl_v0.9.0.rom" -c "$BINDIR/novacustom/V5xxTU(32M).09" -p "NC V560TU" -a "mtl"
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_nv4x_adl_v1.7.2_full.rom" -c "$BINDIR/novacustom/NV4xPZ(32M).03" -p "NC NV4xPZ" -a "adl"
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_nv4x_tgl_v1.5.2.rom" -c "$BINDIR/novacustom/NV4XBX.05" -p "NC NV4xME_MB" -a "tgl"
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_ns5x_adl_v1.7.2.rom" -c "$BINDIR/novacustom/NSx0PU(32M).09" -p "NC NSxxPU" -a "adl"
-  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_ns5x_tgl_v1.5.2.rom" -c "$BINDIR/novacustom/NS50_70MU.16N" -p "NC NS5xMU" -a "tgl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_v54x_mtl_v0.9.0.rom" -c "$BINDIR/novacustom/V5xxTU(32M).09" -p "Novacustom V540TU" -a "mtl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_v56x_mtl_v0.9.0.rom" -c "$BINDIR/novacustom/V5xxTU(32M).09" -p "Novacustom V560TU" -a "mtl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_nv4x_adl_v1.7.2_full.rom" -c "$BINDIR/novacustom/NV4xPZ(32M).03" -p "Novacustom NV4xPZ" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_nv4x_tgl_v1.5.2.rom" -c "$BINDIR/novacustom/NV4XBX.05" -p "Novacustom NV4xME_MB" -a "tgl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_ns5x_adl_v1.7.2.rom" -c "$BINDIR/novacustom/NSx0PU(32M).09" -p "Novacustom NSxxPU" -a "adl"
+  ./openness_score/openness_score.py "$BINDIR/novacustom/novacustom_ns5x_tgl_v1.5.2.rom" -c "$BINDIR/novacustom/NS50_70MU.16N" -p "Novacustom NS5xMU" -a "tgl"
 }
 
 download_odroid() {
