@@ -154,11 +154,12 @@ class DasharoCorebootImage:
         """
         self.debug = verbose
         """Used to enable verbose debug output from the parsing process"""
-        self.use_ifdtool = bool(microarch)
-        """If `microarch` argument is set, use ifdtool"""
+        self.ifd_found = False
+        """Boolean vlaue if Intel Flash Descriptor has been detected in
+        the image by ifdtool"""
 
         self._parse_cb_fmap_layout()
-        if self.use_ifdtool:
+        if bool(microarch):
             self._parse_ifdtool_regions(microarch)
         self._calculate_metrics()
 
@@ -259,6 +260,12 @@ class DasharoCorebootImage:
         offset = 0
         hole_size = 0
         for i in range(self.num_regions - 1):
+            # If the first region does not start at address zero and we use
+            # ifdtool it is likely that FMAP starts with BIOS region and
+            # ifdtool will handle it. However, if there is no descriptor
+            # found, this space will be added as closed-source later.
+            if i == 0 and self.fmap_regions[i]['offset'] != 0:
+                offset = self.fmap_regions[i]['offset']
 
             # Skip containers as they may have bigger size than offset of the
             # next region. Exception: FMAP is always read-only but is not a
@@ -302,14 +309,32 @@ class DasharoCorebootImage:
         If `coreboot.DasharoCorebootImage.debug` is True, all IFD regions with their
         attributes are printed on the console at the end.
         """
+        if self.debug:
+            print('Using ifdtool to detect Intel flash regions')
+
         cmd = ['ifdtool', '-p', microarch, '-d', self.image_path]
         output = subprocess.run(cmd, text=True, capture_output=True)
+        if output.returncode != 0:
+            if self.debug:
+                print ('ERROR: ifdtool returned an error, assuming no flash descriptor in the image')
+
+            self.ifd_found = False
+            return
+        elif 'No Flash Descriptor found in this image' in output.stdout:
+            if self.debug:
+                print ('No Flash Descriptor found in this image or ifdtool')
+
+            self.ifd_found = False
+            return
+        else:
+            self.ifd_found = True
+
         for match in re.finditer(self.ifdtool_regexp, output.stdout):
-            # Do not add regions marked as unused
-            if not bool(match.group('status')):
+            # Do not add regions marked as unused or if region value is invalid (0xffffffff)
+            if not bool(match.group('status')) and int(match.group('reg_val'), 16) != 0xffffffff:
                 self.ifdtool_regions[self.num_ifdtool_regions] = {
                     'id': int(match.group('id')),
-                    'reg_val': match.group('reg_val'),
+                    'reg_val': int(match.group('reg_val'), 16),
                     'name': match.group('name'),
                     'start': f"0x{match.group('start')}",
                     'end': f"0x{match.group('end')}",
@@ -413,7 +438,7 @@ class DasharoCorebootImage:
             # Skip CBFSes because they have separate class and methods to
             # calculate metrics
             return
-        elif self.use_ifdtool and region['name'] in self.IFD_SKIP_REGIONS:
+        elif self.ifd_found and region['name'] in self.IFD_SKIP_REGIONS:
             return
         elif region['name'] in self.SKIP_REGIONS:
             return
@@ -482,7 +507,7 @@ class DasharoCorebootImage:
         if fmap_hole > 0:
             self.closed_code_size += fmap_hole
 
-        if self.use_ifdtool:
+        if self.ifd_found:
             for i in range(self.num_ifdtool_regions):
                 self._classify_ifdtool_region(self.ifdtool_regions[i])
 
@@ -531,8 +556,9 @@ class DasharoCorebootImage:
         # first region will start with non-zero offset. Check if first region
         # offset is zero, if not count all bytes from the start of flash to the
         # start of first region as closed source. This is only done if ifdtool
-        # is not used, because ifdtool will always parse those regions correctly.
-        if self.fmap_regions[0]['offset'] != 0 and not self.use_ifdtool:
+        # is not used or IFD was not found, because ifdtool will always parse
+        # those regions correctly.
+        if self.fmap_regions[0]['offset'] != 0 and not self.ifd_found:
             self.closed_code_size += self.fmap_regions[0]['offset']
 
         # Final check if all sizes are summing up to whole image size
@@ -651,7 +677,7 @@ class DasharoCorebootImage:
             self._export_regions_md(md, self.data_regions, 'data')
             self._export_regions_md(md, self.empty_regions, 'empty')
 
-            if self.use_ifdtool:
+            if self.ifd_found:
                 if not mkdocs:
                     md.write('\n## IFD regions\n\n')
                 else:
