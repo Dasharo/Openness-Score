@@ -219,7 +219,7 @@ def OpennessScore():
         DasharoImage = DasharoCorebootImage(args.file, args.verbose)
         fw_is_cbfs, fw_is_uefi = check_file(args.compare)
         if fw_is_cbfs:
-            ProprietaryImage = DasharoCorebootImage(args.compare, args.verbose)
+            ProprietaryImage = DasharoCorebootImage(args.compare, args.verbose, args.microarch)
         elif fw_is_uefi:
             ProprietaryImage = UEFIImage(args.compare, args.verbose)
         export_compared_data(args, DasharoImage, ProprietaryImage)
