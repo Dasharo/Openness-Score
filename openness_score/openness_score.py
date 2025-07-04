@@ -10,10 +10,19 @@ import subprocess
 from coreboot import DasharoCorebootImage
 from uefi import UEFIImage
 from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
+from git import Repo
 
 """The Dasharo Openness Score utility's entrypoint"""
 
-version = 'v0.2.0'
+script_path = Path(__file__).resolve()
+repo_path = script_path.parent.parent
+
+repo = Repo(repo_path)
+
+try:
+    version = repo.git.describe(tags=True, always=True, dirty=True) 
+except Exception:
+    version = "unknown"
 """The utility's version"""
 
 
