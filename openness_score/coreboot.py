@@ -617,7 +617,7 @@ class DasharoCorebootImage:
                 region['name'], region['start'], region['end'],
                 hex(region['size']), category))
 
-    def export_markdown(self, file, mkdocs):
+    def export_markdown(self, file, mkdocs, version):
         """Opens a file and saves the openness report in markdown format
 
         Saves the parsed information and classified image components into a
@@ -635,6 +635,7 @@ class DasharoCorebootImage:
             if not mkdocs:
                 md.write('# Dasharo Openness Score\n\n')
 
+            md.write('Report has been generated with Openness Score utility version %s\n\n' % version)
             md.write('Openness Score for %s\n\n' % Path(self.image_path).name)
             md.write('Open-source code percentage: **%1.1f%%**\n' %
                      self._get_percentage(self.open_code_size))

@@ -13,7 +13,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
 
 """The Dasharo Openness Score utility's entrypoint"""
 
-version = 'v0.1.0'
+version = 'v0.2.0'
 """The utility's version"""
 
 
@@ -118,7 +118,7 @@ def export_data(args, image):
                               Path(args.file).name)).touch()
     image.export_markdown(output_path.joinpath(
                           '%s_openness_score.md' % Path(args.file).name),
-                          args.mkdocs)
+                          args.mkdocs, version)
     image.export_charts(output_path)
 
 
@@ -167,7 +167,7 @@ def export_compared_data(args, dasharo_image, proprietary_image):
             md.write("| %s | %s | %s | %s | %s | %s |\n" % (args.platform, dasharo_name, proprietary_name, closed_source_diff, data_size_diff, empty_diff))
     else:
         with open(output_file, 'w') as md:
-            md.write("# Openness score comparison table\n\n")
+            md.write("# Openness score %s comparison table\n\n" % version)
             md.write("|Platform | Dasharo Firmware file | Proprietary Firmware file | closed-source diff [%] | data size diff [%] | empty space diff [%] |\n")
             md.write("| --- | --- | --- | --- | --- | --- |\n")
             md.write("| %s | %s | %s | %s | %s | %s |\n" % (args.platform, dasharo_name, proprietary_name, closed_source_diff, data_size_diff, empty_diff))
