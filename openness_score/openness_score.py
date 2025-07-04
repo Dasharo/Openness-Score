@@ -225,7 +225,7 @@ def OpennessScore():
         if not fw_is_cbfs:
             print("File must be Dasharo!")
             sys.exit(1)
-        DasharoImage = DasharoCorebootImage(args.file, args.verbose)
+        DasharoImage = DasharoCorebootImage(args.file, args.verbose, args.microarch)
         fw_is_cbfs, fw_is_uefi = check_file(args.compare)
         if fw_is_cbfs:
             ProprietaryImage = DasharoCorebootImage(args.compare, args.verbose, args.microarch)
