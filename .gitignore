@@ -3,6 +3,7 @@ __pycache__
 *.bin
 *.rom
 build
+binaries
 
 # Devenv
 .devenv*
