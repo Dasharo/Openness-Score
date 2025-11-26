@@ -5,7 +5,7 @@ with pkgs;
   packages = [
     coreboot-utils
     uefitool
-    lzma
+    xz
     stdenv.cc.cc.lib
     glib
   ];
