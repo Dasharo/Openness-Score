@@ -718,13 +718,15 @@ class DasharoCorebootImage:
         plt.savefig('%s_openness_chart.png' %
                     dir.joinpath(Path(self.image_path).name))
 
-        labels = 'closed-source', 'open-source', 'data', 'empty'
-        sizes = [self.closed_code_size, self.open_code_size,
-                 self.data_size, self.empty_size]
-        explode = (0, 0.1, 0, 0)
+        liberation_factor = self.open_code_size + self.data_size + self.empty_size
+        labels = 'closed-source', 'liberation-factor'
+        sizes = [self.closed_code_size, liberation_factor]
+        explode = (0, 0.1)
+        colors = ['#f5f5f5', '#38d430']
 
         fig, ax = plt.subplots()
-        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%')
+        ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+               colors=colors, wedgeprops={'edgecolor': '#272727', 'linewidth': 0.5})
         fig.suptitle('Dasharo coreboot full image component share\n%s' %
                      Path(self.image_path).name)
         plt.savefig('%s_openness_chart_full_image.png' %
