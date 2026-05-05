@@ -43,6 +43,8 @@ options:
   -v, --verbose         Print verbose information during the image parsing
   -m, --mkdocs          Export the report for Dasharo mkdocs
   -V, --version         show program's version number and exit
+  -l / --liberation PROPRIETARY_FILE
+                        triggers the two-chart path; when absent the existing single-image liberation-factor pie chart is used.
 ```
 
 For example:

@@ -7,6 +7,7 @@
 import sys
 from pathlib import Path
 import subprocess
+import matplotlib.pyplot as plt
 from coreboot import DasharoCorebootImage
 from uefi import UEFIImage
 from argparse import ArgumentParser, RawTextHelpFormatter, SUPPRESS
@@ -182,6 +183,76 @@ def export_compared_data(args, dasharo_image, proprietary_image):
             md.write("| %s | %s | %s | %s | %s | %s |\n" % (args.platform, dasharo_name, proprietary_name, closed_source_diff, data_size_diff, empty_diff))
 
 
+def export_liberation_charts(output_path, dasharo_image, proprietary_image,
+                              dasharo_name, proprietary_name):
+    """Generates two comparison charts: code liberation and TCB reduction.
+
+    Chart 1 shows how many bytes/% of proprietary closed-source code have been
+    replaced by open-source in the Dasharo image ('liberated').
+
+    Chart 2 shows how many bytes/% of new empty space the Dasharo image gains
+    over the proprietary image (TCB / attack-surface reduction).
+
+    :param output_path: Directory where PNG files are written.
+    :type output_path: Path
+    :param dasharo_image: Parsed Dasharo firmware image.
+    :param proprietary_image: Parsed proprietary firmware image.
+    :param dasharo_name: Display name for the Dasharo binary.
+    :type dasharo_name: str
+    :param proprietary_name: Display name for the proprietary binary.
+    :type proprietary_name: str
+    """
+    def make_autopct(sizes):
+        def autopct(pct):
+            val = int(round(pct * sum(sizes) / 100.0))
+            return '{:.1f}%\n({:,} B)'.format(pct, val)
+        return autopct
+
+    subtitle = '%s  vs  %s' % (dasharo_name, proprietary_name)
+
+    # --- Chart 1: Code Liberation ---
+    liberated = proprietary_image.closed_code_size - dasharo_image.closed_code_size
+
+    fig, ax = plt.subplots()
+    if liberated > 0:
+        sizes = [liberated, dasharo_image.closed_code_size]
+        labels = ['liberated', 'remaining closed-source']
+        colors = ['#38d430', '#f5f5f5']
+        explode = (0.1, 0)
+    else:
+        sizes = [proprietary_image.closed_code_size, -liberated]
+        labels = ['closed-source', 'regression (more closed-source)']
+        colors = ['#f5f5f5', '#cc0000']
+        explode = (0, 0.1)
+    ax.pie(sizes, explode=explode, labels=labels,
+           autopct=make_autopct(sizes), colors=colors,
+           wedgeprops={'edgecolor': '#272727', 'linewidth': 0.5})
+    fig.suptitle('Code liberation\n' + subtitle)
+    plt.savefig(str(output_path.joinpath('liberation_chart.png')))
+    plt.close()
+
+    # --- Chart 2: TCB / Empty Space Reduction ---
+    tcb_reduced = dasharo_image.empty_size - proprietary_image.empty_size
+
+    fig, ax = plt.subplots()
+    if tcb_reduced > 0:
+        sizes = [tcb_reduced, proprietary_image.empty_size]
+        labels = ['TCB reduced (newly empty)', 'previously empty']
+        colors = ['#38d430', '#f5f5f5']
+        explode = (0.1, 0)
+    else:
+        sizes = [dasharo_image.empty_size, -tcb_reduced]
+        labels = ['empty space', 'TCB increase (less empty)']
+        colors = ['#f5f5f5', '#cc0000']
+        explode = (0, 0.1)
+    ax.pie(sizes, explode=explode, labels=labels,
+           autopct=make_autopct(sizes), colors=colors,
+           wedgeprops={'edgecolor': '#272727', 'linewidth': 0.5})
+    fig.suptitle('TCB / empty space reduction\n' + subtitle)
+    plt.savefig(str(output_path.joinpath('tcb_reduction_chart.png')))
+    plt.close()
+
+
 def OpennessScore():
     """Utility's entry point responsible for argument parsing and
     creating firmware image class instances based on detected image format.
@@ -196,6 +267,10 @@ def OpennessScore():
     parser.add_argument('-c', '--compare', metavar='proprietary_file',
                          help='Compare Dasharo and proprietary firmware scores and store result in a Markdown table.' \
                         ' file should be the Dasharo binary and proprietary_file should  be the proprietary firmware binary.')
+    parser.add_argument('-l', '--liberation', metavar='proprietary_file',
+                        help='Generate liberation and TCB-reduction charts comparing file (Dasharo) against\n'
+                             'proprietary_file. Produces liberation_chart.png and tcb_reduction_chart.png.\n'
+                             'Without this flag the single-image liberation-factor chart is used instead.')
     parser.add_argument('-p', '--platform', default='-', help='Platform model to provide to the table when --compare is set.')
     parser.add_argument('-h', '--help', action='help', help=SUPPRESS)
     parser.add_argument('-o', '--output', default='out/', help='\n'.join([
@@ -232,6 +307,29 @@ def OpennessScore():
         elif fw_is_uefi:
             ProprietaryImage = UEFIImage(args.compare, args.verbose)
         export_compared_data(args, DasharoImage, ProprietaryImage)
+    elif args.liberation:
+        output_path = Path.cwd()
+        if args.output is not None:
+            output_path = Path(args.output)
+            try:
+                output_path.mkdir(parents=True, exist_ok=True)
+            except PermissionError:
+                sys.exit('You do not have permission to write to %s' % args.output)
+
+        fw_is_cbfs, fw_is_uefi = check_file(args.file)
+        if fw_is_cbfs:
+            DasharoImage = DasharoCorebootImage(args.file, args.verbose, args.microarch)
+        else:
+            DasharoImage = UEFIImage(args.file, args.verbose)
+
+        fw_is_cbfs, fw_is_uefi = check_file(args.liberation)
+        if fw_is_cbfs:
+            ProprietaryImage = DasharoCorebootImage(args.liberation, args.verbose, args.microarch)
+        else:
+            ProprietaryImage = UEFIImage(args.liberation, args.verbose)
+
+        export_liberation_charts(output_path, DasharoImage, ProprietaryImage,
+                                  Path(args.file).name, Path(args.liberation).name)
     else:
         fw_is_cbfs, fw_is_uefi = check_file(args.file)
 
