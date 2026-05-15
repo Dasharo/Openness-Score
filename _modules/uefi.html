@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>uefi &mdash; Dasharo Openness Score v0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -98,7 +98,9 @@
     <span class="n">EMPTY_REGION_PADDING</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># First level padding present between IFD regions</span>
         <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0xFF)&#39;</span><span class="p">,</span> <span class="s1">&#39;- Padding&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0x00)&#39;</span><span class="p">,</span> <span class="s1">&#39;- Padding&#39;</span><span class="p">]</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0x00)&#39;</span><span class="p">,</span> <span class="s1">&#39;- Padding&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (FFh)&#39;</span><span class="p">,</span> <span class="s1">&#39;- Padding&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (00h)&#39;</span><span class="p">,</span> <span class="s1">&#39;- Padding&#39;</span><span class="p">]</span>
     <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of entries known to be top-level empty paddings&quot;&quot;&quot;</span>
 
@@ -106,7 +108,9 @@
         <span class="c1"># Second level padding between volumes (ME firmware can also contain</span>
         <span class="c1"># such padding thus in separate array)</span>
         <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0xFF)&#39;</span><span class="p">,</span> <span class="s1">&#39;-- Padding&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0x00)&#39;</span><span class="p">,</span> <span class="s1">&#39;-- Padding&#39;</span><span class="p">]</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (0x00)&#39;</span><span class="p">,</span> <span class="s1">&#39;-- Padding&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (FFh)&#39;</span><span class="p">,</span> <span class="s1">&#39;-- Padding&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;Padding&#39;</span><span class="p">,</span> <span class="s1">&#39;Empty (00h)&#39;</span><span class="p">,</span> <span class="s1">&#39;-- Padding&#39;</span><span class="p">]</span>
     <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of entries known to be second-level empty paddings&quot;&quot;&quot;</span>
 
@@ -299,6 +303,11 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">num_entries</span> <span class="o">+=</span> <span class="mi">1</span>
 
+            <span class="c1"># If BIOS region not found, it may be an AMD image, assume whole</span>
+            <span class="c1"># image is BIOS</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bios_region</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bios_region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UEFI image entries:&quot;</span><span class="p">)</span>
             <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_entries</span><span class="p">)]</span>
@@ -457,11 +466,21 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">empty_spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">entry_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NON_EMPTY_BIOS_PADDING</span><span class="p">)</span> <span class="ow">and</span> \
                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_entry_inside_bios_region</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># If no regions present, likely not an Intel image.</span>
+                <span class="c1"># Treat all non-empty pads as closed-source</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">entry_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">EMPTY_REGION_PADDING</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">empty_spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">entry_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NON_EMPTY_REGION_PADDING</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># If no regions present, likely not an Intel image.</span>
+                <span class="c1"># Treat all non-empty pads as closed-source.</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">closed_code_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uefi_entries</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UEFI image empty entries:&quot;</span><span class="p">)</span>

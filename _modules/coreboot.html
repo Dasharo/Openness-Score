@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>coreboot &mdash; Dasharo Openness Score v0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -115,7 +115,8 @@
                     <span class="s1">&#39;VBLOCK_B&#39;</span><span class="p">,</span> <span class="s1">&#39;HSPHY_FW&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_ELOG&#39;</span><span class="p">,</span> <span class="s1">&#39;FMAP&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_FRID&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;RO_FRID_PAD&#39;</span><span class="p">,</span> <span class="s1">&#39;SPD_CACHE&#39;</span><span class="p">,</span> <span class="s1">&#39;FPF_STATUS&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_LIMITS_CFG&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;RW_DDR_TRAINING&#39;</span><span class="p">,</span> <span class="s1">&#39;GBB&#39;</span><span class="p">,</span> <span class="s1">&#39;BOOTORDER&#39;</span><span class="p">,</span> <span class="s1">&#39;RESERVED&#39;</span><span class="p">,</span> <span class="s1">&#39;BPA&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;ROMHOLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_GBE&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_GSCVD&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_VAR_MRC_CACHE&#39;</span> <span class="p">]</span>
+                    <span class="s1">&#39;ROMHOLE&#39;</span><span class="p">,</span> <span class="s1">&#39;SI_GBE&#39;</span><span class="p">,</span> <span class="s1">&#39;RO_GSCVD&#39;</span><span class="p">,</span> <span class="s1">&#39;RW_VAR_MRC_CACHE&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;PSP_SEV_NVRAM&#39;</span><span class="p">,</span> <span class="s1">&#39;PSP_RPMC_NVRAM&#39;</span> <span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of region names known to contain data&quot;&quot;&quot;</span>
 
     <span class="n">IFD_DATA_REGIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Flash Descriptor&#39;</span><span class="p">,</span> <span class="s1">&#39;Platform Data&#39;</span><span class="p">,</span> <span class="s1">&#39;GbE&#39;</span><span class="p">]</span>
@@ -371,8 +372,16 @@
         <span class="n">offset</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">offset</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: The last region (</span><span class="si">%s</span><span class="s1">) offset + size is not equal &#39;</span>
-                  <span class="s1">&#39;the image size and will be classified as closed-source.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                  <span class="s1">&#39;the image size, assuming empty</span><span class="se">\n</span><span class="s1">&#39;</span>
                   <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;(unused space)&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span>
+                <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span> <span class="o">-</span> <span class="n">offset</span><span class="p">,</span>
+                <span class="s1">&#39;attributes&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">empty_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmap_regions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_regions</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">hole_size</span>
 
