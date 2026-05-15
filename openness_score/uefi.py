@@ -25,7 +25,9 @@ class UEFIImage:
     EMPTY_REGION_PADDING = [
         # First level padding present between IFD regions
         ['Padding', 'Empty (0xFF)', '- Padding'],
-        ['Padding', 'Empty (0x00)', '- Padding']
+        ['Padding', 'Empty (0x00)', '- Padding'],
+        ['Padding', 'Empty (FFh)', '- Padding'],
+        ['Padding', 'Empty (00h)', '- Padding']
     ]
     """A list of entries known to be top-level empty paddings"""
 
@@ -33,7 +35,9 @@ class UEFIImage:
         # Second level padding between volumes (ME firmware can also contain
         # such padding thus in separate array)
         ['Padding', 'Empty (0xFF)', '-- Padding'],
-        ['Padding', 'Empty (0x00)', '-- Padding']
+        ['Padding', 'Empty (0x00)', '-- Padding'],
+        ['Padding', 'Empty (FFh)', '-- Padding'],
+        ['Padding', 'Empty (00h)', '-- Padding']
     ]
     """A list of entries known to be second-level empty paddings"""
 
@@ -226,6 +230,11 @@ class UEFIImage:
 
             self.num_entries += 1
 
+            # If BIOS region not found, it may be an AMD image, assume whole
+            # image is BIOS
+            if len(self.bios_region) == 0:
+                self.bios_region = self.uefi_entries[0]
+
         if self.debug:
             print("UEFI image entries:")
             [print(self.uefi_entries[i]) for i in range(self.num_entries)]
@@ -384,11 +393,21 @@ class UEFIImage:
                 self.empty_spaces.append(self.uefi_entries[i])
             elif (entry_type in self.NON_EMPTY_BIOS_PADDING) and \
                  (self._is_entry_inside_bios_region(self.uefi_entries[i])):
-                self.data_regions.append(self.uefi_entries[i])
+                # If no regions present, likely not an Intel image.
+                # Treat all non-empty pads as closed-source
+                if self.num_regions == 0:
+                    self.closed_code_regions.append(self.uefi_entries[i])
+                else:
+                    self.data_regions.append(self.uefi_entries[i])
             elif entry_type in self.EMPTY_REGION_PADDING:
                 self.empty_spaces.append(self.uefi_entries[i])
             elif entry_type in self.NON_EMPTY_REGION_PADDING:
-                self.data_regions.append(self.uefi_entries[i])
+                # If no regions present, likely not an Intel image.
+                # Treat all non-empty pads as closed-source.
+                if self.num_regions == 0:
+                    self.closed_code_regions.append(self.uefi_entries[i])
+                else:
+                    self.data_regions.append(self.uefi_entries[i])
 
         if self.debug:
             print("UEFI image empty entries:")
