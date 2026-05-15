@@ -42,7 +42,8 @@ class DasharoCorebootImage:
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
                     'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
                     'RW_DDR_TRAINING', 'GBB', 'BOOTORDER', 'RESERVED', 'BPA',
-                    'ROMHOLE', 'SI_GBE', 'RO_GSCVD', 'RW_VAR_MRC_CACHE' ]
+                    'ROMHOLE', 'SI_GBE', 'RO_GSCVD', 'RW_VAR_MRC_CACHE',
+                    'PSP_SEV_NVRAM', 'PSP_RPMC_NVRAM' ]
     """A list of region names known to contain data"""
 
     IFD_DATA_REGIONS = ['Flash Descriptor', 'Platform Data', 'GbE']
@@ -298,8 +299,16 @@ class DasharoCorebootImage:
         offset += self.fmap_regions[self.num_regions - 1]['size']
         if offset != self.image_size:
             print('WARNING: The last region (%s) offset + size is not equal '
-                  'the image size and will be classified as closed-source.\n'
+                  'the image size, assuming empty\n'
                   % self.fmap_regions[self.num_regions - 1]['name'])
+            self.fmap_regions[self.num_regions] = {
+                'name': '(unused space)',
+                'offset': offset,
+                'size': self.image_size - offset,
+                'attributes': '',
+            }
+            self.empty_regions.append(self.fmap_regions[self.num_regions])
+            self.num_regions += 1
 
         return hole_size
 
