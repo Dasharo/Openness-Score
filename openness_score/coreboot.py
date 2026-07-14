@@ -40,10 +40,10 @@ class DasharoCorebootImage:
                     'SMMSTORE', 'SHARED_DATA', 'VBLOCK_DEV', 'RW_NVRAM',
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
-                    'RO_FRID_PAD', 'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
+                    'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
                     'RW_DDR_TRAINING', 'GBB', 'BOOTORDER', 'RESERVED', 'BPA',
                     'ROMHOLE', 'SI_GBE', 'RO_GSCVD', 'RW_VAR_MRC_CACHE',
-                    'PSP_SEV_NVRAM', 'PSP_RPMC_NVRAM' ]
+                    'PSP_SEV_NVRAM', 'PSP_RPMC_NVRAM', 'HUBRIS_NVRAM']
     """A list of region names known to contain data"""
 
     IFD_DATA_REGIONS = ['Flash Descriptor', 'Platform Data', 'GbE']
@@ -82,7 +82,7 @@ class DasharoCorebootImage:
 
     # Regions to count as empty/unused
     EMPTY_REGIONS = ['UNUSED', 'RW_UNUSED', 'SI_DEVICEEXT2', 'UNUSED_HOLE',
-                     'BIOS_UNUSABLE']
+                     'BIOS_UNUSABLE', 'RO_FRID_PAD', 'PAD']
     """A list of region names known to be empty spaces, e.g. between IFD
     regions."""
 
@@ -392,10 +392,10 @@ class DasharoCorebootImage:
             return
         else:
             self.uncategorized_regions_ifdtool.append(region)
-    
+
     def _is_empty(self, start, end):
         """Checks if a flash region is empty, where empty is defined as filled with 0x00 or 0xFF bytes.
-        
+
         :param: start: Start address of the region
         :type start: int
         :param end: End address of the region
