@@ -40,10 +40,10 @@ class DasharoCorebootImage:
                     'SMMSTORE', 'SHARED_DATA', 'VBLOCK_DEV', 'RW_NVRAM',
                     'CONSOLE', 'RW_FWID_A', 'RW_FWID_B', 'VBLOCK_A', 'RO_VPD',
                     'VBLOCK_B', 'HSPHY_FW', 'RW_ELOG', 'FMAP', 'RO_FRID',
-                    'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG',
+                    'SPD_CACHE', 'FPF_STATUS', 'RO_LIMITS_CFG', 'MSI_ID',
                     'RW_DDR_TRAINING', 'GBB', 'BOOTORDER', 'RESERVED', 'BPA',
                     'ROMHOLE', 'SI_GBE', 'RO_GSCVD', 'RW_VAR_MRC_CACHE',
-                    'PSP_SEV_NVRAM', 'PSP_RPMC_NVRAM', 'HUBRIS_NVRAM']
+                    'PSP_SEV_NVRAM', 'PSP_RPMC_NVRAM', 'HUBRIS_NVRAM', 'PSP_NVRAM' ]
     """A list of region names known to contain data"""
 
     IFD_DATA_REGIONS = ['Flash Descriptor', 'Platform Data', 'GbE']
@@ -799,7 +799,7 @@ class CBFSImage:
         'atl1e-macaddress', 'wifi_sar_defaults.hex', 'ecrw.hash', 'pdrw.hash',
         'oem.bin', 'sbom', 'boot_policy_manifest.bin', 'key_manifest.bin',
         'txt_bios_policy.bin', 'apu/amdfw_a', 'apu/amdfw_b', 'me_rw.hash',
-        'me_rw.version', 'vboot_public_key.bin',
+        'me_rw.version', 'vboot_public_key.bin', 'amdfw_manifest',
         # SeaBIOS runtime config below https://www.seabios.org/Runtime_config
         'links', 'bootorder', 'etc/show-boot-menu', 'etc/boot-menu-message',
         'etc/boot-menu-key', 'etc/boot-menu-wait', 'etc/boot-fail-wait',
