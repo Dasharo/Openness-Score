@@ -143,7 +143,13 @@ def compare_scores(dasharo_image, proprietary_image):
     :rtype: float, float, float
     """
     closed_source_diff = 100 * (dasharo_image.closed_code_size - proprietary_image.closed_code_size) / proprietary_image.closed_code_size
-    data_size_diff = 100 * (dasharo_image.data_size - proprietary_image.data_size) / proprietary_image.data_size
+
+    # Avoid division by zero. Assume the data size is 0 for proprietary image
+    if proprietary_image.data_size == 0:
+        data_size_diff = 100 * (dasharo_image.data_size - 1) / 1
+    else:
+        data_size_diff = 100 * (dasharo_image.data_size - proprietary_image.data_size) / proprietary_image.data_size
+
     empty_diff = 100 * (dasharo_image.empty_size - proprietary_image.empty_size) / proprietary_image.empty_size
     return round(closed_source_diff, 1), round(data_size_diff, 1), round(empty_diff, 1)
 
