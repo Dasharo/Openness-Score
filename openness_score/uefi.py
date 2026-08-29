@@ -187,11 +187,11 @@ class UEFIImage:
         If self.debug is True, all UEFI entries and regions with their
         attributes are printed on the console at the end.
         """
-        cmd = ['UEFIExtract', self.image_path, 'report']
+        cmd = ['uefiextract', self.image_path, 'report']
         uefi_extract = subprocess.run(cmd, text=True, capture_output=True)
 
         if uefi_extract.returncode != 0:
-            sys.exit('ERROR: UEFIExtarct returned an error')
+            sys.exit('ERROR: UEFIExtract returned an error')
 
         file = open(''.join([self.image_path, '.report.txt']), mode='r')
         uefi_report = file.read()

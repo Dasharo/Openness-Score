@@ -1308,7 +1308,7 @@ class CBFSImage:
         subprocess.run(cmd, text=True, capture_output=True)
 
         lan_rom_file = '/tmp/lan_rom_' + self.region_name + '/body_1.bin'
-        cmd = ['UEFIExtract', '/tmp/payload_' + self.region_name,
+        cmd = ['uefiextract', '/tmp/payload_' + self.region_name,
                self.DASHARO_LAN_ROM_GUID,
                '-o', '/tmp/lan_rom_' + self.region_name,
                '-m', 'body']

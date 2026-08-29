@@ -76,7 +76,7 @@ def check_file(file):
         sys.exit('ERROR: cbfstool not found, please install it first.')
 
     try:
-        subprocess.run(['UEFIExtract'],
+        subprocess.run(['uefiextract'],
                        stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
     except FileNotFoundError:
@@ -93,7 +93,7 @@ def check_file(file):
                                     text=True, capture_output=True)
     fw_is_cbfs = cbfs_error_string not in cbfstool_check.stderr
 
-    uefiextract_check = subprocess.run(['UEFIExtract', file, 'report'],
+    uefiextract_check = subprocess.run(['uefiextract', file, 'report'],
                                        text=True, capture_output=True)
     fw_is_uefi = uefiextract_error_string not in uefiextract_check.stdout
 
